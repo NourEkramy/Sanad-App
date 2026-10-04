@@ -1,0 +1,678 @@
+{
+  "@@locale": "en",
+  "appName": "Sanad",
+  "appTagline": "Care records, made simple",
+  "commonSave": "Save",
+  "commonCancel": "Cancel",
+  "commonRetry": "Try again",
+  "commonEdit": "Edit",
+  "commonClose": "Close",
+  "commonConfirm": "Confirm",
+  "commonSearch": "Search",
+  "commonAdd": "Add",
+  "commonClear": "Clear",
+  "commonApply": "Apply",
+  "commonAll": "All",
+  "commonOptional": "Optional",
+  "commonActive": "Active",
+  "commonInactive": "Inactive",
+  "commonDeactivate": "Deactivate",
+  "commonActivate": "Activate",
+  "commonNotSet": "Not set",
+  "commonUnspecified": "Unspecified",
+  "commonLoadMore": "Load more",
+  "commonBack": "Back",
+  "commonDone": "Done",
+  "commonContinue": "Continue",
+  "commonYes": "Yes",
+  "commonNo": "No",
+  "commonCopied": "Copied",
+  "commonToday": "Today",
+  "commonYesterday": "Yesterday",
+  "currencyAmount": "{amount} EGP",
+  "@currencyAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "egp": "EGP",
+  "navHome": "Home",
+  "navCustomers": "Customers",
+  "navRecords": "Records",
+  "navMore": "More",
+  "loginTitle": "Welcome back",
+  "loginSubtitle": "Sign in with your work account to continue.",
+  "loginEmail": "Email",
+  "loginPassword": "Password",
+  "loginSubmit": "Sign in",
+  "loginForgot": "Forgot password?",
+  "loginSessionExpired": "Your session has expired. Please sign in again.",
+  "loginShowPassword": "Show password",
+  "loginHidePassword": "Hide password",
+  "notConfiguredTitle": "Sanad is not configured",
+  "notConfiguredBody": "This build has no server address. Rebuild the app with SUPABASE_URL and SUPABASE_ANON_KEY (see docs/08-deployment.md).",
+  "forgotTitle": "Reset password",
+  "forgotBody": "Enter your work email and we will send you a link to choose a new password.",
+  "forgotSubmit": "Send reset link",
+  "forgotSent": "If an account exists for {email}, a reset link is on its way.",
+  "@forgotSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "resetTitle": "Choose a new password",
+  "resetNewPassword": "New password",
+  "resetConfirmPassword": "Confirm new password",
+  "resetSubmit": "Update password",
+  "resetDone": "Password updated.",
+  "signOut": "Sign out",
+  "signOutConfirm": "Sign out of Sanad on this device?",
+  "signOutPending": "There are {count} records on this device that have not synced yet. They stay on this device and will sync after you sign in again.",
+  "@signOutPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "greetingMorning": "Good morning, {name}",
+  "@greetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingEvening": "Good evening, {name}",
+  "@greetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardSearchHint": "Search customer by phone number",
+  "quickActions": "Quick actions",
+  "actionAddCustomer": "Add customer",
+  "actionSearchCustomer": "Search customer",
+  "actionAddRecord": "Add service record",
+  "actionExport": "Export to Excel",
+  "todayOverview": "Today's overview",
+  "statTodayServices": "Today's services",
+  "statTodayRevenue": "Today's revenue",
+  "statCash": "Cash",
+  "statElectronic": "Electronic",
+  "statTotalCustomers": "Customers",
+  "statTotalRecords": "Service records",
+  "statActiveNurses": "Active nurses",
+  "statActiveServices": "Active services",
+  "statMonthRevenue": "This month",
+  "businessOverview": "Business overview",
+  "pendingSyncBanner": "{count, plural, =1{1 record is waiting to sync} other{{count} records are waiting to sync}}",
+  "@pendingSyncBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncNow": "Sync now",
+  "syncing": "Syncing…",
+  "syncDone": "All records are synced.",
+  "needsReviewBanner": "{count, plural, =1{1 imported customer needs review} other{{count} imported customers need review}}",
+  "@needsReviewBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "offlineBanner": "You are offline. New records are saved on this device and sync automatically.",
+  "customersTitle": "Customers",
+  "customersSearchHint": "Phone number or name",
+  "customersNeedsReview": "Needs review",
+  "customersEmptyTitle": "No customers yet",
+  "customersEmptyBody": "Add your first customer or import your existing Excel data.",
+  "searchTitle": "Search customer",
+  "searchForRecordTitle": "Select customer",
+  "searchHint": "Enter phone number",
+  "searchByNameHint": "Phone number or customer name",
+  "searchTypeMore": "Type at least 3 digits of the phone number, or a name.",
+  "searchNotFoundTitle": "Customer not found",
+  "searchNotFoundBody": "No customer matches “{query}”.",
+  "@searchNotFoundBody": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "searchAddNew": "Add new customer",
+  "searchResults": "{count, plural, =1{1 customer found} other{{count} customers found}}",
+  "@searchResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSelectHint": "Check the name and phone, then tap to continue.",
+  "customerVisits": "{count, plural, =0{No visits} =1{1 visit} other{{count} visits}}",
+  "@customerVisits": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "customerLastVisit": "Last visit {date}",
+  "@customerLastVisit": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "customerArchived": "Archived",
+  "customerNoPhone": "No phone number",
+  "addCustomerTitle": "Add customer",
+  "editCustomerTitle": "Edit customer",
+  "fieldFullName": "Full name",
+  "fieldPhone": "Phone number",
+  "fieldPhoneHelper": "Egyptian number, e.g. 01012345678",
+  "fieldAddress": "Address",
+  "fieldArea": "Living area",
+  "fieldAreaHint": "Select area",
+  "fieldNotes": "Notes",
+  "saveCustomer": "Save customer",
+  "customerExistsTitle": "Phone number already registered",
+  "customerExistsBody": "This phone number belongs to an existing customer. Use that customer instead of creating a duplicate.",
+  "customerExistsArchived": "This customer is archived. An administrator can restore them.",
+  "viewCustomer": "View customer",
+  "customerSavedTitle": "Customer saved",
+  "customerSavedBody": "{name} has been added to Sanad.",
+  "@customerSavedBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "backToHome": "Back to home",
+  "customerUpdated": "Customer details updated.",
+  "profileTitle": "Customer profile",
+  "profileInfo": "Customer information",
+  "profileHistory": "Service history",
+  "profileTotalSpent": "Total paid",
+  "profileVisits": "Visits",
+  "profileLastVisit": "Last visit",
+  "profileAddRecord": "Add new record",
+  "profileNoHistoryTitle": "No service records yet",
+  "profileNoHistoryBody": "Records you add for this customer will appear here.",
+  "profileNeedsReview": "Imported without a valid phone number. Edit the customer to add one.",
+  "archiveCustomer": "Archive customer",
+  "restoreCustomer": "Restore customer",
+  "archiveCustomerConfirm": "Archive {name}? Their history is kept, but they will no longer appear in searches.",
+  "@archiveCustomerConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "customerArchivedDone": "Customer archived.",
+  "customerRestoredDone": "Customer restored.",
+  "copyPhone": "Copy phone number",
+  "areaPickerTitle": "Select area",
+  "areaPickerSearch": "Search areas",
+  "areaAddNew": "Add new area",
+  "areaAddNamed": "Add “{name}”",
+  "@areaAddNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "areaNewTitle": "New area",
+  "areaName": "Area name",
+  "areaCreated": "Area “{name}” added.",
+  "@areaCreated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "areaExisting": "“{name}” already exists and was selected.",
+  "@areaExisting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsTitle": "Records",
+  "recordsSearchHint": "Customer name or phone",
+  "recordsFilters": "Filters",
+  "recordsSort": "Sort",
+  "sortNewest": "Newest first",
+  "sortOldest": "Oldest first",
+  "sortPriceHigh": "Highest price",
+  "sortPriceLow": "Lowest price",
+  "recordsTotals": "{count, plural, =1{1 record} other{{count} records}} · {amount}",
+  "@recordsTotals": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsEmptyTitle": "No records found",
+  "recordsEmptyBody": "Try changing the filters or search.",
+  "recordsNoneYetBody": "Service records will appear here once you add them.",
+  "filterDate": "Date",
+  "filterAnyDate": "Any date",
+  "filterThisWeek": "This week",
+  "filterThisMonth": "This month",
+  "filterLastMonth": "Last month",
+  "filterCustomRange": "Custom range",
+  "filterNurse": "Nurse",
+  "filterService": "Service",
+  "filterArea": "Area",
+  "filterPayment": "Payment method",
+  "filterAny": "Any",
+  "filterClearAll": "Clear all",
+  "filterShowResults": "Show results",
+  "addRecordTitle": "New service record",
+  "editRecordTitle": "Edit record",
+  "recordFor": "Record for",
+  "fieldNurse": "Nurse",
+  "fieldNurseHint": "Select nurse",
+  "fieldService": "Service",
+  "fieldServiceHint": "Select service",
+  "fieldPrice": "Price",
+  "fieldPriceHelper": "The amount actually charged for this visit",
+  "fieldPriceDefault": "Default price: {amount}",
+  "@fieldPriceDefault": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldPaymentMethod": "Payment method",
+  "paymentCash": "Cash",
+  "paymentElectronic": "Electronic",
+  "paymentUnspecified": "Not recorded",
+  "fieldDate": "Date",
+  "fieldTime": "Time",
+  "fieldPatientName": "Patient name",
+  "fieldPatientHelper": "Only if the service was for someone else (e.g. a family member)",
+  "saveRecord": "Save record",
+  "recordSaved": "Record saved.",
+  "recordQueued": "No connection — the record is saved on this device and will sync automatically.",
+  "recordUpdated": "Record updated.",
+  "draftRestored": "Your unsaved entry was restored.",
+  "discardDraft": "Discard",
+  "recordDetailsTitle": "Record details",
+  "recordCustomer": "Customer",
+  "recordService": "Service",
+  "recordPayment": "Payment",
+  "recordWhen": "Date & time",
+  "recordAddressAtVisit": "Address at time of visit",
+  "recordAreaAtVisit": "Area at time of visit",
+  "recordPatient": "Patient",
+  "recordCreatedAt": "Created",
+  "recordLegacyRef": "Excel row no.",
+  "recordImported": "Imported from Excel",
+  "recordPendingSync": "Waiting to sync",
+  "recordSyncFailed": "Sync failed",
+  "recordNoTime": "Time not recorded",
+  "archiveRecord": "Archive record",
+  "archiveRecordConfirm": "Archive this record? It will be hidden from history and totals but kept for audit.",
+  "recordArchived": "Record archived.",
+  "openCustomer": "Open customer",
+  "nurseLabel": "Nurse: {name}",
+  "@nurseLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pendingTitle": "Waiting to sync",
+  "pendingEmpty": "Everything is synced.",
+  "pendingBody": "These records are saved on this device. They are sent automatically when the connection returns.",
+  "pendingDiscard": "Discard record",
+  "pendingDiscardConfirm": "Discard this unsynced record? It has not reached the server and will be lost.",
+  "pendingFailedHint": "The server rejected this record: {reason}",
+  "@pendingFailedHint": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "nursesTitle": "Nurses",
+  "nursesEmpty": "No nurses yet. Add the nurses who provide services.",
+  "addNurse": "Add nurse",
+  "editNurse": "Edit nurse",
+  "nurseName": "Name",
+  "nurseSaved": "Nurse saved.",
+  "servicesTitle": "Services",
+  "servicesEmpty": "No services yet. Add the services you provide.",
+  "addService": "Add service",
+  "editService": "Edit service",
+  "serviceName": "Service name",
+  "serviceDefaultPrice": "Default price",
+  "serviceDefaultPriceHelper": "Leave empty if the price varies. Changing it never affects past records.",
+  "serviceVariablePrice": "Variable price",
+  "serviceSaved": "Service saved.",
+  "areasTitle": "Areas",
+  "areasEmpty": "No areas yet.",
+  "addArea": "Add area",
+  "editArea": "Edit area",
+  "areaSaved": "Area saved.",
+  "showInactive": "Show inactive",
+  "statusActiveHelper": "Inactive items stay in history but cannot be chosen for new records.",
+  "deactivateConfirm": "Deactivate “{name}”? It stays in past records but can no longer be selected.",
+  "@deactivateConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pickerNoResults": "No matches",
+  "pickerAddNamed": "Add “{name}”",
+  "@pickerAddNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pickerSearch": "Search",
+  "moreTitle": "More",
+  "moreManage": "Manage",
+  "moreData": "Data",
+  "moreAccount": "Account",
+  "importTitle": "Import from Excel",
+  "exportTitle": "Export to Excel",
+  "settingsTitle": "Settings",
+  "settingsLanguage": "Language",
+  "languageSystem": "System default",
+  "settingsAbout": "About Sanad",
+  "settingsVersion": "Version {version}",
+  "@settingsVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsPrivacy": "Customer data is stored in the cloud database and protected by role-based access. Records saved offline are encrypted on this device until they sync.",
+  "userProfileTitle": "My profile",
+  "profileName": "Name",
+  "profileEmail": "Email",
+  "profileRole": "Role",
+  "roleAdmin": "Administrator",
+  "roleStaff": "Staff",
+  "changePassword": "Change password",
+  "profileSaved": "Profile updated.",
+  "usersTitle": "Users",
+  "inviteUser": "Invite user",
+  "inviteSent": "Invitation sent to {email}.",
+  "@inviteSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteRole": "Role",
+  "userYou": "You",
+  "makeAdmin": "Make administrator",
+  "makeStaff": "Make staff",
+  "userUpdated": "User updated.",
+  "userDeactivateConfirm": "Deactivate {name}? They will be signed out and unable to sign in.",
+  "@userDeactivateConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pendingSyncMenu": "Waiting to sync",
+  "importIntro": "Bring existing records from an Excel workbook into Sanad. Nothing is saved until you review the preview and confirm.",
+  "importChooseFile": "Choose Excel file",
+  "importReading": "Reading workbook…",
+  "importStepFile": "File",
+  "importStepColumns": "Columns",
+  "importStepPreview": "Preview",
+  "importSheet": "Sheet",
+  "importColumnsTitle": "Check column mapping",
+  "importColumnsBody": "Sanad matched these columns automatically. Fix any that are wrong before continuing.",
+  "importNotMapped": "Not in file",
+  "importHeaderRow": "Header found on row {row}",
+  "@importHeaderRow": {
+    "placeholders": {
+      "row": {
+        "type": "int"
+      }
+    }
+  },
+  "importBuildPreview": "Build preview",
+  "importMissingRequired": "Map the required columns: {fields}",
+  "@importMissingRequired": {
+    "placeholders": {
+      "fields": {
+        "type": "String"
+      }
+    }
+  },
+  "importPreviewTitle": "Review before importing",
+  "importRecords": "Records to import",
+  "importSkipped": "Rows skipped",
+  "importNewCustomers": "New customers",
+  "importMatchedCustomers": "Existing customers matched",
+  "importNewAreas": "New areas",
+  "importNewNurses": "New nurses",
+  "importNewServices": "New services",
+  "importRevenue": "Total amount",
+  "importDateRange": "Dates",
+  "importNoPayment": "{count} records have no payment method in the file. They will be marked “Not recorded”.",
+  "@importNoPayment": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importReviewCustomers": "{count} customers have no valid phone number and will be flagged for review.",
+  "@importReviewCustomers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importAlreadyImported": "Data has been imported before. If this is a corrected version of the same file, roll back the earlier import first to avoid duplicates.",
+  "importWarnings": "Warnings (rows are imported)",
+  "importErrors": "Problems (rows are skipped)",
+  "importEntities": "Names found in the file",
+  "importNew": "new",
+  "importRowsLabel": "Rows: {rows}",
+  "@importRowsLabel": {
+    "placeholders": {
+      "rows": {
+        "type": "String"
+      }
+    }
+  },
+  "importConfirm": "Import {count} records",
+  "@importConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importConfirmTitle": "Start import?",
+  "importConfirmBody": "The import runs as a single transaction: either everything is saved or nothing is. You can roll it back later from the import history.",
+  "importRunning": "Importing…",
+  "importDoneTitle": "Import complete",
+  "importDoneBody": "{records} records imported, {customers} new customers created, {matched} existing customers matched.",
+  "@importDoneBody": {
+    "placeholders": {
+      "records": {
+        "type": "int"
+      },
+      "customers": {
+        "type": "int"
+      },
+      "matched": {
+        "type": "int"
+      }
+    }
+  },
+  "importHistory": "Import history",
+  "importHistoryEmpty": "No imports yet.",
+  "importRolledBack": "Rolled back",
+  "importRollback": "Roll back",
+  "importRollbackConfirm": "Roll back “{file}”? Records created by this import are removed. Customers or names that were used afterwards are kept.",
+  "@importRollbackConfirm": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "importRollbackDone": "Import rolled back.",
+  "importBatchSummary": "{count} records · {date}",
+  "@importBatchSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "importStartOver": "Choose another file",
+  "importUnspecifiedName": "Unspecified",
+  "importShowRows": "Rows {rows}",
+  "@importShowRows": {
+    "placeholders": {
+      "rows": {
+        "type": "String"
+      }
+    }
+  },
+  "importField_legacyRef": "Record no.",
+  "importField_serviceDate": "Service date",
+  "importField_serviceTime": "Service time",
+  "importField_customerName": "Customer name",
+  "importField_phone": "Phone",
+  "importField_address": "Address",
+  "importField_area": "Area",
+  "importField_nurse": "Nurse",
+  "importField_service": "Service",
+  "importField_price": "Price",
+  "importField_paymentMethod": "Payment method",
+  "importField_patientName": "Patient (if different)",
+  "importField_notes": "Notes",
+  "importField_status": "Status (kept for reference)",
+  "importIssue_datemissing": "Missing date",
+  "importIssue_dateinvalid": "Unreadable date",
+  "importIssue_pricemissing": "Missing price",
+  "importIssue_priceinvalid": "Unreadable price",
+  "importIssue_customermissing": "No customer name or phone",
+  "importIssue_dateambiguous": "Day/month order assumed (day first)",
+  "importIssue_timemissing": "No time — imported without a time",
+  "importIssue_timeinvalid": "Unreadable time — imported without a time",
+  "importIssue_timeambiguous": "AM/PM unknown — imported without a time",
+  "importIssue_phoneinvalid": "Invalid or missing phone — customer flagged for review",
+  "importIssue_phoneshared": "Same phone, different name — kept as patient name",
+  "importIssue_nursemissing": "No nurse — set to “Unspecified”",
+  "importIssue_servicemissing": "No service — set to “Unspecified”",
+  "importIssue_areamissing": "No area — set to “Unspecified”",
+  "importIssue_pricecleaned": "Price written as text — number extracted",
+  "importIssue_paymentunknown": "Unrecognised payment method",
+  "importIssue_customerdetailschanged": "Address/area differs from other visits — kept on this record",
+  "exportIntro": "Create a formatted Excel workbook for administration, accounting or backup.",
+  "exportPeriod": "Records period",
+  "exportAllTime": "All time",
+  "exportSheets": "Sheets to include",
+  "exportSheetRecords": "Records (with customer details)",
+  "exportSheetCustomers": "Customers",
+  "exportSheetNurses": "Nurses",
+  "exportSheetServices": "Services",
+  "exportSheetAreas": "Areas",
+  "exportCreate": "Create Excel file",
+  "exportWorking": "Preparing workbook…",
+  "exportReady": "Workbook ready",
+  "exportReadyBody": "{count} records exported to {file}.",
+  "@exportReadyBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "exportShare": "Share / save file",
+  "exportSheetTotal": "Total",
+  "exportRecordId": "Record ID",
+  "validationRequired": "This field is required.",
+  "validationTooLong": "This is too long.",
+  "validationInvalidPhone": "Enter a valid Egyptian phone number, e.g. 01012345678.",
+  "validationInvalidPrice": "Enter a valid amount.",
+  "validationNegativePrice": "The price cannot be negative.",
+  "validationPriceTooHigh": "This amount is too high.",
+  "validationInvalidEmail": "Enter a valid email address.",
+  "validationPasswordTooShort": "Use at least 8 characters.",
+  "validationPasswordsDoNotMatch": "Passwords do not match.",
+  "validationFutureDate": "The date cannot be in the future.",
+  "failureNetwork": "No internet connection. Check your connection and try again.",
+  "failureServer": "Something went wrong on the server. Please try again.",
+  "failureSessionExpired": "Your session has expired. Please sign in again.",
+  "failurePermission": "You do not have permission to do this.",
+  "failureDuplicatePhone": "This phone number is already registered.",
+  "failureDuplicateName": "This name already exists.",
+  "failureDuplicateEmail": "A user with this email already exists.",
+  "failureDuplicateFile": "This file has already been imported.",
+  "failureDuplicate": "This value already exists.",
+  "failureValidation": "Please check the highlighted fields.",
+  "failureNotFound": "This item no longer exists.",
+  "failureUnexpected": "Something went wrong. Please try again.",
+  "failureFileUnreadable": "This file could not be read. Make sure it is an Excel (.xlsx) file.",
+  "failureFileNoSheets": "The workbook has no sheets.",
+  "failureFileHeaderNotFound": "No sheet with recognisable columns (date, customer name or phone, price) was found.",
+  "failureFileEmpty": "There is nothing to import or export.",
+  "failureFileWrite": "The Excel file could not be created.",
+  "failureAuthInvalid": "Incorrect email or password.",
+  "failureAuthDisabled": "This account has been deactivated. Contact your administrator.",
+  "failureAuthNotConfirmed": "Confirm your email address first, then sign in.",
+  "failureAuthWeakPassword": "Choose a stronger password.",
+  "failureAuthRateLimited": "Too many attempts. Wait a moment and try again.",
+  "failureAuthUnknown": "Sign-in failed. Please try again.",
+  "failureRuleNurseInactive": "This nurse is no longer active. Choose another nurse.",
+  "failureRuleServiceInactive": "This service is no longer active. Choose another service.",
+  "failureRuleCustomerArchived": "This customer is archived.",
+  "failureRuleAlreadyImported": "This file has already been imported.",
+  "failureRuleBatchNotFound": "This import was already rolled back.",
+  "failureRuleSelfDemotion": "You cannot remove your own administrator access.",
+  "failureRuleInUse": "This item is in use and cannot be removed."
+}

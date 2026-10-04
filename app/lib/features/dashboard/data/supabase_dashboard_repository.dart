@@ -12,10 +12,7 @@ class SupabaseDashboardRepository implements DashboardRepository {
 
   @override
   Future<Result<DashboardStats>> getStats(DateTime day) => guard(() async {
-        final json = await _client.rpc<Map<String, dynamic>>(
-          'dashboard_stats',
-          params: {'for_day': Dates.toJson(day)},
-        );
-        return DashboardStats.fromJson(json);
-      });
+    final json = await _client.rpc<Map<String, dynamic>>('dashboard_stats', params: {'for_day': Dates.toJson(day)});
+    return DashboardStats.fromJson(json);
+  });
 }

@@ -15,10 +15,10 @@ class GetNurses {
 }
 
 Map<String, String> _validate(String name, String? phone, String? notes) => {
-      'name': ?Validators.requiredText(name, maxLength: 120),
-      'phone': ?Validators.optionalPhone(phone),
-      'notes': ?Validators.optionalText(notes, maxLength: 1000),
-    };
+  'name': ?Validators.requiredText(name, maxLength: 120),
+  'phone': ?Validators.optionalPhone(phone),
+  'notes': ?Validators.optionalText(notes, maxLength: 1000),
+};
 
 String? _phone(String? phone) => (phone ?? '').trim().isEmpty ? null : PhoneNumber.normalize(phone);
 

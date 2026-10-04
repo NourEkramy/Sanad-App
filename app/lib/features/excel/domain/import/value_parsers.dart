@@ -78,14 +78,17 @@ abstract final class ValueParsers {
       if (b > 12) return _orInvalid(Dates.fromParts(y, a, b));
       final dayFirst = Dates.fromParts(y, b, a);
       if (a == b) return _orInvalid(dayFirst);
-      return dayFirst == null ? const Parsed.issue(ImportIssue.dateInvalid) : Parsed(dayFirst, ImportIssue.dateAmbiguous);
+      return dayFirst == null
+          ? const Parsed.issue(ImportIssue.dateInvalid)
+          : Parsed(dayFirst, ImportIssue.dateAmbiguous);
     }
     final asNumber = num.tryParse(text);
     if (asNumber != null) return _serial(asNumber);
     return const Parsed.issue(ImportIssue.dateInvalid);
   }
 
-  static Parsed<DateTime> _orInvalid(DateTime? d) => d == null ? const Parsed.issue(ImportIssue.dateInvalid) : Parsed(d);
+  static Parsed<DateTime> _orInvalid(DateTime? d) =>
+      d == null ? const Parsed.issue(ImportIssue.dateInvalid) : Parsed(d);
 
   static Parsed<DateTime> _serial(num serial) {
     // Excel day 1 = 1900-01-01 (with the 1900 leap-year bug → base 1899-12-30).
@@ -120,7 +123,9 @@ abstract final class ValueParsers {
     var hour = int.parse(m.group(1)!);
     final minuteText = m.group(2);
     // "11.3" is written like a decimal: 11:30.
-    final minute = minuteText == null ? 0 : (minuteText.length == 1 ? int.parse(minuteText) * 10 : int.parse(minuteText));
+    final minute = minuteText == null
+        ? 0
+        : (minuteText.length == 1 ? int.parse(minuteText) * 10 : int.parse(minuteText));
     final suffix = m.group(3);
     if (minute > 59 || hour > 23) return const Parsed.issue(ImportIssue.timeInvalid);
 

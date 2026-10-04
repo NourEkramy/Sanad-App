@@ -38,17 +38,16 @@ class RecordFilter extends Equatable {
     PaymentMethod? Function()? paymentMethod,
     String? query,
     RecordSort? sort,
-  }) =>
-      RecordFilter(
-        from: from != null ? from() : this.from,
-        to: to != null ? to() : this.to,
-        nurseId: nurseId != null ? nurseId() : this.nurseId,
-        serviceId: serviceId != null ? serviceId() : this.serviceId,
-        areaId: areaId != null ? areaId() : this.areaId,
-        paymentMethod: paymentMethod != null ? paymentMethod() : this.paymentMethod,
-        query: query ?? this.query,
-        sort: sort ?? this.sort,
-      );
+  }) => RecordFilter(
+    from: from != null ? from() : this.from,
+    to: to != null ? to() : this.to,
+    nurseId: nurseId != null ? nurseId() : this.nurseId,
+    serviceId: serviceId != null ? serviceId() : this.serviceId,
+    areaId: areaId != null ? areaId() : this.areaId,
+    paymentMethod: paymentMethod != null ? paymentMethod() : this.paymentMethod,
+    query: query ?? this.query,
+    sort: sort ?? this.sort,
+  );
 
   RecordFilter cleared() => RecordFilter(query: query, sort: sort);
 

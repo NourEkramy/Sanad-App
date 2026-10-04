@@ -25,12 +25,7 @@ class ChangeUserAccess {
 
   /// Administrators cannot remove their own admin rights or deactivate
   /// themselves (also enforced by the database).
-  Future<Result<AppUser>> call({
-    required AppUser actor,
-    required AppUser target,
-    UserRole? role,
-    bool? active,
-  }) async {
+  Future<Result<AppUser>> call({required AppUser actor, required AppUser target, UserRole? role, bool? active}) async {
     if (!actor.can(Permission.manageUsers)) return const Result.failure(PermissionFailure());
     if (actor.id == target.id && (role == UserRole.staff || active == false)) {
       return const Result.failure(BusinessRuleFailure('self_demotion'));

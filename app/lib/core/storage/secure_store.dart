@@ -11,10 +11,11 @@ abstract interface class KeyValueStore {
 
 class SecureStore implements KeyValueStore {
   SecureStore([FlutterSecureStorage? storage])
-      : _storage = storage ??
-            const FlutterSecureStorage(
-              iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
-            );
+    : _storage =
+          storage ??
+          const FlutterSecureStorage(
+            iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
+          );
 
   final FlutterSecureStorage _storage;
 

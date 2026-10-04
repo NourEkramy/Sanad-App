@@ -46,7 +46,8 @@ final class PermissionFailure extends Failure {
 }
 
 /// A unique value already exists (e.g. phone number, area name).
-final class DuplicateFailure extends Failure {
+/// Not final: features may add context (see `CustomerExistsFailure`).
+class DuplicateFailure extends Failure {
   const DuplicateFailure(this.field);
   final String field;
 
@@ -68,6 +69,13 @@ final class BusinessRuleFailure extends Failure {
 final class ValidationFailure extends Failure {
   const ValidationFailure(this.fields);
   final Map<String, String> fields;
+
+  /// The same failure without [field]'s error, or null when none remain.
+  ValidationFailure? without(String field) {
+    if (!fields.containsKey(field)) return this;
+    final rest = Map<String, String>.from(fields)..remove(field);
+    return rest.isEmpty ? null : ValidationFailure(rest);
+  }
 
   @override
   List<Object?> get props => [fields];

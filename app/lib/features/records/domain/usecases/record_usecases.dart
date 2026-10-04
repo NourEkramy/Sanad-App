@@ -16,19 +16,19 @@ typedef Clock = DateTime Function();
 
 /// Validates a record form. Returns field → error code.
 Map<String, String> validateRecordDraft(RecordDraft draft, {required DateTime today}) => {
-      if (draft.nurseId == null) 'nurse': ValidationCodes.required,
-      if (draft.serviceId == null) 'service': ValidationCodes.required,
-      'price': ?Validators.price(draft.price),
-      if (draft.paymentMethod == null || draft.paymentMethod == PaymentMethod.unspecified)
-        'paymentMethod': ValidationCodes.required,
-      if (draft.serviceDate == null)
-        'serviceDate': ValidationCodes.required
-      else if (Dates.dateOnly(draft.serviceDate!).isAfter(today))
-        'serviceDate': ValidationCodes.futureDate,
-      if (draft.serviceTime == null) 'serviceTime': ValidationCodes.required,
-      'patientName': ?Validators.optionalText(draft.patientName, maxLength: 160),
-      'notes': ?Validators.optionalText(draft.notes, maxLength: 2000),
-    };
+  if (draft.nurseId == null) 'nurse': ValidationCodes.required,
+  if (draft.serviceId == null) 'service': ValidationCodes.required,
+  'price': ?Validators.price(draft.price),
+  if (draft.paymentMethod == null || draft.paymentMethod == PaymentMethod.unspecified)
+    'paymentMethod': ValidationCodes.required,
+  if (draft.serviceDate == null)
+    'serviceDate': ValidationCodes.required
+  else if (Dates.dateOnly(draft.serviceDate!).isAfter(today))
+    'serviceDate': ValidationCodes.futureDate,
+  if (draft.serviceTime == null) 'serviceTime': ValidationCodes.required,
+  'patientName': ?Validators.optionalText(draft.patientName, maxLength: 160),
+  'notes': ?Validators.optionalText(draft.notes, maxLength: 2000),
+};
 
 /// Outcome of saving a record: either stored in the cloud, or kept on the
 /// device because the network was unavailable (it will sync automatically).
@@ -124,31 +124,31 @@ class SyncPendingRecords {
   }
 
   static String _code(Failure f) => switch (f) {
-        BusinessRuleFailure(:final rule) => rule,
-        PermissionFailure() => 'permission',
-        ValidationFailure() => 'validation',
-        _ => 'server',
-      };
+    BusinessRuleFailure(:final rule) => rule,
+    PermissionFailure() => 'permission',
+    ValidationFailure() => 'validation',
+    _ => 'server',
+  };
 
   static NewServiceRecord _toNew(ServiceRecord r) => NewServiceRecord(
-        id: r.id,
-        customerId: r.customerId,
-        customerName: r.customerName,
-        customerPhone: r.customerPhone,
-        customerAddress: r.customerAddress,
-        areaName: r.areaName,
-        patientName: r.patientName,
-        nurseId: r.nurseId,
-        nurseName: r.nurseName,
-        serviceId: r.serviceId,
-        serviceName: r.serviceName,
-        price: r.price,
-        paymentMethod: r.paymentMethod,
-        serviceDate: r.serviceDate,
-        serviceTime: r.serviceTime!,
-        notes: r.notes,
-        createdAt: r.createdAt,
-      );
+    id: r.id,
+    customerId: r.customerId,
+    customerName: r.customerName,
+    customerPhone: r.customerPhone,
+    customerAddress: r.customerAddress,
+    areaName: r.areaName,
+    patientName: r.patientName,
+    nurseId: r.nurseId,
+    nurseName: r.nurseName,
+    serviceId: r.serviceId,
+    serviceName: r.serviceName,
+    price: r.price,
+    paymentMethod: r.paymentMethod,
+    serviceDate: r.serviceDate,
+    serviceTime: r.serviceTime!,
+    notes: r.notes,
+    createdAt: r.createdAt,
+  );
 }
 
 class SyncReport {

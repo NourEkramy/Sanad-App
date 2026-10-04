@@ -1,14 +1,22 @@
+import 'package:equatable/equatable.dart';
+
 import '../../../../core/result/result.dart';
 import '../entities/app_user.dart';
 
 /// Authentication state as seen by the app.
-sealed class AuthStatus {
+sealed class AuthStatus extends Equatable {
   const AuthStatus();
+
+  @override
+  List<Object?> get props => const [];
 }
 
 final class Authenticated extends AuthStatus {
   const Authenticated(this.user);
   final AppUser user;
+
+  @override
+  List<Object?> get props => [user];
 }
 
 final class Unauthenticated extends AuthStatus {
@@ -16,6 +24,9 @@ final class Unauthenticated extends AuthStatus {
 
   /// True when the session ended without the user signing out.
   final bool sessionExpired;
+
+  @override
+  List<Object?> get props => [sessionExpired];
 }
 
 /// The user opened a password-reset link and must choose a new password.

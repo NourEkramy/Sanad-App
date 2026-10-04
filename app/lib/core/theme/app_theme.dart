@@ -9,10 +9,7 @@ abstract final class AppTheme {
   static const fontFamily = 'Cairo';
 
   static ThemeData light() {
-    final scheme = ColorScheme.fromSeed(
-      seedColor: AppColors.primary,
-      brightness: Brightness.light,
-    ).copyWith(
+    final scheme = ColorScheme.fromSeed(seedColor: AppColors.primary, brightness: Brightness.light).copyWith(
       primary: AppColors.primary,
       onPrimary: Colors.white,
       primaryContainer: AppColors.primarySoft,
@@ -39,19 +36,21 @@ abstract final class AppTheme {
       materialTapTargetSize: MaterialTapTargetSize.padded,
     );
 
-    final text = base.textTheme.copyWith(
-      displaySmall: const TextStyle(fontSize: 30, fontWeight: FontWeight.w700, height: 1.25),
-      headlineSmall: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, height: 1.3),
-      titleLarge: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, height: 1.3),
-      titleMedium: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, height: 1.35),
-      titleSmall: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, height: 1.35),
-      bodyLarge: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5),
-      bodyMedium: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.5),
-      bodySmall: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w400, height: 1.45),
-      labelLarge: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, height: 1.3),
-      labelMedium: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, height: 1.3),
-      labelSmall: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, height: 1.3),
-    ).apply(bodyColor: AppColors.textPrimary, displayColor: AppColors.textPrimary);
+    final text = base.textTheme
+        .copyWith(
+          displaySmall: const TextStyle(fontSize: 30, fontWeight: FontWeight.w700, height: 1.25),
+          headlineSmall: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, height: 1.3),
+          titleLarge: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, height: 1.3),
+          titleMedium: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, height: 1.35),
+          titleSmall: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, height: 1.35),
+          bodyLarge: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5),
+          bodyMedium: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.5),
+          bodySmall: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w400, height: 1.45),
+          labelLarge: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, height: 1.3),
+          labelMedium: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, height: 1.3),
+          labelSmall: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, height: 1.3),
+        )
+        .apply(bodyColor: AppColors.textPrimary, displayColor: AppColors.textPrimary);
 
     const inputBorder = OutlineInputBorder(
       borderRadius: AppRadius.input,
@@ -87,15 +86,21 @@ abstract final class AppTheme {
         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 14),
         border: inputBorder,
         enabledBorder: inputBorder,
-        focusedBorder: inputBorder.copyWith(
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.6),
-        ),
+        focusedBorder: inputBorder.copyWith(borderSide: const BorderSide(color: AppColors.primary, width: 1.6)),
         errorBorder: inputBorder.copyWith(borderSide: const BorderSide(color: AppColors.error)),
-        focusedErrorBorder: inputBorder.copyWith(
-          borderSide: const BorderSide(color: AppColors.error, width: 1.6),
-        ),
+        focusedErrorBorder: inputBorder.copyWith(borderSide: const BorderSide(color: AppColors.error, width: 1.6)),
         labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 15),
-        floatingLabelStyle: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600),
+        // Brand colour only while focused; red on error; neutral otherwise.
+        floatingLabelStyle: WidgetStateTextStyle.resolveWith(
+          (s) => TextStyle(
+            color: s.contains(WidgetState.error)
+                ? AppColors.error
+                : s.contains(WidgetState.focused)
+                ? AppColors.primary
+                : AppColors.textSecondary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 15),
         errorStyle: const TextStyle(fontSize: 12.5, height: 1.3),
         prefixIconColor: AppColors.textMuted,
@@ -130,9 +135,7 @@ abstract final class AppTheme {
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
           minimumSize: const WidgetStatePropertyAll(Size.fromHeight(AppSpacing.buttonHeight)),
-          shape: const WidgetStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: AppRadius.input),
-          ),
+          shape: const WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: AppRadius.input)),
           textStyle: WidgetStatePropertyAll(text.labelLarge),
           side: const WidgetStatePropertyAll(BorderSide(color: AppColors.border)),
           backgroundColor: WidgetStateProperty.resolveWith(
@@ -164,9 +167,7 @@ abstract final class AppTheme {
           ),
         ),
         iconTheme: WidgetStateProperty.resolveWith(
-          (s) => IconThemeData(
-            color: s.contains(WidgetState.selected) ? AppColors.primary : AppColors.textMuted,
-          ),
+          (s) => IconThemeData(color: s.contains(WidgetState.selected) ? AppColors.primary : AppColors.textMuted),
         ),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
@@ -184,9 +185,7 @@ abstract final class AppTheme {
         backgroundColor: AppColors.surface,
         surfaceTintColor: Colors.transparent,
         showDragHandle: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl))),
       ),
       dialogTheme: const DialogThemeData(
         backgroundColor: AppColors.surface,
@@ -199,12 +198,8 @@ abstract final class AppTheme {
       ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(color: AppColors.primary),
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? Colors.white : null,
-        ),
-        trackColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? AppColors.primary : null,
-        ),
+        thumbColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? Colors.white : null),
+        trackColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? AppColors.primary : null),
       ),
     );
   }

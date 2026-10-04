@@ -47,17 +47,17 @@ class DashboardStats extends Equatable {
 
   @override
   List<Object?> get props => [
-        totalCustomers,
-        totalRecords,
-        todayRecords,
-        todayRevenue,
-        todayCash,
-        todayElectronic,
-        monthRevenue,
-        activeNurses,
-        activeServices,
-        customersNeedingReview,
-      ];
+    totalCustomers,
+    totalRecords,
+    todayRecords,
+    todayRevenue,
+    todayCash,
+    todayElectronic,
+    monthRevenue,
+    activeNurses,
+    activeServices,
+    customersNeedingReview,
+  ];
 }
 
 abstract interface class DashboardRepository {

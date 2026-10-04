@@ -3,9 +3,7 @@ import 'package:equatable/equatable.dart';
 /// Time of day without a date or time zone (Flutter-independent so it can be
 /// used in the domain layer).
 class LocalTime extends Equatable implements Comparable<LocalTime> {
-  const LocalTime(this.hour, this.minute)
-      : assert(hour >= 0 && hour < 24),
-        assert(minute >= 0 && minute < 60);
+  const LocalTime(this.hour, this.minute) : assert(hour >= 0 && hour < 24), assert(minute >= 0 && minute < 60);
 
   factory LocalTime.fromDateTime(DateTime dt) => LocalTime(dt.hour, dt.minute);
 

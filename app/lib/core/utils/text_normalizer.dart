@@ -9,14 +9,7 @@ class TextNormalizer {
   // Tatweel and Arabic diacritics (harakat).
   static final _strip = RegExp('[ـً-ْ]');
 
-  static const _map = {
-    'أ': 'ا',
-    'إ': 'ا',
-    'آ': 'ا',
-    'ٱ': 'ا',
-    'ى': 'ي',
-    'ة': 'ه',
-  };
+  static const _map = {'أ': 'ا', 'إ': 'ا', 'آ': 'ا', 'ٱ': 'ا', 'ى': 'ي', 'ة': 'ه'};
 
   /// Returns the normalised key, or an empty string for blank input.
   static String key(String? input) {

@@ -15,11 +15,11 @@ class CareService extends Equatable {
   final bool isActive;
 
   CareService copyWith({String? name, Money? defaultPrice, bool clearPrice = false, bool? isActive}) => CareService(
-        id: id,
-        name: name ?? this.name,
-        defaultPrice: clearPrice ? null : (defaultPrice ?? this.defaultPrice),
-        isActive: isActive ?? this.isActive,
-      );
+    id: id,
+    name: name ?? this.name,
+    defaultPrice: clearPrice ? null : (defaultPrice ?? this.defaultPrice),
+    isActive: isActive ?? this.isActive,
+  );
 
   @override
   List<Object?> get props => [id, name, defaultPrice, isActive];

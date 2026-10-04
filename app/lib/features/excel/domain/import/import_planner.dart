@@ -211,7 +211,10 @@ class ImportPlanner {
           address: latestAddress,
           exists: phone != null && existing.phones.contains(phone),
           needsReview: phone == null,
-          otherNames: [for (final k in nameCounts.keys) if (k != bestKey) spelling[k]!],
+          otherNames: [
+            for (final k in nameCounts.keys)
+              if (k != bestKey) spelling[k]!,
+          ],
           rowCount: group.length,
         ),
       );

@@ -25,9 +25,7 @@ class CreateArea {
       return Result.failure(ValidationFailure({'name': e}));
     }
     final cleaned = TextNormalizer.clean(name);
-    final existing = (known ?? const <Area>[])
-        .where((a) => TextNormalizer.sameName(a.name, cleaned))
-        .firstOrNull;
+    final existing = (known ?? const <Area>[]).where((a) => TextNormalizer.sameName(a.name, cleaned)).firstOrNull;
     if (existing != null) return Result.success(existing);
 
     final created = await _repository.createArea(cleaned);

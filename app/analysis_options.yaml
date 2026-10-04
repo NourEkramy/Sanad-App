@@ -1,5 +1,8 @@
 include: package:flutter_lints/flutter.yaml
 
+formatter:
+  page_width: 120
+
 analyzer:
   exclude:
     - lib/l10n/app_localizations*.dart
@@ -13,13 +16,14 @@ analyzer:
 
 linter:
   rules:
-    - always_declare_return_types
-    - avoid_print
-    - prefer_const_constructors
-    - prefer_const_declarations
-    - prefer_final_locals
-    - prefer_single_quotes
-    - require_trailing_commas
-    - sort_child_properties_last
-    - unawaited_futures
-    - use_super_parameters
+    always_declare_return_types: true
+    avoid_print: true
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_final_locals: true
+    prefer_single_quotes: true
+    sort_child_properties_last: true
+    unawaited_futures: true
+    use_super_parameters: true
+    # Cubits keep explicit `_field = param` initialisers for readability.
+    prefer_initializing_formals: false

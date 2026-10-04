@@ -19,10 +19,7 @@ class ErrorMapper {
     if (error is Failure) return error;
     if (error is AuthException) return _auth(error);
     if (error is PostgrestException) return _postgrest(error);
-    if (error is SocketException ||
-        error is TimeoutException ||
-        error is HttpException ||
-        error is ClientException) {
+    if (error is SocketException || error is TimeoutException || error is HttpException || error is ClientException) {
       return const NetworkFailure();
     }
     if (error is FunctionException) {
@@ -80,13 +77,12 @@ class ErrorMapper {
       'invalid_credentials' => const AuthFailure(AuthFailureReason.invalidCredentials),
       'user_banned' => const AuthFailure(AuthFailureReason.accountDisabled),
       'email_not_confirmed' => const AuthFailure(AuthFailureReason.emailNotConfirmed),
-      'over_request_rate_limit' || 'over_email_send_rate_limit' =>
-        const AuthFailure(AuthFailureReason.rateLimited),
-      'session_expired' || 'refresh_token_not_found' || 'session_not_found' =>
-        const SessionExpiredFailure(),
-      _ => e.statusCode == '400'
-          ? const AuthFailure(AuthFailureReason.invalidCredentials)
-          : const AuthFailure(AuthFailureReason.unknown),
+      'over_request_rate_limit' || 'over_email_send_rate_limit' => const AuthFailure(AuthFailureReason.rateLimited),
+      'session_expired' || 'refresh_token_not_found' || 'session_not_found' => const SessionExpiredFailure(),
+      _ =>
+        e.statusCode == '400'
+            ? const AuthFailure(AuthFailureReason.invalidCredentials)
+            : const AuthFailure(AuthFailureReason.unknown),
     };
   }
 }

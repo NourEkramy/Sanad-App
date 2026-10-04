@@ -23,21 +23,21 @@ class SupabaseAuthRepository implements AuthRepository {
   bool _hadSession = false;
 
   static AppUser userFromRow(Map<String, dynamic> row) => AppUser(
-        id: row['id'] as String,
-        email: row['email'] as String? ?? '',
-        fullName: row['full_name'] as String? ?? '',
-        role: UserRole.fromJson(row['role'] as String?),
-        isActive: row['is_active'] as bool? ?? true,
-        createdAt: row['created_at'] == null ? null : DateTime.parse(row['created_at'] as String).toLocal(),
-      );
+    id: row['id'] as String,
+    email: row['email'] as String? ?? '',
+    fullName: row['full_name'] as String? ?? '',
+    role: UserRole.fromJson(row['role'] as String?),
+    isActive: row['is_active'] as bool? ?? true,
+    createdAt: row['created_at'] == null ? null : DateTime.parse(row['created_at'] as String).toLocal(),
+  );
 
   static Map<String, Object?> _toRow(AppUser u) => {
-        'id': u.id,
-        'email': u.email,
-        'full_name': u.fullName,
-        'role': u.role.name,
-        'is_active': u.isActive,
-      };
+    'id': u.id,
+    'email': u.email,
+    'full_name': u.fullName,
+    'role': u.role.name,
+    'is_active': u.isActive,
+  };
 
   Future<AppUser> _loadProfile(String userId) async {
     final row = await _client.from('profiles').select().eq('id', userId).single();
@@ -112,33 +112,33 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<VoidResult> signOut() => guard(() async {
-        _signingOut = true;
-        await _store.delete(_profileKey);
-        await _client.auth.signOut();
-      });
+    _signingOut = true;
+    await _store.delete(_profileKey);
+    await _client.auth.signOut();
+  });
 
   @override
   Future<VoidResult> sendPasswordReset(String email) => guard(() async {
-        await _client.auth.resetPasswordForEmail(email, redirectTo: Env.authRedirectUrl);
-      });
+    await _client.auth.resetPasswordForEmail(email, redirectTo: Env.authRedirectUrl);
+  });
 
   @override
   Future<VoidResult> updatePassword(String newPassword) => guard(() async {
-        await _client.auth.updateUser(UserAttributes(password: newPassword));
-      });
+    await _client.auth.updateUser(UserAttributes(password: newPassword));
+  });
 
   @override
   Future<Result<AppUser>> updateProfile({required String fullName}) => guard(() async {
-        final id = _client.auth.currentUser?.id;
-        if (id == null) throw const SessionExpiredFailure();
-        await _client.from('profiles').update({'full_name': fullName.trim()}).eq('id', id);
-        return _loadProfile(id);
-      });
+    final id = _client.auth.currentUser?.id;
+    if (id == null) throw const SessionExpiredFailure();
+    await _client.from('profiles').update({'full_name': fullName.trim()}).eq('id', id);
+    return _loadProfile(id);
+  });
 
   @override
   Future<Result<AppUser>> refreshCurrentUser() => guard(() async {
-        final id = _client.auth.currentUser?.id;
-        if (id == null) throw const SessionExpiredFailure();
-        return _loadProfile(id);
-      });
+    final id = _client.auth.currentUser?.id;
+    if (id == null) throw const SessionExpiredFailure();
+    return _loadProfile(id);
+  });
 }

@@ -38,11 +38,11 @@ class ColumnMapping extends Equatable {
 
   /// Missing mappings that prevent an import.
   List<ImportField> get missingRequired => [
-        for (final f in ImportField.values)
-          if (f.isRequired && !columns.containsKey(f)) f,
-        if (!columns.containsKey(ImportField.customerName) && !columns.containsKey(ImportField.phone))
-          ImportField.customerName,
-      ];
+    for (final f in ImportField.values)
+      if (f.isRequired && !columns.containsKey(f)) f,
+    if (!columns.containsKey(ImportField.customerName) && !columns.containsKey(ImportField.phone))
+      ImportField.customerName,
+  ];
 
   bool get isUsable => missingRequired.isEmpty;
 
@@ -119,7 +119,8 @@ class ColumnDetector {
     for (var r = 0; r < table.rows.length && r < scanRows; r++) {
       final mapping = mapRow(table, r);
       final score = mapping.columns.length;
-      final plausible = mapping.columns.containsKey(ImportField.serviceDate) &&
+      final plausible =
+          mapping.columns.containsKey(ImportField.serviceDate) &&
           (mapping.columns.containsKey(ImportField.customerName) || mapping.columns.containsKey(ImportField.phone));
       if (plausible && score > bestScore) {
         best = mapping;

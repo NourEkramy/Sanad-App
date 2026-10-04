@@ -46,19 +46,21 @@ class OpenWorkbook {
 
   Result<OpenedWorkbook> call({required String fileName, required Uint8List bytes}) {
     if (bytes.isEmpty) return const Result.failure(FileFailure(FileFailureReason.empty));
-    return _codec.decode(bytes).fold(
-      Result.failure,
-      (sheets) {
-        if (sheets.isEmpty) return const Result.failure(FileFailure(FileFailureReason.noSheets));
-        final mappings = {for (final s in sheets) s.name: _detector.detect(s)};
-        if (mappings.values.every((m) => m == null)) {
-          return const Result.failure(FileFailure(FileFailureReason.headerNotFound));
-        }
-        return Result.success(
-          OpenedWorkbook(fileName: fileName, sha256: sha256.convert(bytes).toString(), sheets: sheets, mappings: mappings),
-        );
-      },
-    );
+    return _codec.decode(bytes).fold(Result.failure, (sheets) {
+      if (sheets.isEmpty) return const Result.failure(FileFailure(FileFailureReason.noSheets));
+      final mappings = {for (final s in sheets) s.name: _detector.detect(s)};
+      if (mappings.values.every((m) => m == null)) {
+        return const Result.failure(FileFailure(FileFailureReason.headerNotFound));
+      }
+      return Result.success(
+        OpenedWorkbook(
+          fileName: fileName,
+          sha256: sha256.convert(bytes).toString(),
+          sheets: sheets,
+          mappings: mappings,
+        ),
+      );
+    });
   }
 }
 
@@ -68,9 +70,7 @@ class PrepareImport {
 
   Future<Result<ImportPlan>> call(SheetTable sheet, ColumnMapping mapping, {required String unspecifiedLabel}) async {
     if (!mapping.isUsable) {
-      return Result.failure(
-        ValidationFailure({for (final f in mapping.missingRequired) f.name: 'required'}),
-      );
+      return Result.failure(ValidationFailure({for (final f in mapping.missingRequired) f.name: 'required'}));
     }
     final existing = await _repository.existingData();
     return existing.map(
@@ -121,7 +121,9 @@ class ExportWorkbook {
       case Err(:final failure):
         return Result.failure(failure);
       case Success(value: final exportData):
-        return _codec.encodeExport(exportData, labels, request.sheets).map(
+        return _codec
+            .encodeExport(exportData, labels, request.sheets)
+            .map(
               (bytes) => ExportFile(
                 fileName: 'sanad-export-${Dates.toJson(_clock())}.xlsx',
                 bytes: bytes,

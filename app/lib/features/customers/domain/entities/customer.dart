@@ -34,30 +34,24 @@ class Customer extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        fullName,
-        phone,
-        address,
-        areaId,
-        areaName,
-        notes,
-        needsReview,
-        isArchived,
-        createdAt,
-        recordCount,
-        lastServiceDate,
-      ];
+    id,
+    fullName,
+    phone,
+    address,
+    areaId,
+    areaName,
+    notes,
+    needsReview,
+    isArchived,
+    createdAt,
+    recordCount,
+    lastServiceDate,
+  ];
 }
 
 /// Input for creating/updating a customer (raw form values).
 class CustomerDraft extends Equatable {
-  const CustomerDraft({
-    required this.fullName,
-    required this.phone,
-    required this.areaId,
-    this.address,
-    this.notes,
-  });
+  const CustomerDraft({required this.fullName, required this.phone, required this.areaId, this.address, this.notes});
 
   final String fullName;
   final String phone;

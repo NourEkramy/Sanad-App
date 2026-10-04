@@ -8,21 +8,21 @@ import '../repositories/customer_repository.dart';
 
 /// Thrown (as a failure) when the phone already belongs to a customer.
 /// Carries that customer so the UI can show it instead of creating a duplicate.
-final class CustomerExistsFailure extends Failure {
-  const CustomerExistsFailure(this.existing);
+final class CustomerExistsFailure extends DuplicateFailure {
+  const CustomerExistsFailure(this.existing) : super('phone');
   final Customer existing;
 
   @override
-  List<Object?> get props => [existing];
+  List<Object?> get props => [field, existing];
 }
 
 Map<String, String> validateCustomerDraft(CustomerDraft draft) => {
-      'fullName': ?Validators.requiredText(draft.fullName, maxLength: 160),
-      'phone': ?Validators.phone(draft.phone),
-      'areaId': ?Validators.required(draft.areaId),
-      'address': ?Validators.optionalText(draft.address, maxLength: 500),
-      'notes': ?Validators.optionalText(draft.notes, maxLength: 2000),
-    };
+  'fullName': ?Validators.requiredText(draft.fullName, maxLength: 160),
+  'phone': ?Validators.phone(draft.phone),
+  'areaId': ?Validators.required(draft.areaId),
+  'address': ?Validators.optionalText(draft.address, maxLength: 500),
+  'notes': ?Validators.optionalText(draft.notes, maxLength: 2000),
+};
 
 String? _optional(String? v) => (v ?? '').trim().isEmpty ? null : v!.trim();
 

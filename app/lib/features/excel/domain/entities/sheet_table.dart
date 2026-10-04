@@ -22,9 +22,10 @@ class SheetCell extends Equatable {
     return switch (v) {
       null => '',
       String() => v.trim(),
-      DateTime() => v.hour == 0 && v.minute == 0
-          ? '${v.year}-${_two(v.month)}-${_two(v.day)}'
-          : '${v.year}-${_two(v.month)}-${_two(v.day)} ${_two(v.hour)}:${_two(v.minute)}',
+      DateTime() =>
+        v.hour == 0 && v.minute == 0
+            ? '${v.year}-${_two(v.month)}-${_two(v.day)}'
+            : '${v.year}-${_two(v.month)}-${_two(v.day)} ${_two(v.hour)}:${_two(v.minute)}',
       LocalTime() => v.hhmm,
       double() when v == v.roundToDouble() => v.toInt().toString(),
       _ => v.toString(),

@@ -36,17 +36,17 @@ class ExcelWorkbookCodec implements WorkbookCodec {
   }
 
   static Object? _value(xl.CellValue? v) => switch (v) {
-        null => null,
-        xl.TextCellValue() => v.value.toString(),
-        xl.IntCellValue() => v.value,
-        xl.DoubleCellValue() => v.value,
-        xl.BoolCellValue() => v.value,
-        xl.DateCellValue() => DateTime(v.year, v.month, v.day),
-        xl.DateTimeCellValue() => DateTime(v.year, v.month, v.day, v.hour, v.minute, v.second),
-        xl.TimeCellValue() => LocalTime(v.hour % 24, v.minute % 60),
-        // Formula results are not cached by the package; keep the formula text.
-        xl.FormulaCellValue() => null,
-      };
+    null => null,
+    xl.TextCellValue() => v.value.toString(),
+    xl.IntCellValue() => v.value,
+    xl.DoubleCellValue() => v.value,
+    xl.BoolCellValue() => v.value,
+    xl.DateCellValue() => DateTime(v.year, v.month, v.day),
+    xl.DateTimeCellValue() => DateTime(v.year, v.month, v.day, v.hour, v.minute, v.second),
+    xl.TimeCellValue() => LocalTime(v.hour % 24, v.minute % 60),
+    // Formula results are not cached by the package; keep the formula text.
+    xl.FormulaCellValue() => null,
+  };
 
   // ----------------------------------------------------------------- encode
 
@@ -55,13 +55,13 @@ class ExcelWorkbookCodec implements WorkbookCodec {
   static final _totalFill = xl.ExcelColor.fromHexString('#E8F0FE');
 
   static xl.CellStyle _header() => xl.CellStyle(
-        bold: true,
-        fontColorHex: xl.ExcelColor.white,
-        backgroundColorHex: _brand,
-        horizontalAlign: xl.HorizontalAlign.Center,
-        verticalAlign: xl.VerticalAlign.Center,
-        textWrapping: xl.TextWrapping.WrapText,
-      );
+    bold: true,
+    fontColorHex: xl.ExcelColor.white,
+    backgroundColorHex: _brand,
+    horizontalAlign: xl.HorizontalAlign.Center,
+    verticalAlign: xl.VerticalAlign.Center,
+    textWrapping: xl.TextWrapping.WrapText,
+  );
 
   static const _dateFormat = xl.CustomDateTimeNumFormat(formatCode: 'yyyy-mm-dd');
   static const _dateTimeFormat = xl.CustomDateTimeNumFormat(formatCode: 'yyyy-mm-dd hh:mm');
@@ -73,8 +73,14 @@ class ExcelWorkbookCodec implements WorkbookCodec {
       final defaultSheet = book.getDefaultSheet() ?? 'Sheet1';
       final written = <String>[];
 
-      void sheet(ExportSheet kind, List<String> headers, List<List<xl.CellValue?>> rows, List<double> widths,
-          {Map<int, xl.NumFormat> formats = const {}, List<xl.CellValue?>? totals}) {
+      void sheet(
+        ExportSheet kind,
+        List<String> headers,
+        List<List<xl.CellValue?>> rows,
+        List<double> widths, {
+        Map<int, xl.NumFormat> formats = const {},
+        List<xl.CellValue?>? totals,
+      }) {
         final name = labels.sheetNames[kind]!;
         final s = book[name];
         s.isRTL = labels.rtl;
@@ -122,13 +128,20 @@ class ExcelWorkbookCodec implements WorkbookCodec {
               labels.recordHeaders,
               rows,
               [38, 24, 16, 36, 16, 20, 18, 30, 12, 16, 13, 11, 40, 18],
-              formats: {priceCol: xl.NumFormat.standard_4, 10: _dateFormat, 11: xl.NumFormat.standard_20, 13: _dateTimeFormat},
+              formats: {
+                priceCol: xl.NumFormat.standard_4,
+                10: _dateFormat,
+                11: xl.NumFormat.standard_20,
+                13: _dateTimeFormat,
+              },
               totals: rows.isEmpty
                   ? null
+                  // Label sits in the ID column and the customer columns stay
+                  // empty, so re-importing an export ignores this row.
                   : [
+                      xl.TextCellValue('${labels.total} (${rows.length})'),
                       null,
-                      xl.TextCellValue(labels.total),
-                      xl.IntCellValue(rows.length),
+                      null,
                       null,
                       null,
                       null,
@@ -188,7 +201,8 @@ class ExcelWorkbookCodec implements WorkbookCodec {
               kind,
               labels.areaHeaders,
               [
-                for (final a in data.areas) [xl.TextCellValue(a.id), xl.TextCellValue(a.name), _status(a.isActive, labels)],
+                for (final a in data.areas)
+                  [xl.TextCellValue(a.id), xl.TextCellValue(a.name), _status(a.isActive, labels)],
               ],
               [38, 26, 12],
             );
@@ -198,8 +212,18 @@ class ExcelWorkbookCodec implements WorkbookCodec {
       if (written.isEmpty) return const Result.failure(FileFailure(FileFailureReason.empty));
       if (!written.contains(defaultSheet)) book.delete(defaultSheet);
       book.setDefaultSheet(written.first);
-      final bytes = book.encode();
+      var bytes = book.encode();
       if (bytes == null) return const Result.failure(FileFailure(FileFailureReason.writeFailed));
+      if (labels.rtl) {
+        // The package only writes `rightToLeft` for sheets that already exist
+        // in the file, so re-open the freshly written workbook to apply it.
+        final reopened = xl.Excel.decodeBytes(bytes);
+        for (final sheet in reopened.tables.values) {
+          sheet.isRTL = true;
+        }
+        bytes = reopened.encode();
+        if (bytes == null) return const Result.failure(FileFailure(FileFailureReason.writeFailed));
+      }
       return Result.success(Uint8List.fromList(bytes));
     } catch (_) {
       return const Result.failure(FileFailure(FileFailureReason.writeFailed));
@@ -207,23 +231,23 @@ class ExcelWorkbookCodec implements WorkbookCodec {
   }
 
   static List<xl.CellValue?> _recordRow(ServiceRecord r, ExportLabels labels) => [
-        // Imported records keep their legacy reference so the sheet can be
-        // reconciled against the original workbook.
-        xl.TextCellValue(r.legacyRef ?? r.id),
-        xl.TextCellValue(r.customerName),
-        _text(r.customerPhone),
-        _text(r.customerAddress),
-        _text(r.areaName),
-        _text(r.patientName),
-        xl.TextCellValue(r.nurseName),
-        xl.TextCellValue(r.serviceName),
-        _money(r.price),
-        xl.TextCellValue(labels.paymentLabels[r.paymentMethod]!),
-        xl.DateCellValue.fromDateTime(r.serviceDate),
-        if (r.serviceTime case final t?) xl.TimeCellValue(hour: t.hour, minute: t.minute) else null,
-        _text(r.notes),
-        _dateTime(r.createdAt),
-      ];
+    // Imported records keep their legacy reference so the sheet can be
+    // reconciled against the original workbook.
+    xl.TextCellValue(r.legacyRef ?? r.id),
+    xl.TextCellValue(r.customerName),
+    _text(r.customerPhone),
+    _text(r.customerAddress),
+    _text(r.areaName),
+    _text(r.patientName),
+    xl.TextCellValue(r.nurseName),
+    xl.TextCellValue(r.serviceName),
+    _money(r.price),
+    xl.TextCellValue(labels.paymentLabels[r.paymentMethod]!),
+    xl.DateCellValue.fromDateTime(r.serviceDate),
+    if (r.serviceTime case final t?) xl.TimeCellValue(hour: t.hour, minute: t.minute) else null,
+    _text(r.notes),
+    _dateTime(r.createdAt),
+  ];
 
   static xl.CellValue? _text(String? v) => v == null || v.isEmpty ? null : xl.TextCellValue(v);
 

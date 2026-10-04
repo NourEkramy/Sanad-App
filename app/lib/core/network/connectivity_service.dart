@@ -14,8 +14,7 @@ class ConnectivityPlusService implements ConnectivityService {
 
   final Connectivity _connectivity;
 
-  static bool _online(List<ConnectivityResult> results) =>
-      results.any((r) => r != ConnectivityResult.none);
+  static bool _online(List<ConnectivityResult> results) => results.any((r) => r != ConnectivityResult.none);
 
   @override
   Future<bool> get isOnline async => _online(await _connectivity.checkConnectivity());

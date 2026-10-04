@@ -70,13 +70,13 @@ class AppUser extends Equatable {
   }
 
   AppUser copyWith({String? fullName, UserRole? role, bool? isActive}) => AppUser(
-        id: id,
-        email: email,
-        fullName: fullName ?? this.fullName,
-        role: role ?? this.role,
-        isActive: isActive ?? this.isActive,
-        createdAt: createdAt,
-      );
+    id: id,
+    email: email,
+    fullName: fullName ?? this.fullName,
+    role: role ?? this.role,
+    isActive: isActive ?? this.isActive,
+    createdAt: createdAt,
+  );
 
   @override
   List<Object?> get props => [id, email, fullName, role, isActive, createdAt];

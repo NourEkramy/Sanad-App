@@ -11,10 +11,10 @@ enum PaymentMethod {
   unspecified;
 
   static PaymentMethod fromJson(String? value) => switch (value) {
-        'cash' => PaymentMethod.cash,
-        'electronic' => PaymentMethod.electronic,
-        _ => PaymentMethod.unspecified,
-      };
+    'cash' => PaymentMethod.cash,
+    'electronic' => PaymentMethod.electronic,
+    _ => PaymentMethod.unspecified,
+  };
 
   String toJson() => name;
 
@@ -85,62 +85,57 @@ class ServiceRecord extends Equatable {
   final SyncState syncState;
   final String? syncError;
 
-  DateTime get sortKey => DateTime(
-        serviceDate.year,
-        serviceDate.month,
-        serviceDate.day,
-        serviceTime?.hour ?? 0,
-        serviceTime?.minute ?? 0,
-      );
+  DateTime get sortKey =>
+      DateTime(serviceDate.year, serviceDate.month, serviceDate.day, serviceTime?.hour ?? 0, serviceTime?.minute ?? 0);
 
   ServiceRecord copyWith({SyncState? syncState, String? syncError}) => ServiceRecord(
-        id: id,
-        customerId: customerId,
-        customerName: customerName,
-        customerPhone: customerPhone,
-        customerAddress: customerAddress,
-        areaName: areaName,
-        patientName: patientName,
-        nurseId: nurseId,
-        nurseName: nurseName,
-        serviceId: serviceId,
-        serviceName: serviceName,
-        price: price,
-        paymentMethod: paymentMethod,
-        serviceDate: serviceDate,
-        serviceTime: serviceTime,
-        notes: notes,
-        legacyRef: legacyRef,
-        isImported: isImported,
-        isArchived: isArchived,
-        createdAt: createdAt,
-        syncState: syncState ?? this.syncState,
-        syncError: syncError ?? this.syncError,
-      );
+    id: id,
+    customerId: customerId,
+    customerName: customerName,
+    customerPhone: customerPhone,
+    customerAddress: customerAddress,
+    areaName: areaName,
+    patientName: patientName,
+    nurseId: nurseId,
+    nurseName: nurseName,
+    serviceId: serviceId,
+    serviceName: serviceName,
+    price: price,
+    paymentMethod: paymentMethod,
+    serviceDate: serviceDate,
+    serviceTime: serviceTime,
+    notes: notes,
+    legacyRef: legacyRef,
+    isImported: isImported,
+    isArchived: isArchived,
+    createdAt: createdAt,
+    syncState: syncState ?? this.syncState,
+    syncError: syncError ?? this.syncError,
+  );
 
   @override
   List<Object?> get props => [
-        id,
-        customerId,
-        customerName,
-        customerPhone,
-        customerAddress,
-        areaName,
-        patientName,
-        nurseId,
-        nurseName,
-        serviceId,
-        serviceName,
-        price,
-        paymentMethod,
-        serviceDate,
-        serviceTime,
-        notes,
-        legacyRef,
-        isImported,
-        isArchived,
-        createdAt,
-        syncState,
-        syncError,
-      ];
+    id,
+    customerId,
+    customerName,
+    customerPhone,
+    customerAddress,
+    areaName,
+    patientName,
+    nurseId,
+    nurseName,
+    serviceId,
+    serviceName,
+    price,
+    paymentMethod,
+    serviceDate,
+    serviceTime,
+    notes,
+    legacyRef,
+    isImported,
+    isArchived,
+    createdAt,
+    syncState,
+    syncError,
+  ];
 }

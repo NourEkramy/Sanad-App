@@ -37,12 +37,7 @@ class SaveCareService {
       return _repository.createService(name: cleanedName, defaultPrice: price);
     }
     return _repository.updateService(
-      CareService(
-        id: existing.id,
-        name: cleanedName,
-        defaultPrice: price,
-        isActive: isActive ?? existing.isActive,
-      ),
+      CareService(id: existing.id, name: cleanedName, defaultPrice: price, isActive: isActive ?? existing.isActive),
     );
   }
 }

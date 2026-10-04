@@ -142,8 +142,10 @@ class ImportPlan {
 
   Money get totalRevenue => records.fold(Money.zero, (sum, r) => sum + r.price);
 
-  DateTime? get firstDate => records.isEmpty ? null : records.map((r) => r.serviceDate).reduce((a, b) => a.isBefore(b) ? a : b);
-  DateTime? get lastDate => records.isEmpty ? null : records.map((r) => r.serviceDate).reduce((a, b) => a.isAfter(b) ? a : b);
+  DateTime? get firstDate =>
+      records.isEmpty ? null : records.map((r) => r.serviceDate).reduce((a, b) => a.isBefore(b) ? a : b);
+  DateTime? get lastDate =>
+      records.isEmpty ? null : records.map((r) => r.serviceDate).reduce((a, b) => a.isAfter(b) ? a : b);
 
   /// Warning code → number of rows.
   Map<String, int> get warningCounts {
@@ -169,56 +171,62 @@ class ImportPlan {
 
   /// JSON payload for `public.import_legacy_batch`.
   Map<String, Object?> toPayload({required String fileName, required String fileSha256}) => {
-        'file_name': fileName,
-        'file_sha256': fileSha256,
-        'sheet_name': sheetName,
-        'summary': {
-          'rows': rowCount,
-          'records': records.length,
-          'skipped': skipped.length,
-          'warnings': warningCounts,
-          'errors': errorCounts,
-          'revenue': totalRevenue.toJson(),
+    'file_name': fileName,
+    'file_sha256': fileSha256,
+    'sheet_name': sheetName,
+    'summary': {
+      'rows': rowCount,
+      'records': records.length,
+      'skipped': skipped.length,
+      'warnings': warningCounts,
+      'errors': errorCounts,
+      'revenue': totalRevenue.toJson(),
+    },
+    'areas': [
+      for (final a in areas) {'key': a.key, 'name': a.name},
+    ],
+    'nurses': [
+      for (final n in nurses) {'key': n.key, 'name': n.name},
+    ],
+    'services': [
+      for (final s in services) {'key': s.key, 'name': s.name, 'default_price': null},
+    ],
+    'customers': [
+      for (final c in customers)
+        {
+          'key': c.key,
+          'full_name': c.fullName,
+          'phone': c.phone,
+          'address': c.address,
+          'area_key': c.areaKey,
+          'needs_review': c.needsReview,
         },
-        'areas': [for (final a in areas) {'key': a.key, 'name': a.name}],
-        'nurses': [for (final n in nurses) {'key': n.key, 'name': n.name}],
-        'services': [for (final s in services) {'key': s.key, 'name': s.name, 'default_price': null}],
-        'customers': [
-          for (final c in customers)
-            {
-              'key': c.key,
-              'full_name': c.fullName,
-              'phone': c.phone,
-              'address': c.address,
-              'area_key': c.areaKey,
-              'needs_review': c.needsReview,
-            },
-        ],
-        'records': [
-          for (final r in records)
-            {
-              'row_number': r.rowNumber,
-              'customer_key': r.customerKey,
-              'nurse_key': r.nurseKey,
-              'service_key': r.serviceKey,
-              'patient_name': r.patientName,
-              'price': r.price.toJson(),
-              'payment_method': r.paymentMethod.toJson(),
-              'service_date': Dates.toJson(r.serviceDate),
-              'service_time': r.serviceTime?.toJson(),
-              'notes': r.notes,
-              'legacy_ref': r.legacyRef,
-              'address': r.address,
-              'area_key': TextNormalizer.key(r.areaName),
-              'area_name': r.areaName,
-              'raw': r.raw,
-              'messages': r.warnings,
-            },
-        ],
-        'skipped': [
-          for (final s in skipped) {'row_number': s.rowNumber, 'raw': s.raw, 'messages': s.issues},
-        ],
-      };
+    ],
+    'records': [
+      for (final r in records)
+        {
+          'row_number': r.rowNumber,
+          'customer_key': r.customerKey,
+          'nurse_key': r.nurseKey,
+          'service_key': r.serviceKey,
+          'patient_name': r.patientName,
+          'price': r.price.toJson(),
+          'payment_method': r.paymentMethod.toJson(),
+          'service_date': Dates.toJson(r.serviceDate),
+          'service_time': r.serviceTime?.toJson(),
+          'notes': r.notes,
+          'legacy_ref': r.legacyRef,
+          'address': r.address,
+          'area_key': TextNormalizer.key(r.areaName),
+          'area_name': r.areaName,
+          'raw': r.raw,
+          'messages': r.warnings,
+        },
+    ],
+    'skipped': [
+      for (final s in skipped) {'row_number': s.rowNumber, 'raw': s.raw, 'messages': s.issues},
+    ],
+  };
 }
 
 /// Server response after committing an import.
