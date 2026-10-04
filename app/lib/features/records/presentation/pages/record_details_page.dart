@@ -134,13 +134,15 @@ class _Body extends StatelessWidget {
               InfoRow(
                 icon: Icons.person_outline_rounded,
                 label: l.recordCustomer,
-                value: [record.customerName, if (record.customerPhone != null) record.customerPhone!].join('\n'),
+                value: record.customerName,
                 trailing: IconButton(
                   tooltip: l.openCustomer,
                   icon: const Icon(Icons.open_in_new_rounded, color: AppColors.primary),
                   onPressed: () => context.push(Routes.customer(record.customerId)),
                 ),
               ),
+              if (record.customerPhone != null)
+                InfoRow(icon: Icons.phone_outlined, label: l.fieldPhone, value: record.customerPhone!),
               if (record.patientName != null)
                 InfoRow(icon: Icons.personal_injury_outlined, label: l.recordPatient, value: record.patientName!),
               InfoRow(icon: Icons.badge_outlined, label: l.fieldNurse, value: record.nurseName),

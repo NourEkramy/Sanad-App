@@ -337,7 +337,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         ),
       );
     }
-    return _AuthScaffold(title: l.resetTitle, subtitle: l.loginSubtitle, child: form);
+    return _AuthScaffold(title: l.resetTitle, subtitle: l.resetBody, child: form);
   }
 }
 

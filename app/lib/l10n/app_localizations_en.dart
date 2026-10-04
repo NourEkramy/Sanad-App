@@ -168,6 +168,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetTitle => 'Choose a new password';
 
   @override
+  String get resetBody => 'Enter a new password for your account. You will then sign in with it.';
+
+  @override
   String get resetNewPassword => 'New password';
 
   @override
@@ -970,7 +973,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importNewCustomers => 'New customers';
 
   @override
-  String get importMatchedCustomers => 'Existing customers matched';
+  String get importMatchedCustomers => 'Existing customers';
 
   @override
   String get importNewAreas => 'New areas';
@@ -989,12 +992,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String importNoPayment(int count) {
-    return '$count records have no payment method in the file. They will be marked “Not recorded”.';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count records have no payment method in the file. They will be marked “Not recorded”.',
+      one: '1 record has no payment method in the file. It will be marked “Not recorded”.',
+    );
+    return '$_temp0';
   }
 
   @override
   String importReviewCustomers(int count) {
-    return '$count customers have no valid phone number and will be flagged for review.';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count customers have no valid phone number and will be flagged for review.',
+      one: '1 customer has no valid phone number and will be flagged for review.',
+    );
+    return '$_temp0';
   }
 
   @override

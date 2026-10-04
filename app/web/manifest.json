@@ -1,11 +1,11 @@
 {
-    "name": "sanad",
-    "short_name": "sanad",
+    "name": "Sanad",
+    "short_name": "Sanad",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "Sanad - customer & service records management",
+    "background_color": "#F5F7FB",
+    "theme_color": "#1A56DB",
+    "description": "Sanad — customer & service records management",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -72,7 +72,7 @@ class CustomerProfileCubit extends Cubit<CustomerProfileState> {
 
   Future<void> load() async {
     emit(state.copyWith(loading: state.customer == null, historyLoading: true, clearFailures: true));
-    final results = await Future.wait([_getCustomer(customerId), _getHistory(customerId)]);
+    final results = await Future.wait([_getCustomer(customerId), _getHistory(customerId, cached: state.history)]);
     if (isClosed) return;
     final customer = results[0].valueOrNull as Customer?;
     final history = results[1].valueOrNull as List<ServiceRecord>?;

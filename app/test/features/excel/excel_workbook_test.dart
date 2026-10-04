@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:excel/excel.dart' as xl;
@@ -245,5 +246,19 @@ void main() {
     expect(first['price'], 500);
     expect(first['payment_method'], 'cash');
     expect(opened.sha256, hasLength(64));
+  });
+
+  test('reads workbooks written by other tools (absolute part names)', () {
+    // Synthetic file in the legacy layout, written with openpyxl (no real data).
+    final bytes = File('test/fixtures/legacy_synthetic_openpyxl.xlsx').readAsBytesSync();
+    final opened = const OpenWorkbook(codec)(fileName: 'legacy.xlsx', bytes: bytes).valueOrNull!;
+    expect(opened.bestSheet!.name, 'سجل الزيارات');
+    final plan = const ImportPlanner(unspecifiedLabel: 'غير محدد')
+        .plan(opened.bestSheet!, opened.mappings['سجل الزيارات']!);
+    expect(plan.records, hasLength(5));
+    expect(plan.skipped.single.issues, ['date_missing']);
+    expect(plan.records.first.serviceDate, DateTime(2026, 10, 1), reason: 'real Excel date cells');
+    expect(plan.customers.where((c) => c.phone == '01155555501').single.otherNames, ['والدة منى']);
+    expect(plan.nurses.where((n) => n.name.contains('سارة')).single.rowCount, 2, reason: 'أحمد / احمد merged');
   });
 }

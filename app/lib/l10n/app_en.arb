@@ -65,6 +65,7 @@
     }
   },
   "resetTitle": "Choose a new password",
+  "resetBody": "Enter a new password for your account. You will then sign in with it.",
   "resetNewPassword": "New password",
   "resetConfirmPassword": "Confirm new password",
   "resetSubmit": "Update password",
@@ -483,13 +484,13 @@
   "importRecords": "Records to import",
   "importSkipped": "Rows skipped",
   "importNewCustomers": "New customers",
-  "importMatchedCustomers": "Existing customers matched",
+  "importMatchedCustomers": "Existing customers",
   "importNewAreas": "New areas",
   "importNewNurses": "New nurses",
   "importNewServices": "New services",
   "importRevenue": "Total amount",
   "importDateRange": "Dates",
-  "importNoPayment": "{count} records have no payment method in the file. They will be marked “Not recorded”.",
+  "importNoPayment": "{count, plural, =1{1 record has no payment method in the file. It will be marked “Not recorded”.} other{{count} records have no payment method in the file. They will be marked “Not recorded”.}}",
   "@importNoPayment": {
     "placeholders": {
       "count": {
@@ -497,7 +498,7 @@
       }
     }
   },
-  "importReviewCustomers": "{count} customers have no valid phone number and will be flagged for review.",
+  "importReviewCustomers": "{count, plural, =1{1 customer has no valid phone number and will be flagged for review.} other{{count} customers have no valid phone number and will be flagged for review.}}",
   "@importReviewCustomers": {
     "placeholders": {
       "count": {

@@ -398,6 +398,12 @@ abstract class AppLocalizations {
   /// **'Choose a new password'**
   String get resetTitle;
 
+  /// No description provided for @resetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a new password for your account. You will then sign in with it.'**
+  String get resetBody;
+
   /// No description provided for @resetNewPassword.
   ///
   /// In en, this message translates to:
@@ -1841,7 +1847,7 @@ abstract class AppLocalizations {
   /// No description provided for @importMatchedCustomers.
   ///
   /// In en, this message translates to:
-  /// **'Existing customers matched'**
+  /// **'Existing customers'**
   String get importMatchedCustomers;
 
   /// No description provided for @importNewAreas.
@@ -1877,13 +1883,13 @@ abstract class AppLocalizations {
   /// No description provided for @importNoPayment.
   ///
   /// In en, this message translates to:
-  /// **'{count} records have no payment method in the file. They will be marked “Not recorded”.'**
+  /// **'{count, plural, =1{1 record has no payment method in the file. It will be marked “Not recorded”.} other{{count} records have no payment method in the file. They will be marked “Not recorded”.}}'**
   String importNoPayment(int count);
 
   /// No description provided for @importReviewCustomers.
   ///
   /// In en, this message translates to:
-  /// **'{count} customers have no valid phone number and will be flagged for review.'**
+  /// **'{count, plural, =1{1 customer has no valid phone number and will be flagged for review.} other{{count} customers have no valid phone number and will be flagged for review.}}'**
   String importReviewCustomers(int count);
 
   /// No description provided for @importAlreadyImported.

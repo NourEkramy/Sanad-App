@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'dart:typed_data';
+
+import 'package:archive/archive.dart';
 
 import 'package:excel/excel.dart' as xl;
 
@@ -21,7 +24,7 @@ class ExcelWorkbookCodec implements WorkbookCodec {
   @override
   Result<List<SheetTable>> decode(Uint8List bytes) {
     try {
-      final book = xl.Excel.decodeBytes(bytes);
+      final book = xl.Excel.decodeBytes(_normalizePackage(bytes));
       final tables = <SheetTable>[];
       for (final MapEntry(key: name, value: sheet) in book.tables.entries) {
         final rows = [
@@ -33,6 +36,24 @@ class ExcelWorkbookCodec implements WorkbookCodec {
     } catch (_) {
       return const Result.failure(FileFailure(FileFailureReason.unreadable));
     }
+  }
+
+  /// Workbooks written by other tools (openpyxl, some exporters) may use
+  /// absolute part names such as `/xl/worksheets/sheet1.xml` in
+  /// `workbook.xml.rels`. Both forms are valid OOXML, but the `excel` package
+  /// only understands relative ones, so rewrite them before parsing.
+  static Uint8List _normalizePackage(Uint8List bytes) {
+    final archive = ZipDecoder().decodeBytes(bytes);
+    final rels = archive.findFile('xl/_rels/workbook.xml.rels');
+    if (rels == null) return bytes;
+    final text = utf8.decode(rels.content as List<int>);
+    if (!text.contains('Target="/xl/')) return bytes;
+    final fixed = utf8.encode(text.replaceAll('Target="/xl/', 'Target="'));
+    final out = Archive();
+    for (final file in archive.files) {
+      out.addFile(file.name == rels.name ? ArchiveFile(file.name, fixed.length, fixed) : file);
+    }
+    return Uint8List.fromList(ZipEncoder().encode(out)!);
   }
 
   static Object? _value(xl.CellValue? v) => switch (v) {

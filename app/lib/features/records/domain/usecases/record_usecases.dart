@@ -160,20 +160,29 @@ class SyncReport {
 
 /// A customer's full history, including records still waiting to sync,
 /// newest first.
+///
+/// Offline, the previously loaded records ([cached]) are combined with the
+/// queued ones so a record saved on the device shows up immediately.
 class GetCustomerHistory {
   const GetCustomerHistory(this._repository, this._pending);
   final RecordRepository _repository;
   final PendingRecordStore _pending;
 
-  Future<Result<List<ServiceRecord>>> call(String customerId) async {
+  Future<Result<List<ServiceRecord>>> call(String customerId, {List<ServiceRecord> cached = const []}) async {
     final remote = await _repository.customerHistory(customerId);
     final local = (await _pending.all()).where((r) => r.customerId == customerId).toList();
-    return remote.map((records) {
+    List<ServiceRecord> merge(List<ServiceRecord> records) {
       final ids = records.map((r) => r.id).toSet();
-      final merged = [...local.where((r) => !ids.contains(r.id)), ...records]
-        ..sort((a, b) => b.sortKey.compareTo(a.sortKey));
-      return merged;
-    });
+      return [...local.where((r) => !ids.contains(r.id)), ...records]..sort((a, b) => b.sortKey.compareTo(a.sortKey));
+    }
+
+    return switch (remote) {
+      Success(value: final records) => Result.success(merge(records)),
+      Err(failure: NetworkFailure()) when local.isNotEmpty || cached.isNotEmpty => Result.success(
+        merge(cached.where((r) => r.syncState == SyncState.synced).toList()),
+      ),
+      Err(:final failure) => Result.failure(failure),
+    };
   }
 }
 

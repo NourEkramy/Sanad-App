@@ -168,6 +168,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get resetTitle => 'اختر كلمة مرور جديدة';
 
   @override
+  String get resetBody => 'أدخل كلمة مرور جديدة لحسابك، ثم سجّل الدخول بها.';
+
+  @override
   String get resetNewPassword => 'كلمة المرور الجديدة';
 
   @override
@@ -981,7 +984,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get importNewCustomers => 'عملاء جدد';
 
   @override
-  String get importMatchedCustomers => 'عملاء موجودون تمت مطابقتهم';
+  String get importMatchedCustomers => 'عملاء موجودون';
 
   @override
   String get importNewAreas => 'مناطق جديدة';
@@ -1000,12 +1003,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String importNoPayment(int count) {
-    return '$count سجل بدون طريقة دفع في الملف وسيتم تمييزها بـ “غير مسجل”.';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count سجل بدون طريقة دفع في الملف وسيتم تمييزها بـ “غير مسجل”.',
+      one: 'سجل واحد بدون طريقة دفع في الملف وسيتم تمييزه بـ “غير مسجل”.',
+    );
+    return '$_temp0';
   }
 
   @override
   String importReviewCustomers(int count) {
-    return '$count عميل بدون رقم تليفون صحيح وسيتم تمييزهم للمراجعة.';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عميل بدون رقم تليفون صحيح وسيتم تمييزهم للمراجعة.',
+      one: 'عميل واحد بدون رقم تليفون صحيح وسيتم تمييزه للمراجعة.',
+    );
+    return '$_temp0';
   }
 
   @override

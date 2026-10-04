@@ -148,6 +148,22 @@ void main() {
   });
 
   group('GetCustomerHistory', () {
+    test('offline: keeps the loaded history and shows records saved on the device', () async {
+      final synced = (await add(customer(), validDraft.copyWith(serviceDate: DateTime(2026, 9, 1)))).valueOrNull!.$1;
+      repo.failWith = const NetworkFailure();
+      await add(customer(), validDraft.copyWith(serviceDate: DateTime(2026, 9, 10)));
+
+      final history = (await GetCustomerHistory(repo, pending)('c1', cached: [synced])).valueOrNull!;
+
+      expect(history.map((r) => r.serviceDate.day), [10, 1]);
+      expect(history.first.syncState, SyncState.pending);
+    });
+
+    test('offline without anything to show reports the network failure', () async {
+      repo.failWith = const NetworkFailure();
+      expect((await GetCustomerHistory(repo, pending)('c1')).failureOrNull, const NetworkFailure());
+    });
+
     test('merges queued and saved records, newest first', () async {
       await add(customer(), validDraft.copyWith(serviceDate: DateTime(2026, 9, 1)));
       repo.failWith = const NetworkFailure();
