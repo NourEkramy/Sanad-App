@@ -10,39 +10,18 @@ abstract class Failure extends Equatable {
   List<Object?> get props => const [];
 }
 
-/// The device is offline or the server could not be reached.
+/// The device is offline or Google Drive could not be reached.
 final class NetworkFailure extends Failure {
   const NetworkFailure();
 }
 
-/// The server answered with an unexpected error.
+/// A remote service (Google Drive) answered with an unexpected error.
 final class ServerFailure extends Failure {
   const ServerFailure([this.code]);
   final String? code;
 
   @override
   List<Object?> get props => [code];
-}
-
-/// Wrong e-mail/password or another authentication problem.
-final class AuthFailure extends Failure {
-  const AuthFailure(this.reason);
-  final AuthFailureReason reason;
-
-  @override
-  List<Object?> get props => [reason];
-}
-
-enum AuthFailureReason { invalidCredentials, accountDisabled, emailNotConfirmed, weakPassword, rateLimited, unknown }
-
-/// The session expired and the user must sign in again.
-final class SessionExpiredFailure extends Failure {
-  const SessionExpiredFailure();
-}
-
-/// The signed-in user is not allowed to perform the action.
-final class PermissionFailure extends Failure {
-  const PermissionFailure();
 }
 
 /// A unique value already exists (e.g. phone number, area name).
@@ -55,7 +34,7 @@ class DuplicateFailure extends Failure {
   List<Object?> get props => [field];
 }
 
-/// A business rule enforced by the server was violated.
+/// A business rule was violated.
 /// [rule] is a stable identifier such as `nurse_inactive`.
 final class BusinessRuleFailure extends Failure {
   const BusinessRuleFailure(this.rule);
@@ -94,7 +73,33 @@ final class FileFailure extends Failure {
   List<Object?> get props => [reason];
 }
 
-enum FileFailureReason { unreadable, noSheets, headerNotFound, empty, writeFailed }
+enum FileFailureReason { unreadable, noSheets, headerNotFound, empty, writeFailed, notABackup }
+
+/// Google Drive backup could not be used.
+final class BackupFailure extends Failure {
+  const BackupFailure(this.reason);
+  final BackupFailureReason reason;
+
+  @override
+  List<Object?> get props => [reason];
+}
+
+enum BackupFailureReason {
+  /// The person closed the Google account / permission screen.
+  canceled,
+
+  /// Drive access was not granted, or was revoked.
+  notAuthorized,
+
+  /// The app's Google Cloud registration is missing or wrong (setup issue).
+  notConfigured,
+
+  /// There is no Sanad backup in this Google Drive.
+  noBackup,
+
+  /// Drive backup is not available on this platform.
+  unsupported,
+}
 
 final class UnexpectedFailure extends Failure {
   const UnexpectedFailure();

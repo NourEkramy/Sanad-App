@@ -10,9 +10,6 @@ abstract final class ValidationCodes {
   static const invalidPrice = 'invalid_price';
   static const negativePrice = 'negative_price';
   static const priceTooHigh = 'price_too_high';
-  static const invalidEmail = 'invalid_email';
-  static const passwordTooShort = 'password_too_short';
-  static const passwordsDoNotMatch = 'passwords_do_not_match';
   static const futureDate = 'future_date';
 }
 
@@ -56,17 +53,6 @@ abstract final class Validators {
   static String? optionalPrice(String? value) {
     if ((value ?? '').trim().isEmpty) return null;
     return price(value);
-  }
-
-  static String? email(String? value) {
-    final v = (value ?? '').trim();
-    if (v.isEmpty) return ValidationCodes.required;
-    return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v) ? null : ValidationCodes.invalidEmail;
-  }
-
-  static String? password(String? value) {
-    if ((value ?? '').isEmpty) return ValidationCodes.required;
-    return value!.length < 8 ? ValidationCodes.passwordTooShort : null;
   }
 
   static String? required(Object? value) => value == null ? ValidationCodes.required : null;

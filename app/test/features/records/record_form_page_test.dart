@@ -35,7 +35,7 @@ void main() {
       ),
       saveNurse: SaveNurse(FakeNurseRepository()),
       saveService: SaveCareService(FakeServiceRepository()),
-      addRecord: AddServiceRecord(records, MemoryPendingStore(), () => 'rec-1', clock: () => testNow),
+      addRecord: AddServiceRecord(records, () => 'rec-1', clock: () => testNow),
       updateRecord: UpdateServiceRecord(records, clock: () => testNow),
       drafts: MemoryDraftStore(),
       clock: () => testNow,

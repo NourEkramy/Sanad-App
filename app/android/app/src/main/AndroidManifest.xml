@@ -1,10 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Release builds need this to reach the Supabase API. -->
+    <!-- Needed for the Google Drive backup. -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <!-- allowBackup=false: customer data and the encrypted session must not
-         be copied off the device by Android backups. -->
+    <!-- allowBackup=false: customer data must not be copied off the device
+         by Android backups (Sanad backs up to the user's own Google Drive). -->
     <application
         android:label="Sanad"
         android:name="${applicationName}"
@@ -31,13 +31,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-            <!-- Password-reset / invitation links: com.sanad.sanad://auth-callback -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="com.sanad.sanad" android:host="auth-callback"/>
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

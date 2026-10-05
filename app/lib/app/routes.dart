@@ -1,10 +1,5 @@
 /// Route paths in one place so navigation never relies on string literals.
 abstract final class Routes {
-  static const splash = '/splash';
-  static const login = '/login';
-  static const forgotPassword = '/forgot-password';
-  static const resetPassword = '/reset-password';
-
   static const home = '/home';
   static const customers = '/customers';
   static const records = '/records';
@@ -35,8 +30,6 @@ abstract final class Routes {
   static const areas = '/more/areas';
   static const import = '/more/import';
   static const export = '/more/export';
+  static const backup = '/more/backup';
   static const settings = '/more/settings';
-  static const profile = '/more/profile';
-  static const users = '/more/users';
-  static const pendingSync = '/more/pending';
 }

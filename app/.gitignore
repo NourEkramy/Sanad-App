@@ -48,5 +48,3 @@ app.*.map.json
 .widget_preview/
 
 # Local build configuration (keys); only the example is committed.
-/env/*.json
-!/env/*.example.json

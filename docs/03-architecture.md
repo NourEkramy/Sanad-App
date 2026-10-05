@@ -6,37 +6,56 @@
 │        │  calls                                                                         │
 │  Domain         entities · value objects · repository interfaces · use cases (pure Dart)  │
 │        │  implemented by                                                                │
-│  Data           Supabase repositories · Excel codec · secure local stores                 │
-└────────┼──────────────────────────────────────────────┼──────────────────────────────────┘
-         │ HTTPS (PostgREST / GoTrue / Functions)         │ Keychain / Keystore
-┌────────▼──────────────────────────┐          ┌──────────▼─────────────┐
-│ Supabase                           │          │ Device                 │
-│  Auth (GoTrue) · PostgreSQL + RLS  │          │  session · offline     │
-│  RPC functions · Edge Function     │          │  queue · form drafts   │
-│  Backups (PITR) · Studio           │          └────────────────────────┘
-└────────────────────────────────────┘
+│  Data           SQLite repositories · Excel codec · Google Drive client · secure store    │
+└────────┼──────────────────────────────────────┼──────────────────────────────────────────┘
+         │                                      │ HTTPS, only Sanad's own files (drive.file)
+┌────────▼──────────────────────────┐   ┌───────▼─────────────────────────────────┐
+│ This phone                         │   │ The user's Google Drive › Sanad          │
+│  sanad.db (SQLite, app storage)    │   │  Sanad.xlsx         every sheet, to open │
+│  form drafts, preferences          │   │                     and share            │
+│  (Keystore-encrypted)              │   │  Sanad-backup.json  full data, restore   │
+└────────────────────────────────────┘   └─────────────────────────────────────────┘
 ```
 
-## 3.1 Backend choice: Supabase (PostgreSQL)
+## 3.1 Storage choice: on-device SQLite + the user's Google Drive
 
-Firebase/Firestore and Supabase were both considered. Supabase was chosen
-because of the data and requirements, not popularity:
+Sanad is used by one person for their own work. The data stays with them:
 
-| Requirement | Why PostgreSQL/Supabase fits | Firestore trade-off |
-|-------------|------------------------------|---------------------|
-| **Relational data** (customer → records ← nurse/service/area) | Foreign keys, joins and views. A record can't point at a missing nurse. | No joins or FK integrity. Data must be denormalised by hand. |
-| **Unique phone, unique area names** | `UNIQUE` indexes enforced by the database, safe under concurrency. | Needs a separate "index document" and transactions for every write. |
-| **Phone search, including partial** | B-tree prefix + trigram indexes. One query handles prefix, "contains" and name. | Prefix only. "Contains" search needs an external search service. |
-| **History must not change** | Snapshots written by triggers, check constraints, an audit-log trigger. | Must be enforced in every client. |
-| **Totals and reports** (revenue per filter, dashboard) | `SUM`/`COUNT` in SQL functions, done on the server. | Aggregations are limited and billed per document read. |
-| **Excel import** (all or nothing, reversible) | One SQL function runs in a single transaction. Rollback by batch. | Batched writes are capped (500 operations), so 271+ rows need several batches, which loses atomicity. |
-| **Authentication and roles** | Built-in Auth + Row Level Security policies in SQL, testable with plain SQL. | Security rules are a separate DSL. Roles need custom claims. |
-| **Scalability** | Comfortably handles millions of rows. Indexes cover every screen. | Scales well too. |
-| **Data security and ownership** | Standard Postgres: `pg_dump` backups, point-in-time recovery, portable (self-hostable). | Vendor lock-in. Exports are less convenient. |
-| **Cost predictability** | Fixed tiers. Reads are not billed per document. | Per-read billing grows with every list and search. |
+* **Working copy: SQLite on the phone** (`sqflite`). Every screen reads and
+  writes it directly, so the app is fast and works with no connection at all.
+  There is no server, no account to create and nothing published.
+* **Cloud copy: the user's own Google Drive.** After each change (20 s of
+  quiet, when the app goes to the background, or when the connection comes
+  back) Sanad replaces two files in a `Sanad` folder:
+  * `Sanad.xlsx`: the formatted workbook (Records with customer details,
+    Customers, Nurses, Services, Areas), to open in Excel / Google Sheets
+    and share like any other Drive file;
+  * `Sanad-backup.json`: every row of every table, which **Restore** reads
+    back on a new phone.
 
-Firestore's main advantage is built-in offline sync. Sanad covers that need
-for its primary workflow with an explicit offline queue (see 3.6).
+  Drive keeps earlier versions of both files (version history).
+
+Why this design:
+
+| Need | How it is met |
+|------|---------------|
+| Private, not published | Data never leaves the phone except to the owner's Drive. The app requests the `drive.file` scope: it can see only the files it created, nothing else in Drive. |
+| Data editable in the app | All sheets (customers, records, nurses, services, areas) are edited in the app; the database is the source of truth. |
+| Export any time, shareable | **Export to Excel** (any period, any sheets) creates a file to share; the Drive copy of `Sanad.xlsx` is always up to date. |
+| Works offline | Everything is local; only the backup needs a connection, and it retries. |
+| Relational rules | SQLite with foreign keys, `UNIQUE` phone and names, `CHECK` constraints, transactions. |
+| History never changes | Snapshots written by the repository inside the same transaction as the record. |
+| Safe Excel import | One transaction, duplicate-file protection, rollback by batch. |
+| New phone / lost phone | Connect the same Google account → **Restore from Google Drive**. |
+
+The cloud file is a **copy**: edits made directly in the Excel file are not
+read back automatically. To bring edited rows in, use **Import from Excel**
+(duplicate-safe and reversible). Two-way live editing of one spreadsheet from
+two places would create conflicting versions and lost changes.
+
+The repository interfaces do not depend on SQLite. A shared online database
+(e.g. PostgreSQL) can be added later as another implementation without
+touching the domain or the screens.
 
 ## 3.2 Flutter project structure (feature-first clean architecture)
 
@@ -44,115 +63,87 @@ for its primary workflow with an explicit offline queue (see 3.6).
 app/lib/
 ├── main.dart                  bootstrap
 ├── app/                       composition root
-│   ├── app.dart               MaterialApp, providers, theme, locales
+│   ├── app.dart               MaterialApp, app-wide cubits (language, backup), reload after restore
 │   ├── di.dart                get_it registrations (only place that knows implementations)
-│   ├── router.dart            go_router, auth redirects, permission guards
+│   ├── router.dart            go_router
 │   ├── routes.dart            route paths
 │   └── shell.dart             bottom navigation (Home · Customers · Records · More)
 ├── core/
-│   ├── config/env.dart        --dart-define configuration
+│   ├── database/              SanadDatabase (schema, seed, transactions, dump/restore), SQL helpers
 │   ├── errors/                Failure types + exception → failure mapping
 │   ├── files/                 file picking / sharing gateway
-│   ├── network/               connectivity
+│   ├── network/               connectivity (backup retries)
 │   ├── result/                Result<T> (Success / Err)
-│   ├── storage/               secure key-value store, Supabase session storage
+│   ├── storage/               secure key-value store (drafts, preferences)
 │   ├── theme/                 design tokens + Material 3 theme
 │   ├── utils/                 Money, PhoneNumber, LocalTime, Dates, TextNormalizer
 │   ├── validation/            validators + error codes
 │   └── widgets/               design-system components, failure messages, l10n helpers
 ├── features/
-│   ├── auth/                  login, password reset, session, roles & permissions
 │   ├── dashboard/             statistics + quick actions
 │   ├── customers/             search, list, create/edit (duplicate guard), profile
-│   ├── records/               add/edit, details, list + filters, offline queue & sync
+│   ├── records/               add/edit (with drafts), details, list + filters + totals
 │   ├── nurses/ care_services/ areas/   reference data
 │   ├── excel/                 import (detector, parsers, planner) and export
-│   ├── users/                 admin user management
-│   └── settings/              More, settings, profile, generic catalogue screens
+│   ├── backup/                Google Drive backup & restore
+│   └── settings/              More, settings, generic catalogue screens
 └── l10n/                      app_en.arb, app_ar.arb (+ generated classes)
 ```
 
 Each feature follows `domain/` (entities, repository interfaces, use cases)
-→ `data/` (Supabase/Excel implementations) → `presentation/` (cubits, pages,
-widgets). **Dependencies only point inwards.** Domain code imports no Flutter
-or Supabase, which is why the import planner, validation and the record rules
-are unit-tested without a device or a database.
+→ `data/` (SQLite / Excel / Drive implementations) → `presentation/`
+(cubits, pages, widgets). **Dependencies only point inwards.** Domain code
+imports no Flutter, SQLite or Google packages.
 
 ## 3.3 Key patterns
 
 | Concern | Choice |
 |---------|--------|
-| State management | `flutter_bloc` **Cubits**: one per screen, with immutable `Equatable` states. App-wide: `AuthCubit`, `SyncCubit`, `LocaleCubit`. |
-| Dependency injection | `get_it`, registered in `app/di.dart` only. Pages receive cubits via `BlocProvider`, and cubits receive use cases through constructors. |
-| Repository pattern | Interfaces in `domain/`, Supabase implementations in `data/`. Tests use in-memory fakes. |
-| Use cases | Small callable classes (`CreateCustomer`, `AddServiceRecord`, `PrepareImport`, …) holding the business rules. |
-| Errors | Repositories never throw. They return `Result<T>` with a typed `Failure` (network, permission, duplicate, validation, business rule, file, auth, session expired). Raw server messages are never shown or logged. |
-| Validation | Pure functions return **codes**. The UI maps codes to localised text. The database enforces the same rules again. |
-| Routing | `go_router` with a pure, unit-tested redirect function for auth state, permission guards and deep links. |
-| Localisation | `gen-l10n`, English + Arabic (RTL), with a language switch in Settings. Western digits are used in both languages. |
+| State management | `flutter_bloc` **Cubits**: one per screen, immutable `Equatable` states. App-wide: `LocaleCubit`, `BackupCubit`. |
+| Dependency injection | `get_it`, registered in `app/di.dart` only. |
+| Repository pattern | Interfaces in `domain/`, SQLite implementations in `data/`. Use-case and cubit tests use in-memory fakes; repository tests use real SQLite (FFI). |
+| Writes | Every write goes through `SanadDatabase.write` (one transaction), which also announces the change so a backup is scheduled. |
+| Errors | Repositories never throw. They return `Result<T>` with a typed `Failure` (duplicate, validation, business rule, not found, file, backup, network). Raw messages are never shown or logged. |
+| Validation | Pure functions return **codes**; the UI maps them to localised text. The database enforces the same rules again (constraints). |
+| Localisation | `gen-l10n`, English + Arabic (RTL). Western digits in both languages. |
 | Money | Integer piasters (`Money`), never `double`. |
 
-## 3.4 Authentication and authorisation
+## 3.4 Google Drive backup
 
-* Supabase Auth (email + password). **Public sign-up is disabled.** Admins
-  invite staff through the `invite-user` Edge Function, which holds the
-  service-role key server-side.
-* Session tokens are kept in the platform keystore (`flutter_secure_storage`),
-  not in plain preferences. PKCE is used for password-reset links
-  (`com.sanad.sanad://auth-callback`).
-* Roles (`admin`, `staff`) live in `profiles`. The app checks **permissions**
-  (`Permission.importData`, `editRecords`, …) mapped from roles in one table
-  (`RolePermissions`), so adding a role is a one-line change. The database
-  enforces the same rules with RLS. The UI hiding a button is a convenience,
-  not the security boundary.
-* Session expiry: when a refresh fails, the app returns to the login screen
-  with an explanation. Unsaved record drafts stay on the device.
+* Sign-in and permission: `google_sign_in` (Android Identity
+  AuthorizationClient). Only the scope
+  `https://www.googleapis.com/auth/drive.file` is requested.
+* Upload: Drive v3 REST (`DriveApi`): find or create the `Sanad` folder, then
+  create the two files the first time and **replace their content** afterwards
+  (same file id, so sharing settings and version history are kept).
+* Scheduling (`BackupCubit`): a change marks the data *pending* (stored, so it
+  survives a restart) and starts a 20-second timer; the app going to the
+  background uploads at once; a network failure is retried when connectivity
+  returns. The dashboard and the More menu show the state.
+* Connecting to a Drive that already has a backup never overwrites it
+  silently: the user chooses **Restore** or **Keep this phone's data**.
+* Restore replaces all local data in one transaction, then the app reloads
+  every screen.
+* Drive backup is available in the Android app. On the web build the screen
+  offers Export to Excel instead.
 
 ## 3.5 Excel import and export
 
-* **Import:** `excel` package → `SheetTable` (plain Dart values) →
-  `ColumnDetector` (finds the header row, maps Arabic/English headers; the user
-  can correct it) → `ImportPlanner` (pure: parsing, deduplication,
-  issues) → preview → `import_legacy_batch` (one transaction) → batch history
+* **Import:** `excel` package → `SheetTable` → `ColumnDetector` (header row,
+  Arabic/English headers, user can correct) → `ImportPlanner` (pure: parsing,
+  deduplication, issues) → preview → one SQLite transaction → batch history
   with rollback. Details: [01-excel-analysis.md](01-excel-analysis.md).
-* **Export:** `filter_service_records` (the same filter as the Records
-  screen) → `ExcelWorkbookCodec` builds Records / Customers / Nurses / Services
-  / Areas sheets with branded headers, number/date formats, column widths, a
-  `SUM` totals row and RTL sheets in Arabic. The file is shared on mobile and
-  downloaded on the web.
-* An exported workbook can be imported back (round-trip tested). This makes
-  Excel a reliable interchange and backup format, while the database stays
-  the source of truth.
+* **Export:** the same filter as the Records screen → `ExcelWorkbookCodec`
+  builds Records / Customers / Nurses / Services / Areas sheets with headers,
+  number/date formats, column widths, a `SUM` totals row and RTL sheets in
+  Arabic. Shared on mobile, downloaded on the web.
+* An exported workbook can be imported back (round-trip tested).
 
-## 3.6 Offline strategy
+## 3.6 Performance
 
-Sanad is **online-first with a safety net for the primary workflow**:
-
-1. **Record IDs are generated on the device** (UUID v4) and inserted with
-   `ON CONFLICT DO NOTHING`. Retrying a save can never create a duplicate.
-2. If saving a record fails because of the **network**, it is stored in an
-   **encrypted on-device queue** and shown immediately in the customer's
-   history as *Waiting to sync*. Staff see a banner and a badge.
-3. `SyncCubit` sends the queue on start-up, when connectivity returns, every
-   2 minutes while items are pending, and on demand. Only one sync runs at a time.
-4. **Conflicts:** records are append-only from staff, so there are no edit
-   conflicts. If the server rejects a queued record (e.g. the nurse was
-   deactivated meanwhile), it is kept as *Sync failed* with the reason, so
-   staff can open it and either re-enter or discard it. Nothing is dropped
-   silently.
-5. **Form drafts** (Add record) are saved on the device as the user types and
-   restored when the screen is reopened, even after the app was killed.
-6. Creating customers, imports and exports require a connection. Phone
-   uniqueness must be checked on the server, and these are not time-critical.
-
-To make the app fully offline later, the repository interfaces allow a
-caching decorator (e.g. Drift/SQLite) to be added without touching the domain
-or the UI.
-
-## 3.7 Performance
-
-* Phone search: debounced (250 ms), stale responses dropped, index-backed
-  prefix/trigram queries, at most 20 results.
-* Lists are paginated (30 rows) with infinite scroll. Totals come from one
-  aggregate query.
-* Dashboard: a single RPC call.
+* SQLite indexes on phone, normalised name, record dates, customer and batch.
+* Phone search: debounced (250 ms), stale responses dropped, at most 20 results.
+* Lists are paginated (30 rows) with infinite scroll; totals come from one
+  aggregate query; the dashboard is one query.
+* The real workbook (271 records, 129 customers) produces a ~0.5 MB JSON
+  backup.

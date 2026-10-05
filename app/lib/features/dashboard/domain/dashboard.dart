@@ -17,23 +17,6 @@ class DashboardStats extends Equatable {
     required this.customersNeedingReview,
   });
 
-  factory DashboardStats.fromJson(Map<String, dynamic> json) {
-    int i(String k) => (json[k] as num?)?.toInt() ?? 0;
-    Money m(String k) => Money.fromJson(json[k]);
-    return DashboardStats(
-      totalCustomers: i('total_customers'),
-      totalRecords: i('total_records'),
-      todayRecords: i('today_records'),
-      todayRevenue: m('today_revenue'),
-      todayCash: m('today_cash'),
-      todayElectronic: m('today_electronic'),
-      monthRevenue: m('month_revenue'),
-      activeNurses: i('active_nurses'),
-      activeServices: i('active_services'),
-      customersNeedingReview: i('customers_needing_review'),
-    );
-  }
-
   final int totalCustomers;
   final int totalRecords;
   final int todayRecords;

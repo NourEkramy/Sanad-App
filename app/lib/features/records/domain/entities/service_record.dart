@@ -22,16 +22,6 @@ enum PaymentMethod {
   static const selectable = [PaymentMethod.cash, PaymentMethod.electronic];
 }
 
-enum SyncState {
-  synced,
-
-  /// Saved on this device, waiting to be sent.
-  pending,
-
-  /// The server rejected it while syncing (e.g. nurse was deactivated).
-  failed,
-}
-
 class ServiceRecord extends Equatable {
   const ServiceRecord({
     required this.id,
@@ -54,8 +44,6 @@ class ServiceRecord extends Equatable {
     this.legacyRef,
     this.isImported = false,
     this.isArchived = false,
-    this.syncState = SyncState.synced,
-    this.syncError,
   });
 
   final String id;
@@ -82,36 +70,9 @@ class ServiceRecord extends Equatable {
   final bool isImported;
   final bool isArchived;
   final DateTime createdAt;
-  final SyncState syncState;
-  final String? syncError;
 
   DateTime get sortKey =>
       DateTime(serviceDate.year, serviceDate.month, serviceDate.day, serviceTime?.hour ?? 0, serviceTime?.minute ?? 0);
-
-  ServiceRecord copyWith({SyncState? syncState, String? syncError}) => ServiceRecord(
-    id: id,
-    customerId: customerId,
-    customerName: customerName,
-    customerPhone: customerPhone,
-    customerAddress: customerAddress,
-    areaName: areaName,
-    patientName: patientName,
-    nurseId: nurseId,
-    nurseName: nurseName,
-    serviceId: serviceId,
-    serviceName: serviceName,
-    price: price,
-    paymentMethod: paymentMethod,
-    serviceDate: serviceDate,
-    serviceTime: serviceTime,
-    notes: notes,
-    legacyRef: legacyRef,
-    isImported: isImported,
-    isArchived: isArchived,
-    createdAt: createdAt,
-    syncState: syncState ?? this.syncState,
-    syncError: syncError ?? this.syncError,
-  );
 
   @override
   List<Object?> get props => [
@@ -135,7 +96,5 @@ class ServiceRecord extends Equatable {
     isImported,
     isArchived,
     createdAt,
-    syncState,
-    syncError,
   ];
 }

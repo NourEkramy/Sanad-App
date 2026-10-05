@@ -22,7 +22,7 @@ Code: [`app/lib/core/theme`](../app/lib/core/theme) and [`app/lib/core/widgets`]
 | `border` | `#E2E8F0` | Card and input outlines |
 | `textPrimary` / `textSecondary` / `textMuted` | `#0F172A` / `#475569` / `#64748B` | Text hierarchy |
 | `success` / `successSoft` | `#15803D` / `#E7F6EC` | Saved, cash |
-| `warning` / `warningSoft` | `#B45309` / `#FEF3E2` | Offline queue, needs review |
+| `warning` / `warningSoft` | `#B45309` / `#FEF3E2` | Backup waiting or failed, needs review |
 | `error` / `errorSoft` | `#DC2626` / `#FDECEC` | Errors, destructive actions |
 | `electronic` / `electronicSoft` | `#6D28D9` / `#F1EAFE` | Electronic payment |
 
@@ -56,7 +56,8 @@ direction (`textDirectionOf`), so mixed Arabic/Latin addresses aren't reordered.
 | `BottomAction` | Sticky bottom bar holding the screen's main action |
 | `SectionCard`, `SectionHeader`, `InfoRow` | Grouped content, label/value rows |
 | `StatTile` | Dashboard metric |
-| `StatusChip`, `PaymentChip`, `SyncChip` | Small labelled statuses |
+| `StatusChip`, `PaymentChip` | Small labelled statuses |
+| `BackupBanner`, `BackupStatusButton` | Google Drive backup state on the dashboard |
 | `CustomerTile`, `CustomerSummaryCard`, `RecordTile` | Domain list items: name **and** phone always together |
 | `EmptyView`, `ErrorView`, `LoadingView`, `InlineBanner` | Empty, error (with retry), loading and banner states |
 | `context.showSuccess / showFailure / confirm` | Snackbars and confirmation dialogs |
@@ -65,8 +66,8 @@ direction (`textDirectionOf`), so mixed Arabic/Latin addresses aren't reordered.
 ## 5.6 States every screen handles
 
 Loading (spinner or kept previous data while refreshing) · empty (icon, title,
-explanation, call to action) · error (localised message + retry) · offline
-(banner) · validation (inline, next to the field, cleared as the user fixes
+explanation, call to action) · error (localised message + retry) · backup
+problems (banner) · validation (inline, next to the field, cleared as the user fixes
 it) · success (snackbar or success screen) · destructive confirmation (red
 button in a dialog).
 

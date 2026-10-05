@@ -19,6 +19,8 @@ jobs:
           channel: stable
           flutter-version: 3.47.6
           cache: true
+      - name: SQLite for the database tests
+        run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
       - run: flutter pub get
       - run: flutter gen-l10n
       - name: Check formatting (generated l10n excluded)
@@ -26,10 +28,3 @@ jobs:
       - run: flutter analyze
       - run: flutter test
 
-  database:
-    name: Database — schema, RLS & import tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run SQL tests against a throw-away PostgreSQL
-        run: supabase/tests/run.sh

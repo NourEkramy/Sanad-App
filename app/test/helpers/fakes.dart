@@ -151,29 +151,49 @@ class FakeRecordRepository implements RecordRepository {
   int addCalls = 0;
 
   @override
-  Future<VoidResult> add(NewServiceRecord record) async {
+  Future<Result<ServiceRecord>> add(NewServiceRecord record) async {
     addCalls++;
     if (failWith != null) return Result.failure(failWith!);
     if (inactiveNurses.contains(record.nurseId)) return const Result.failure(BusinessRuleFailure('nurse_inactive'));
-    inserted.putIfAbsent(record.id, () => record); // idempotent like ON CONFLICT DO NOTHING
-    return ok;
+    inserted.putIfAbsent(record.id, () => record); // saving the same id twice is a no-op
+    return Result.success(_toRecord(inserted[record.id]!));
   }
+
+  static ServiceRecord _toRecord(NewServiceRecord r) => ServiceRecord(
+    id: r.id,
+    customerId: r.customerId,
+    customerName: r.customerName,
+    customerPhone: r.customerPhone,
+    customerAddress: r.customerAddress,
+    areaName: r.areaName,
+    patientName: r.patientName,
+    nurseId: r.nurseId,
+    nurseName: r.nurseName,
+    serviceId: r.serviceId,
+    serviceName: r.serviceName,
+    price: r.price,
+    paymentMethod: r.paymentMethod,
+    serviceDate: r.serviceDate,
+    serviceTime: r.serviceTime,
+    notes: r.notes,
+    createdAt: r.createdAt,
+  );
 
   @override
   Future<Result<List<ServiceRecord>>> customerHistory(String customerId) async {
     if (failWith != null) return Result.failure(failWith!);
-    final list = inserted.values.where((r) => r.customerId == customerId).map((r) => r.toRecord()).toList()
+    final list = inserted.values.where((r) => r.customerId == customerId).map(_toRecord).toList()
       ..sort((a, b) => b.sortKey.compareTo(a.sortKey));
     return Result.success(list);
   }
 
   @override
   Future<Result<ServiceRecord>> getById(String id) async =>
-      inserted[id] == null ? const Result.failure(NotFoundFailure()) : Result.success(inserted[id]!.toRecord());
+      inserted[id] == null ? const Result.failure(NotFoundFailure()) : Result.success(_toRecord(inserted[id]!));
 
   @override
   Future<Result<List<ServiceRecord>>> list(RecordFilter filter, {int offset = 0, int limit = 30}) async =>
-      Result.success(inserted.values.map((r) => r.toRecord()).skip(offset).take(limit).toList());
+      Result.success(inserted.values.map(_toRecord).skip(offset).take(limit).toList());
 
   @override
   Future<Result<RecordTotals>> totals(RecordFilter filter) async => Result.success(
@@ -195,29 +215,6 @@ class FakeRecordRepository implements RecordRepository {
 
   @override
   Future<VoidResult> archive(String id) async => ok;
-}
-
-class MemoryPendingStore implements PendingRecordStore {
-  final Map<String, ServiceRecord> records = {};
-  final _controller = StreamController<int>.broadcast();
-
-  @override
-  Future<List<ServiceRecord>> all() async => records.values.toList();
-
-  @override
-  Future<void> put(ServiceRecord record) async {
-    records[record.id] = record;
-    _controller.add(records.length);
-  }
-
-  @override
-  Future<void> remove(String id) async {
-    records.remove(id);
-    _controller.add(records.length);
-  }
-
-  @override
-  Stream<int> watchCount() => _controller.stream;
 }
 
 class MemoryDraftStore implements RecordDraftStore {

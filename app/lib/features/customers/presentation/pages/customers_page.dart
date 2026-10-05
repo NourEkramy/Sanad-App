@@ -7,8 +7,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/l10n.dart';
 import '../../../../core/widgets/state_views.dart';
-import '../../../auth/domain/entities/app_user.dart';
-import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../cubit/customers_list_cubit.dart';
 import '../widgets/customer_widgets.dart';
 
@@ -18,7 +16,6 @@ class CustomersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final canReview = context.watch<AuthCubit>().can(Permission.editCustomers);
     return Scaffold(
       appBar: AppBar(title: Text(l.customersTitle)),
       floatingActionButton: FloatingActionButton.extended(
@@ -63,15 +60,13 @@ class CustomersPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          if (canReview) ...[
-                            const SizedBox(height: AppSpacing.sm),
-                            FilterChip(
-                              label: Text(l.customersNeedsReview),
-                              avatar: const Icon(Icons.person_search_rounded, size: 18),
-                              selected: state.needsReviewOnly,
-                              onSelected: (_) => cubit.toggleNeedsReview(),
-                            ),
-                          ],
+                          const SizedBox(height: AppSpacing.sm),
+                          FilterChip(
+                            label: Text(l.customersNeedsReview),
+                            avatar: const Icon(Icons.person_search_rounded, size: 18),
+                            selected: state.needsReviewOnly,
+                            onSelected: (_) => cubit.toggleNeedsReview(),
+                          ),
                           const SizedBox(height: AppSpacing.sm),
                         ],
                       ),

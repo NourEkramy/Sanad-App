@@ -17,7 +17,7 @@ this repository; examples are masked.
 | 5 | Sheet1 | Scratch table counting which nurse did each visit for two patients | 4 | Not imported. |
 | 6 | **المصروفات التفصيلية** (Detailed expenses) | Company expenses: date, item, category, amount, payment method | ~100 | Out of scope for v1 (no expense module requested). Kept in Excel. |
 | 7 | **اسعار الخدمات** (Service prices) | Printable price list grouped by category | 41 | Same data as the lists sheet. |
-| 8 | **قوائم** (Lists) | Drop-down sources: services + price, nurses, areas | 53 services, 15 nurses, 9 areas | **Seeds services and areas** (`supabase/seed.sql`). |
+| 8 | **قوائم** (Lists) | Drop-down sources: services + price, nurses, areas | 53 services, 15 nurses, 9 areas | **Seeds services and areas** (`app/lib/core/database/seed_data.dart`). |
 
 ## 1.2 Columns of the visits log (`سجل الزيارات`)
 
@@ -83,15 +83,15 @@ Customer * ──── 1 Area
 |---|---------|------|------------------|--------------------|
 | 1 | **Same phone, different names**: family members, or "case" placeholders | 7 phones | `0112•••2962` → two different patients at the same address | One customer per phone (most frequent name). Every record whose name differs keeps it as **`patient_name`**, so no information is lost. |
 | 2 | **Spelling variants of the same name** | e.g. `أسماء منصور` / `اسماء منصور`; `اشرقة محمد إبراهيم` / `…ابراهيم` | — | Arabic-aware normalisation (alef/yaa/taa-marbuta, whitespace, diacritics) merges them. |
-| 3 | **Missing / placeholder phone** (`0`, `**` … `*****`) | 7 rows | "حالة تبع المركز" | Imported. The customer is created **without a phone, flagged `needs_review`**, grouped by name. The dashboard asks an admin to fix them. |
+| 3 | **Missing / placeholder phone** (`0`, `**` … `*****`) | 7 rows | "حالة تبع المركز" | Imported. The customer is created **without a phone, flagged `needs_review`**, grouped by name. The dashboard asks the user to fix them. |
 | 4 | **Customer moved / different area across visits** | 11 rows | phone used in الهانوفيل and الكيلو 21 | Customer gets the **latest** address/area. Every record keeps **its own** address and area as a historical snapshot. |
 | 5 | **Time written as free text** | all | `11.30م`, `5.30 ص`, `12ص` | Parser for Arabic ص/م (AM/PM), `.`/`:` separators, Arabic digits. |
-| 6 | **Time without AM/PM** | 2 rows | `11.3`, `8.3` | **Not guessed.** Imported without a time and flagged. An admin can correct it. |
+| 6 | **Time without AM/PM** | 2 rows | `11.3`, `8.3` | **Not guessed.** Imported without a time and flagged. It can be corrected in the app. |
 | 7 | **No time** (`**`) | 3 rows | — | Imported without a time and flagged. |
 | 8 | **Price typed as text** | 1 row | `45ج` | Number extracted (45 EGP) and flagged. |
 | 9 | **Zero price** | 1 row | first visit of a package | Kept (0 is valid), not treated as an error. |
 | 10 | **No payment method anywhere** | 271 rows | — | Imported as **`unspecified`** ("Not recorded"). This value is only allowed on imported rows. New records must be cash or electronic (database constraint). |
-| 11 | **Non-person "nurses"**: `باكدج` (package, 24 visits), `تمريض الشركة` (company nursing, 5), `الشركة` (company, 1) | 30 rows | — | Kept **as written**, as nurse entries, so totals per "nurse" still match the old dashboard. An admin can rename or deactivate them later without touching history. |
+| 11 | **Non-person "nurses"**: `باكدج` (package, 24 visits), `تمريض الشركة` (company nursing, 5), `الشركة` (company, 1) | 30 rows | — | Kept **as written**, as nurse entries, so totals per "nurse" still match the old dashboard. They can be renamed or deactivated later without touching history. |
 | 12 | **Nurses not in the lists sheet**: `سلمى`, `أسماء`, `اسماء منصور`, `تمريض الشركة` | — | — | Created during import. |
 | 13 | **Services not in the lists sheet** | — | — | Created with *variable price*. |
 | 14 | **"Services" that are not services** in the lists sheet: `اللى جايب الحالة` ("the person who brought the case", a referral fee, 200 EGP) and `0` placeholder rows | — | — | Left out of the seed list. If they appear in the visits log they are still imported as written. |
@@ -112,7 +112,7 @@ Customer * ──── 1 Area
 | price (K) | `service_records.price` (actual price, numeric) |
 | — | `service_records.payment_method = 'unspecified'` |
 | running number (A) | `service_records.legacy_ref` |
-| lists sheet | `supabase/seed.sql` (areas + services with default prices) |
+| lists sheet | `seed_data.dart`, inserted when the database is created (areas + services with default prices) |
 | dashboard / monthly summary | replaced by `dashboard_stats()` and the Records totals |
 | expenses sheet | not migrated (outside the requested scope) |
 
@@ -123,20 +123,21 @@ Customer * ──── 1 Area
    will happen: records, new/matched customers, new areas/nurses/services,
    revenue, date range, and every warning/error with its row numbers. Nothing
    is written yet.
-2. **One transaction.** On confirmation, the plan is sent to the
-   `import_legacy_batch` database function, which runs as a single
-   transaction. Either everything is imported or nothing is.
+2. **One transaction.** On confirmation, the plan is written to the
+   on-device database in a single transaction. Either everything is imported
+   or nothing is.
 3. **Never overwrite.** Existing customers (same phone) and existing
    areas/nurses/services (same normalised name) are matched, never modified.
 4. **Full audit.** Every source row, imported or skipped, is stored in
    `import_rows` with its original text and messages.
-5. **Reversible.** `rollback_import_batch` removes everything the batch
-   created. Customers or names that staff have used since are kept. The same file
+5. **Reversible.** **Roll back** removes everything the batch
+   created. Customers or names that have been used since are kept. The same file
    (by SHA-256) cannot be imported twice while a committed import of it exists.
 6. **Re-import of a corrected file:** roll back the previous batch, fix the
    file, import again. The preview warns when an import already exists.
 
-Dry-run result on the real workbook: **271 / 271 rows importable, 0
+Result on the real workbook (imported into the app's SQLite database in
+a test that stays on the development machine): **271 / 271 rows imported, 0
 skipped.** 129 customers (7 flagged for review), 8 areas, 20 nurses,
 42 services, revenue 60,282 EGP. Warnings: 11 customer-details-changed,
 7 invalid phones, 7 shared phones, 3 missing times, 2 ambiguous times, 1 price

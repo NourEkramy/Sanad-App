@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import '../../../../core/errors/failure.dart';
 import '../../../../core/result/result.dart';
 import '../../../../core/utils/dates.dart';
@@ -30,160 +28,51 @@ Map<String, String> validateRecordDraft(RecordDraft draft, {required DateTime to
   'notes': ?Validators.optionalText(draft.notes, maxLength: 2000),
 };
 
-/// Outcome of saving a record: either stored in the cloud, or kept on the
-/// device because the network was unavailable (it will sync automatically).
-enum SaveOutcome { saved, queuedOffline }
-
 class AddServiceRecord {
-  AddServiceRecord(this._repository, this._pending, this._newId, {Clock? clock}) : _clock = clock ?? DateTime.now;
+  AddServiceRecord(this._repository, this._newId, {Clock? clock}) : _clock = clock ?? DateTime.now;
 
   final RecordRepository _repository;
-  final PendingRecordStore _pending;
   final IdGenerator _newId;
   final Clock _clock;
 
-  Future<Result<(ServiceRecord, SaveOutcome)>> call(Customer customer, RecordDraft draft) async {
+  Future<Result<ServiceRecord>> call(Customer customer, RecordDraft draft) async {
     final now = _clock();
     final errors = validateRecordDraft(draft, today: Dates.dateOnly(now));
     if (errors.isNotEmpty) return Result.failure(ValidationFailure(errors));
 
     final patient = (draft.patientName ?? '').trim();
     final notes = (draft.notes ?? '').trim();
-    final record = NewServiceRecord(
-      id: _newId(),
-      customerId: customer.id,
-      customerName: customer.fullName,
-      customerPhone: customer.phone,
-      customerAddress: customer.address,
-      areaName: customer.areaName,
-      patientName: patient.isEmpty || patient == customer.fullName ? null : patient,
-      nurseId: draft.nurseId!,
-      nurseName: draft.nurseName ?? '',
-      serviceId: draft.serviceId!,
-      serviceName: draft.serviceName ?? '',
-      // The price actually charged — never derived from the service default.
-      price: Money.tryParse(draft.price)!,
-      paymentMethod: draft.paymentMethod!,
-      serviceDate: Dates.dateOnly(draft.serviceDate!),
-      serviceTime: draft.serviceTime!,
-      notes: notes.isEmpty ? null : notes,
-      createdAt: now,
-    );
-
-    final result = await _repository.add(record);
-    switch (result) {
-      case Success():
-        return Result.success((record.toRecord(), SaveOutcome.saved));
-      case Err(failure: NetworkFailure()):
-        final queued = record.toRecord(syncState: SyncState.pending);
-        await _pending.put(queued);
-        return Result.success((queued, SaveOutcome.queuedOffline));
-      case Err(:final failure):
-        return Result.failure(failure);
-    }
-  }
-}
-
-/// Sends queued offline records. Safe to call repeatedly and concurrently:
-/// inserts are idempotent and only one sync runs at a time.
-class SyncPendingRecords {
-  SyncPendingRecords(this._repository, this._pending);
-
-  final RecordRepository _repository;
-  final PendingRecordStore _pending;
-  Completer<SyncReport>? _running;
-
-  Future<SyncReport> call() async {
-    if (_running != null) return _running!.future;
-    final completer = _running = Completer<SyncReport>();
-    var sent = 0, failed = 0, remaining = 0;
-    try {
-      for (final record in await _pending.all()) {
-        final result = await _repository.add(_toNew(record));
-        switch (result) {
-          case Success():
-            await _pending.remove(record.id);
-            sent++;
-          case Err(failure: NetworkFailure() || SessionExpiredFailure()):
-            remaining++;
-          case Err(:final failure):
-            await _pending.put(record.copyWith(syncState: SyncState.failed, syncError: _code(failure)));
-            failed++;
-        }
-      }
-      final report = SyncReport(sent: sent, failed: failed, remaining: remaining);
-      completer.complete(report);
-      return report;
-    } catch (e) {
-      final report = SyncReport(sent: sent, failed: failed, remaining: remaining + 1);
-      completer.complete(report);
-      return report;
-    } finally {
-      _running = null;
-    }
-  }
-
-  static String _code(Failure f) => switch (f) {
-    BusinessRuleFailure(:final rule) => rule,
-    PermissionFailure() => 'permission',
-    ValidationFailure() => 'validation',
-    _ => 'server',
-  };
-
-  static NewServiceRecord _toNew(ServiceRecord r) => NewServiceRecord(
-    id: r.id,
-    customerId: r.customerId,
-    customerName: r.customerName,
-    customerPhone: r.customerPhone,
-    customerAddress: r.customerAddress,
-    areaName: r.areaName,
-    patientName: r.patientName,
-    nurseId: r.nurseId,
-    nurseName: r.nurseName,
-    serviceId: r.serviceId,
-    serviceName: r.serviceName,
-    price: r.price,
-    paymentMethod: r.paymentMethod,
-    serviceDate: r.serviceDate,
-    serviceTime: r.serviceTime!,
-    notes: r.notes,
-    createdAt: r.createdAt,
-  );
-}
-
-class SyncReport {
-  const SyncReport({required this.sent, required this.failed, required this.remaining});
-  final int sent;
-  final int failed;
-  final int remaining;
-}
-
-/// A customer's full history, including records still waiting to sync,
-/// newest first.
-///
-/// Offline, the previously loaded records ([cached]) are combined with the
-/// queued ones so a record saved on the device shows up immediately.
-class GetCustomerHistory {
-  const GetCustomerHistory(this._repository, this._pending);
-  final RecordRepository _repository;
-  final PendingRecordStore _pending;
-
-  Future<Result<List<ServiceRecord>>> call(String customerId, {List<ServiceRecord> cached = const []}) async {
-    final remote = await _repository.customerHistory(customerId);
-    final local = (await _pending.all()).where((r) => r.customerId == customerId).toList();
-    List<ServiceRecord> merge(List<ServiceRecord> records) {
-      final ids = records.map((r) => r.id).toSet();
-      return [...local.where((r) => !ids.contains(r.id)), ...records]..sort((a, b) => b.sortKey.compareTo(a.sortKey));
-    }
-
-    return switch (remote) {
-      Success(value: final records) => Result.success(merge(records)),
-      Err(failure: NetworkFailure()) when local.isNotEmpty || cached.isNotEmpty => Result.success(
-        merge(cached.where((r) => r.syncState == SyncState.synced).toList()),
+    return _repository.add(
+      NewServiceRecord(
+        id: _newId(),
+        customerId: customer.id,
+        customerName: customer.fullName,
+        customerPhone: customer.phone,
+        customerAddress: customer.address,
+        areaName: customer.areaName,
+        patientName: patient.isEmpty || patient == customer.fullName ? null : patient,
+        nurseId: draft.nurseId!,
+        nurseName: draft.nurseName ?? '',
+        serviceId: draft.serviceId!,
+        serviceName: draft.serviceName ?? '',
+        // The price actually charged — never derived from the service default.
+        price: Money.tryParse(draft.price)!,
+        paymentMethod: draft.paymentMethod!,
+        serviceDate: Dates.dateOnly(draft.serviceDate!),
+        serviceTime: draft.serviceTime!,
+        notes: notes.isEmpty ? null : notes,
+        createdAt: now,
       ),
-      Err(:final failure) => Result.failure(failure),
-    };
+    );
   }
+}
+
+/// A customer's full history, newest first.
+class GetCustomerHistory {
+  const GetCustomerHistory(this._repository);
+  final RecordRepository _repository;
+
+  Future<Result<List<ServiceRecord>>> call(String customerId) => _repository.customerHistory(customerId);
 }
 
 class ListRecords {
@@ -202,15 +91,10 @@ class GetRecordTotals {
 }
 
 class GetRecord {
-  const GetRecord(this._repository, this._pending);
+  const GetRecord(this._repository);
   final RecordRepository _repository;
-  final PendingRecordStore _pending;
 
-  Future<Result<ServiceRecord>> call(String id) async {
-    final local = (await _pending.all()).where((r) => r.id == id).firstOrNull;
-    if (local != null) return Result.success(local);
-    return _repository.getById(id);
-  }
+  Future<Result<ServiceRecord>> call(String id) => _repository.getById(id);
 }
 
 class UpdateServiceRecord {
@@ -242,11 +126,4 @@ class ArchiveServiceRecord {
   final RecordRepository _repository;
 
   Future<VoidResult> call(String id) => _repository.archive(id);
-}
-
-class DiscardPendingRecord {
-  const DiscardPendingRecord(this._pending);
-  final PendingRecordStore _pending;
-
-  Future<void> call(String id) => _pending.remove(id);
 }

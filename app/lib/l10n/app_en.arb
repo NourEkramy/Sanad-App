@@ -42,60 +42,8 @@
   "navCustomers": "Customers",
   "navRecords": "Records",
   "navMore": "More",
-  "loginTitle": "Welcome back",
-  "loginSubtitle": "Sign in with your work account to continue.",
-  "loginEmail": "Email",
-  "loginPassword": "Password",
-  "loginSubmit": "Sign in",
-  "loginForgot": "Forgot password?",
-  "loginSessionExpired": "Your session has expired. Please sign in again.",
-  "loginShowPassword": "Show password",
-  "loginHidePassword": "Hide password",
-  "notConfiguredTitle": "Sanad is not configured",
-  "notConfiguredBody": "This build has no server address. Rebuild the app with SUPABASE_URL and SUPABASE_ANON_KEY (see docs/08-deployment.md).",
-  "forgotTitle": "Reset password",
-  "forgotBody": "Enter your work email and we will send you a link to choose a new password.",
-  "forgotSubmit": "Send reset link",
-  "forgotSent": "If an account exists for {email}, a reset link is on its way.",
-  "@forgotSent": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "resetTitle": "Choose a new password",
-  "resetBody": "Enter a new password for your account. You will then sign in with it.",
-  "resetNewPassword": "New password",
-  "resetConfirmPassword": "Confirm new password",
-  "resetSubmit": "Update password",
-  "resetDone": "Password updated.",
-  "signOut": "Sign out",
-  "signOutConfirm": "Sign out of Sanad on this device?",
-  "signOutPending": "There are {count} records on this device that have not synced yet. They stay on this device and will sync after you sign in again.",
-  "@signOutPending": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "greetingMorning": "Good morning, {name}",
-  "@greetingMorning": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "greetingEvening": "Good evening, {name}",
-  "@greetingEvening": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
+  "greetingMorning": "Good morning",
+  "greetingEvening": "Good evening",
   "dashboardSearchHint": "Search customer by phone number",
   "quickActions": "Quick actions",
   "actionAddCustomer": "Add customer",
@@ -113,17 +61,6 @@
   "statActiveServices": "Active services",
   "statMonthRevenue": "This month",
   "businessOverview": "Business overview",
-  "pendingSyncBanner": "{count, plural, =1{1 record is waiting to sync} other{{count} records are waiting to sync}}",
-  "@pendingSyncBanner": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "syncNow": "Sync now",
-  "syncing": "Syncing…",
-  "syncDone": "All records are synced.",
   "needsReviewBanner": "{count, plural, =1{1 imported customer needs review} other{{count} imported customers need review}}",
   "@needsReviewBanner": {
     "placeholders": {
@@ -132,7 +69,6 @@
       }
     }
   },
-  "offlineBanner": "You are offline. New records are saved on this device and sync automatically.",
   "customersTitle": "Customers",
   "customersSearchHint": "Phone number or name",
   "customersNeedsReview": "Needs review",
@@ -319,7 +255,6 @@
   "fieldPatientHelper": "Only if the service was for someone else (e.g. a family member)",
   "saveRecord": "Save record",
   "recordSaved": "Record saved.",
-  "recordQueued": "No connection — the record is saved on this device and will sync automatically.",
   "recordUpdated": "Record updated.",
   "draftRestored": "Your unsaved entry was restored.",
   "discardDraft": "Discard",
@@ -334,8 +269,6 @@
   "recordCreatedAt": "Created",
   "recordLegacyRef": "Excel row no.",
   "recordImported": "Imported from Excel",
-  "recordPendingSync": "Waiting to sync",
-  "recordSyncFailed": "Sync failed",
   "recordNoTime": "Time not recorded",
   "archiveRecord": "Archive record",
   "archiveRecordConfirm": "Archive this record? It will be hidden from history and totals but kept for audit.",
@@ -345,19 +278,6 @@
   "@nurseLabel": {
     "placeholders": {
       "name": {
-        "type": "String"
-      }
-    }
-  },
-  "pendingTitle": "Waiting to sync",
-  "pendingEmpty": "Everything is synced.",
-  "pendingBody": "These records are saved on this device. They are sent automatically when the connection returns.",
-  "pendingDiscard": "Discard record",
-  "pendingDiscardConfirm": "Discard this unsynced record? It has not reached the server and will be lost.",
-  "pendingFailedHint": "The server rejected this record: {reason}",
-  "@pendingFailedHint": {
-    "placeholders": {
-      "reason": {
         "type": "String"
       }
     }
@@ -405,7 +325,6 @@
   "moreTitle": "More",
   "moreManage": "Manage",
   "moreData": "Data",
-  "moreAccount": "Account",
   "importTitle": "Import from Excel",
   "exportTitle": "Export to Excel",
   "settingsTitle": "Settings",
@@ -420,39 +339,7 @@
       }
     }
   },
-  "settingsPrivacy": "Customer data is stored in the cloud database and protected by role-based access. Records saved offline are encrypted on this device until they sync.",
-  "userProfileTitle": "My profile",
-  "profileName": "Name",
-  "profileEmail": "Email",
-  "profileRole": "Role",
-  "roleAdmin": "Administrator",
-  "roleStaff": "Staff",
-  "changePassword": "Change password",
-  "profileSaved": "Profile updated.",
-  "usersTitle": "Users",
-  "inviteUser": "Invite user",
-  "inviteSent": "Invitation sent to {email}.",
-  "@inviteSent": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "inviteRole": "Role",
-  "userYou": "You",
-  "makeAdmin": "Make administrator",
-  "makeStaff": "Make staff",
-  "userUpdated": "User updated.",
-  "userDeactivateConfirm": "Deactivate {name}? They will be signed out and unable to sign in.",
-  "@userDeactivateConfirm": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "pendingSyncMenu": "Waiting to sync",
+  "settingsPrivacy": "Your data is stored only on this phone. If you connect Google Drive, a backup is kept in your own Drive, visible only to you until you share it.",
   "importIntro": "Bring existing records from an Excel workbook into Sanad. Nothing is saved until you review the preview and confirm.",
   "importChooseFile": "Choose Excel file",
   "importReading": "Reading workbook…",
@@ -642,17 +529,10 @@
   "validationInvalidPrice": "Enter a valid amount.",
   "validationNegativePrice": "The price cannot be negative.",
   "validationPriceTooHigh": "This amount is too high.",
-  "validationInvalidEmail": "Enter a valid email address.",
-  "validationPasswordTooShort": "Use at least 8 characters.",
-  "validationPasswordsDoNotMatch": "Passwords do not match.",
   "validationFutureDate": "The date cannot be in the future.",
-  "failureNetwork": "No internet connection. Check your connection and try again.",
-  "failureServer": "Something went wrong on the server. Please try again.",
-  "failureSessionExpired": "Your session has expired. Please sign in again.",
-  "failurePermission": "You do not have permission to do this.",
+  "failureNetwork": "No internet connection. Your data is safe on this phone; the backup will run when you are back online.",
   "failureDuplicatePhone": "This phone number is already registered.",
   "failureDuplicateName": "This name already exists.",
-  "failureDuplicateEmail": "A user with this email already exists.",
   "failureDuplicateFile": "This file has already been imported.",
   "failureDuplicate": "This value already exists.",
   "failureValidation": "Please check the highlighted fields.",
@@ -663,17 +543,51 @@
   "failureFileHeaderNotFound": "No sheet with recognisable columns (date, customer name or phone, price) was found.",
   "failureFileEmpty": "There is nothing to import or export.",
   "failureFileWrite": "The Excel file could not be created.",
-  "failureAuthInvalid": "Incorrect email or password.",
-  "failureAuthDisabled": "This account has been deactivated. Contact your administrator.",
-  "failureAuthNotConfirmed": "Confirm your email address first, then sign in.",
-  "failureAuthWeakPassword": "Choose a stronger password.",
-  "failureAuthRateLimited": "Too many attempts. Wait a moment and try again.",
-  "failureAuthUnknown": "Sign-in failed. Please try again.",
   "failureRuleNurseInactive": "This nurse is no longer active. Choose another nurse.",
   "failureRuleServiceInactive": "This service is no longer active. Choose another service.",
   "failureRuleCustomerArchived": "This customer is archived.",
   "failureRuleAlreadyImported": "This file has already been imported.",
   "failureRuleBatchNotFound": "This import was already rolled back.",
-  "failureRuleSelfDemotion": "You cannot remove your own administrator access.",
-  "failureRuleInUse": "This item is in use and cannot be removed."
+  "failureRuleInUse": "This item is in use and cannot be removed.",
+  "moreApp": "App",
+  "failureServer": "Google Drive answered with an error. Please try again.",
+  "failureFileNotABackup": "This file is not a Sanad backup.",
+  "failureBackupCanceled": "Google sign-in was canceled.",
+  "failureBackupNotAuthorized": "Sanad no longer has access to Google Drive. Connect again.",
+  "failureBackupNotConfigured": "Google sign-in is not set up for this copy of the app yet. See \"Google Drive setup\" in the deployment guide.",
+  "failureBackupNoBackup": "No Sanad backup was found in this Google Drive.",
+  "backupTitle": "Google Drive backup",
+  "backupIntro": "Your data is stored on this phone. Connect Google Drive to keep a copy in your own Drive: Sanad.xlsx (all sheets, ready to open and share) and a full backup to restore on a new phone. After every change the copy is updated automatically.",
+  "backupConnect": "Connect Google Drive",
+  "backupAccount": "Google account",
+  "backupLast": "Last backup",
+  "backupNever": "Not backed up yet",
+  "backupUpToDate": "Everything is backed up",
+  "backupPendingChanges": "Changes waiting to be backed up",
+  "backupNotUpToDate": "The last backup did not complete",
+  "backupInProgress": "Backing up…",
+  "backupRestoring": "Restoring…",
+  "backupNow": "Back up now",
+  "backupRestore": "Restore from Google Drive",
+  "backupRestoreConfirmTitle": "Replace the data on this phone?",
+  "backupRestoreConfirm": "All customers, records, nurses, services and areas on this phone will be replaced by the backup in Google Drive.",
+  "backupRestored": "Data restored from Google Drive",
+  "backupFoundTitle": "A backup is already in this Google Drive",
+  "backupFoundBody": "Sanad found a backup from {date}. Restore it to this phone, or keep this phone's data and replace the backup.",
+  "@backupFoundBody": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "backupKeepDevice": "Keep this phone's data",
+  "backupKeepDeviceConfirm": "The backup in Google Drive will be replaced by the data on this phone. Earlier versions stay in the file's version history in Drive.",
+  "backupDisconnect": "Disconnect Google Drive",
+  "backupDisconnectConfirm": "Automatic backups will stop. Files already in Google Drive stay there.",
+  "backupWhere": "Files are in Google Drive › Sanad. Open Sanad.xlsx there to view it or share it with others. Drive keeps earlier versions of each file.",
+  "backupUnsupported": "Google Drive backup works in the Android app. Here, use Export to Excel to save a copy.",
+  "backupBannerConnect": "Back up your data to Google Drive",
+  "backupBannerFailed": "The Google Drive backup did not complete",
+  "backupBannerAction": "Open"
 }

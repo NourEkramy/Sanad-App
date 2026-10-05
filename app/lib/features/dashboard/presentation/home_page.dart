@@ -10,9 +10,7 @@ import '../../../core/utils/money.dart';
 import '../../../core/widgets/cards.dart';
 import '../../../core/widgets/l10n.dart';
 import '../../../core/widgets/state_views.dart';
-import '../../auth/domain/entities/app_user.dart';
-import '../../auth/presentation/cubit/auth_cubit.dart';
-import '../../records/presentation/widgets/sync_banner.dart';
+import '../../backup/presentation/backup_widgets.dart';
 import '../domain/dashboard.dart';
 import 'dashboard_cubit.dart';
 
@@ -21,7 +19,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthCubit>().user;
     return Scaffold(
       body: BlocBuilder<DashboardCubit, DashboardState>(
         builder: (context, state) => RefreshIndicator(
@@ -29,14 +26,13 @@ class HomePage extends StatelessWidget {
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
-              SliverToBoxAdapter(child: _Header(user: user)),
+              const SliverToBoxAdapter(child: _Header()),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.xxl),
                 sliver: SliverList.list(
                   children: [
-                    const SyncBanner(),
-                    if ((state.stats?.customersNeedingReview ?? 0) > 0 &&
-                        (user?.can(Permission.editCustomers) ?? false))
+                    const BackupBanner(),
+                    if ((state.stats?.customersNeedingReview ?? 0) > 0)
                       Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                         child: InlineBanner.warning(
@@ -50,7 +46,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                     SectionHeader(context.l10n.quickActions),
-                    _QuickActions(user: user),
+                    const _QuickActions(),
                     SectionHeader(context.l10n.todayOverview),
                     if (state.failure != null && state.stats == null)
                       ErrorView(
@@ -74,16 +70,14 @@ class HomePage extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.user});
-  final AppUser? user;
+  const _Header();
 
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
     final theme = Theme.of(context);
     final now = DateTime.now();
-    final name = (user?.fullName ?? '').split(' ').first;
-    final greeting = now.hour < 12 ? l.greetingMorning(name) : l.greetingEvening(name);
+    final greeting = now.hour < 12 ? l.greetingMorning : l.greetingEvening;
     return Container(
       decoration: const BoxDecoration(
         gradient: AppColors.heroGradient,
@@ -116,24 +110,7 @@ class _Header extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Semantics(
-                    button: true,
-                    label: l.userProfileTitle,
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: () => context.go(Routes.profile),
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.18), shape: BoxShape.circle),
-                        child: Text(
-                          user?.initials ?? '',
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                    ),
-                  ),
+                  const BackupStatusButton(),
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -176,8 +153,7 @@ class _Header extends StatelessWidget {
 }
 
 class _QuickActions extends StatelessWidget {
-  const _QuickActions({required this.user});
-  final AppUser? user;
+  const _QuickActions();
 
   @override
   Widget build(BuildContext context) {
@@ -186,10 +162,7 @@ class _QuickActions extends StatelessWidget {
       (Icons.playlist_add_rounded, l.actionAddRecord, () => context.push(Routes.searchForRecord()), true),
       (Icons.person_search_rounded, l.actionSearchCustomer, () => context.push(Routes.search), false),
       (Icons.person_add_alt_1_rounded, l.actionAddCustomer, () => context.push(Routes.newCustomer()), false),
-      if (user?.can(Permission.exportData) ?? false)
-        (Icons.file_download_outlined, l.actionExport, () => context.go(Routes.export), false)
-      else
-        (Icons.receipt_long_rounded, l.navRecords, () => context.go(Routes.records), false),
+      (Icons.file_download_outlined, l.actionExport, () => context.go(Routes.export), false),
     ];
     return GridView.count(
       crossAxisCount: 2,

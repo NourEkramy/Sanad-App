@@ -6,8 +6,10 @@ import '../entities/record_filter.dart';
 import '../entities/service_record.dart';
 
 abstract interface class RecordRepository {
-  /// Inserts the record. Idempotent: inserting the same id twice is a no-op.
-  Future<VoidResult> add(NewServiceRecord record);
+  /// Saves the record and returns it as stored (with its snapshot of the
+  /// customer, area, nurse and service). Saving the same id twice returns the
+  /// existing record instead of creating a duplicate.
+  Future<Result<ServiceRecord>> add(NewServiceRecord record);
 
   Future<Result<ServiceRecord>> getById(String id);
 
@@ -17,7 +19,7 @@ abstract interface class RecordRepository {
 
   Future<Result<RecordTotals>> totals(RecordFilter filter);
 
-  /// Admin correction of an existing record.
+  /// Correction of an existing record.
   Future<Result<ServiceRecord>> update(
     String id, {
     required String nurseId,
@@ -31,14 +33,6 @@ abstract interface class RecordRepository {
   });
 
   Future<VoidResult> archive(String id);
-}
-
-/// Device-local queue of records that could not be sent yet (offline).
-abstract interface class PendingRecordStore {
-  Future<List<ServiceRecord>> all();
-  Future<void> put(ServiceRecord record);
-  Future<void> remove(String id);
-  Stream<int> watchCount();
 }
 
 /// Device-local storage for half-filled record forms.

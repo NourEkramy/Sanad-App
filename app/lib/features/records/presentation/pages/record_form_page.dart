@@ -16,7 +16,6 @@ import '../../../../core/widgets/searchable_picker.dart';
 import '../../../../core/widgets/state_views.dart';
 import '../../../customers/presentation/widgets/customer_widgets.dart';
 import '../../domain/entities/service_record.dart';
-import '../../domain/usecases/record_usecases.dart';
 import '../cubit/record_form_cubit.dart';
 import '../widgets/record_widgets.dart';
 
@@ -141,11 +140,7 @@ class _RecordFormPageState extends State<RecordFormPage> {
       listener: (context, state) {
         _sync(state);
         if (state.status == RecordFormStatus.saved) {
-          if (state.outcome == SaveOutcome.queuedOffline) {
-            context.showWarning(l.recordQueued);
-          } else {
-            context.showSuccess(cubit.isEditing ? l.recordUpdated : l.recordSaved);
-          }
+          context.showSuccess(cubit.isEditing ? l.recordUpdated : l.recordSaved);
           if (widget.thenProfile) {
             context.go(Routes.customer(cubit.customer.id), extra: cubit.customer);
           } else if (context.canPop()) {

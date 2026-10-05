@@ -6,12 +6,9 @@ import '../../../../app/routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/cards.dart';
-import '../../../../core/widgets/failure_messages.dart';
 import '../../../../core/widgets/feedback.dart';
 import '../../../../core/widgets/l10n.dart';
 import '../../../../core/widgets/state_views.dart';
-import '../../../auth/domain/entities/app_user.dart';
-import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../domain/entities/service_record.dart';
 import '../cubit/record_details_cubit.dart';
 import '../widgets/record_widgets.dart';
@@ -22,7 +19,6 @@ class RecordDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final auth = context.watch<AuthCubit>();
     return BlocConsumer<RecordDetailsCubit, RecordDetailsState>(
       listenWhen: (a, b) => !a.archived && b.archived,
       listener: (context, state) {
@@ -31,14 +27,11 @@ class RecordDetailsPage extends StatelessWidget {
       },
       builder: (context, state) {
         final record = state.record;
-        final pending = record != null && record.syncState != SyncState.synced;
-        final canEdit = record != null && !pending && auth.can(Permission.editRecords);
-        final canArchive = record != null && (pending || auth.can(Permission.archiveRecords));
         return Scaffold(
           appBar: AppBar(
             title: Text(l.recordDetailsTitle),
             actions: [
-              if (canEdit)
+              if (record != null)
                 IconButton(
                   tooltip: l.commonEdit,
                   icon: const Icon(Icons.edit_outlined),
@@ -47,11 +40,11 @@ class RecordDetailsPage extends StatelessWidget {
                     if (updated != null && context.mounted) context.read<RecordDetailsCubit>().replace(updated);
                   },
                 ),
-              if (canArchive)
+              if (record != null)
                 IconButton(
-                  tooltip: pending ? l.pendingDiscard : l.archiveRecord,
-                  icon: Icon(pending ? Icons.delete_outline_rounded : Icons.archive_outlined),
-                  onPressed: state.busy ? null : () => _archive(context, pending: pending),
+                  tooltip: l.archiveRecord,
+                  icon: const Icon(Icons.archive_outlined),
+                  onPressed: state.busy ? null : () => _archive(context),
                 ),
             ],
           ),
@@ -68,12 +61,12 @@ class RecordDetailsPage extends StatelessWidget {
     );
   }
 
-  Future<void> _archive(BuildContext context, {required bool pending}) async {
+  Future<void> _archive(BuildContext context) async {
     final l = context.l10n;
     final ok = await context.confirm(
-      title: pending ? l.pendingDiscard : l.archiveRecord,
-      message: pending ? l.pendingDiscardConfirm : l.archiveRecordConfirm,
-      confirmLabel: pending ? l.pendingDiscard : l.archiveRecord,
+      title: l.archiveRecord,
+      message: l.archiveRecordConfirm,
+      confirmLabel: l.archiveRecord,
       destructive: true,
     );
     if (!ok || !context.mounted) return;
@@ -109,7 +102,6 @@ class _Body extends StatelessWidget {
                   runSpacing: AppSpacing.xs,
                   children: [
                     PaymentChip(record.paymentMethod),
-                    SyncChip(record.syncState),
                     if (record.isImported)
                       StatusChip(
                         label: l.recordImported,
@@ -119,10 +111,6 @@ class _Body extends StatelessWidget {
                       ),
                   ],
                 ),
-                if (record.syncState == SyncState.failed && record.syncError != null) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  InlineBanner.error(message: l.pendingFailedHint(context.ruleMessage(record.syncError!))),
-                ],
               ],
             ),
           ),

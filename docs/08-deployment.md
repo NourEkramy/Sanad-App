@@ -1,104 +1,99 @@
-# 8. Deployment
+# 8. Setup & deployment
+
+Sanad runs entirely on the phone. There is no server to deploy. The only
+one-time setup is registering the app with Google so it may write its backup
+into your Google Drive (8.3).
 
 ## 8.1 Prerequisites
 
-* Flutter **3.47** (stable) / Dart 3.13
-* Supabase CLI (`npx supabase`) and Docker for local development
-* A Supabase project for production (EU region recommended for Egypt latency)
+* Flutter **3.47** (stable) / Dart 3.13, with the Android toolchain
+  (Android Studio or the Android command-line tools) — check with `flutter doctor`.
+* An Android phone (Android 7 or newer) with a USB cable, or an emulator.
 
-## 8.2 Local development
+## 8.2 Run it
 
 ```bash
-# 1. Backend: Postgres, Auth, REST, Studio (applies migrations + seed)
-npx supabase start                     # prints API URL and keys
-# 2. First admin (local)
-#    Studio → Authentication → Add user (email + password, auto-confirm), then:
-psql postgresql://postgres:postgres@127.0.0.1:54322/postgres \
-  -c "update public.profiles set role = 'admin' where email = 'you@example.com';"
-# 3. App configuration
-cp app/env/local.example.json app/env/local.json   # fill in the publishable key
 cd app
 flutter pub get
-flutter run --dart-define-from-file=env/local.json   # or -d chrome
+flutter run            # phone connected by USB, or an emulator
+flutter run -d chrome  # quick look in the browser (data stays in that browser; no Drive backup)
 ```
 
-Database tests without Docker: `supabase/tests/run.sh` (needs a local PostgreSQL binary).
+## 8.3 Google Drive setup (once, about 10 minutes)
 
-## 8.3 Production backend (Supabase)
+Google requires every app that writes to Drive to be registered. Do this
+signed in with **the Google account that will hold the backups**.
 
-1. Create the project. In **Authentication → Providers → Email**:
-   disable sign-ups, minimum password length 8. Set **Site URL** and add redirect
-   URLs: `com.sanad.sanad://auth-callback` and your web URL.
-2. Configure SMTP (Authentication → SMTP) so invitations and password resets
-   are delivered from your domain.
-3. Apply the schema and reference data:
-   ```bash
-   npx supabase link --project-ref <ref>
-   npx supabase db push                 # runs supabase/migrations
-   psql "$DATABASE_URL" -f supabase/seed.sql   # areas + service price list
+1. Open <https://console.cloud.google.com/> → project picker → **New project**
+   → name it `Sanad` → **Create**, and select it.
+2. **APIs & Services → Library** → search **Google Drive API** → **Enable**.
+3. **Google Auth Platform** (APIs & Services → OAuth consent screen) →
+   **Get started**: app name `Sanad`, your e-mail as support e-mail, audience
+   **External**, your e-mail as contact → **Create**.
+4. **Data access → Add or remove scopes** → filter for `drive.file` → tick
+   `…/auth/drive.file` ("See, edit, create and delete only the specific Google
+   Drive files you use with this app") → **Update** → **Save**.
+5. **Audience → Publish app** → confirm. (`drive.file` is a non-sensitive
+   scope, so Google does not require a review. If you leave the app in
+   *Testing*, add your account under *Test users*; Google then asks you to
+   allow access again every 7 days.)
+6. Get your computer's signing fingerprint (SHA-1). In a terminal:
+   ```powershell
+   cd "E:\Sanad App\app\android"
+   .\gradlew signingReport
    ```
-4. Deploy the invite function and its redirect:
-   ```bash
-   npx supabase functions deploy invite-user
-   npx supabase secrets set SANAD_AUTH_REDIRECT_URL=com.sanad.sanad://auth-callback
-   ```
-5. Create the first administrator: invite yourself (Dashboard → Authentication →
-   Invite) and run in the SQL editor:
-   `update public.profiles set role = 'admin' where email = 'you@example.com';`
-6. **Backups:** enable Point-in-Time Recovery (Pro plan) or schedule
-   `pg_dump`. Regular Excel exports are an additional human-readable backup.
+   (on macOS/Linux: `./gradlew signingReport`). Copy the **SHA1** line of the
+   `debug` variant. If `gradlew` is missing, run `flutter build apk` once first.
+7. **Clients → Create client** → type **Android** → package name
+   `com.sanad.sanad` → paste the SHA-1 → **Create**.
 
-## 8.4 Migrating the existing workbook
+Nothing has to be copied into the app: Google recognises it by package name
+and signing certificate. Then on the phone: More → **Google Drive backup** →
+**Connect Google Drive**.
 
-1. Download the workbook from SharePoint as `.xlsx` (the owner must allow
-   downloads, or use *File → Save a copy*).
-2. Sign in as admin → More → **Import from Excel** → choose the file.
-3. Check the detected columns (sheet `سجل الزيارات`, header row 3).
-4. Review the preview. Expected for the analysed version: 271 records,
-   0 skipped, 129 customers, 60,282 EGP (see [01-excel-analysis.md](01-excel-analysis.md)).
-5. Import. If something looks wrong, **Roll back** from the import history, fix
-   the file and import again.
-6. Fix the 7 *needs review* customers from the dashboard banner.
+> The fingerprint belongs to the computer that builds the app (its
+> `~/.android/debug.keystore`). If you build on another computer, add its
+> SHA-1 as another Android client, or copy the keystore file. If sign-in shows
+> "Google sign-in is not set up for this copy of the app", the package name or
+> SHA-1 does not match, or the Drive API is not enabled.
 
-## 8.5 Building the apps
-
-Configuration is passed at build time (no keys in source):
-
-```json
-// app/env/prod.json  (git-ignored)
-{
-  "SUPABASE_URL": "https://<ref>.supabase.co",
-  "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_…",
-  "AUTH_REDIRECT_URL": "com.sanad.sanad://auth-callback"
-}
-```
+## 8.4 Install on your phone
 
 ```bash
 cd app
-# Android (Play Store)
-flutter build appbundle --release --dart-define-from-file=env/prod.json
-# iOS (App Store / TestFlight; on macOS)
-flutter build ipa --release --dart-define-from-file=env/prod.json
-# Web (any static host: Netlify, Vercel, Cloudflare Pages, Supabase Storage…)
-flutter build web --release --dart-define-from-file=env/prod.json
+flutter build apk --release
 ```
 
-* **Android signing:** create an upload keystore and reference it in
-  `android/key.properties` + `android/app/build.gradle.kts` (see Flutter's
-  "Build and release an Android app"). Application ID: `com.sanad.sanad`.
-* **iOS:** set the team and bundle identifier in Xcode (`Runner`). The URL scheme
-  `com.sanad.sanad` is already registered for password-reset links.
-* **Web:** for the web build, set `AUTH_REDIRECT_URL` to the site URL and add
-  it to Supabase's redirect list.
-* App icons are in the platform folders. Regenerate them from the brand mark
-  if the logo changes.
+Copy `app/build/app/outputs/flutter-apk/app-release.apk` to the phone and
+open it (allow installing from this source when Android asks), or with the
+phone connected: `flutter install --release`.
 
-## 8.6 Operations
+Release builds are signed with the computer's debug key (the Flutter
+default), which is fine for personal use and matches the SHA-1 from 8.3. To
+publish on Google Play later, create an upload key ("Build and release an
+Android app" in the Flutter docs) and add its SHA-1 as another Android client.
 
-* **Add staff:** More → Users → *Invite user* (admin).
-* **Remove access:** deactivate the user (immediate, even with a valid token).
-* **Prices change:** edit the service's default price. Past records are not affected.
-* **Monitoring:** Supabase dashboard (API, Auth, database health). The
-  `audit_log` table records every change to customers and records.
-* **Schema changes:** add a new file under `supabase/migrations/`, run
-  `supabase/tests/run.sh`, then `supabase db push`.
+## 8.5 Bring in the existing workbook
+
+1. Download the workbook from SharePoint as `.xlsx` (*File → Save a copy*, or
+   *Download*; the owner must allow downloads).
+2. Put it on the phone (e.g. in Downloads or Google Drive).
+3. Sanad → More → **Import from Excel** → choose the file.
+4. Check the detected columns (sheet `سجل الزيارات`, header row 3).
+5. Review the preview. Expected for the analysed version: 271 records,
+   0 skipped, 129 customers, 60,282 EGP (see [01-excel-analysis.md](01-excel-analysis.md)).
+6. Import. If something looks wrong, **Roll back** from the import history,
+   fix the file and import again.
+7. Fix the 7 *needs review* customers from the dashboard banner.
+
+## 8.6 Everyday operation
+
+* **Backup** runs by itself after changes. The cloud icon on Home shows the
+  state; More → Google Drive backup shows the last backup and **Back up now**.
+* **Share the data**: in Google Drive open `Sanad` → `Sanad.xlsx` → *Share*;
+  or in the app **Export to Excel** for a specific period and share the file.
+* **New phone**: install Sanad → More → Google Drive backup → Connect the same
+  account → **Restore from Google Drive**.
+* **Prices change**: edit the service's default price. Past records are not affected.
+* **Schema changes** (development): bump `SanadDatabase.schemaVersion` and add
+  an `onUpgrade` step; backups record their schema version.

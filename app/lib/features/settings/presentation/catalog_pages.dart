@@ -13,8 +13,6 @@ import '../../../core/widgets/l10n.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../areas/domain/entities/area.dart';
 import '../../areas/domain/usecases/area_usecases.dart';
-import '../../auth/domain/entities/app_user.dart';
-import '../../auth/presentation/cubit/auth_cubit.dart';
 import '../../care_services/domain/entities/care_service.dart';
 import '../../care_services/domain/usecases/care_service_usecases.dart';
 import '../../nurses/domain/entities/nurse.dart';
@@ -279,9 +277,6 @@ class NursesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final auth = context.watch<AuthCubit>();
-    final canManage = auth.can(Permission.manageReferenceData);
-    final canAdd = auth.can(Permission.createReferenceData);
     Future<void> edit(Nurse? nurse) async {
       final cubit = context.read<CatalogCubit<Nurse>>();
       final saved = await _showEditor(
@@ -312,13 +307,13 @@ class NursesPage extends StatelessWidget {
       emptyText: l.nursesEmpty,
       addLabel: l.addNurse,
       icon: Icons.badge_rounded,
-      onAdd: canAdd ? () => edit(null) : null,
+      onAdd: () => edit(null),
       itemBuilder: (context, n) => _CatalogTile(
         leading: Icons.badge_outlined,
         title: n.name,
         subtitle: n.phone,
         active: n.isActive,
-        onTap: canManage ? () => edit(n) : null,
+        onTap: () => edit(n),
       ),
     );
   }
@@ -334,9 +329,6 @@ class ServicesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final auth = context.watch<AuthCubit>();
-    final canManage = auth.can(Permission.manageReferenceData);
-    final canAdd = auth.can(Permission.createReferenceData);
     Future<void> edit(CareService? service) async {
       final cubit = context.read<CatalogCubit<CareService>>();
       final saved = await _showEditor(
@@ -367,13 +359,13 @@ class ServicesPage extends StatelessWidget {
       emptyText: l.servicesEmpty,
       addLabel: l.addService,
       icon: Icons.medical_services_rounded,
-      onAdd: canAdd ? () => edit(null) : null,
+      onAdd: () => edit(null),
       itemBuilder: (context, s) => _CatalogTile(
         leading: Icons.medical_services_outlined,
         title: s.name,
         subtitle: s.defaultPrice == null ? l.serviceVariablePrice : context.fmt.money(s.defaultPrice!),
         active: s.isActive,
-        onTap: canManage ? () => edit(s) : null,
+        onTap: () => edit(s),
       ),
     );
   }
@@ -390,9 +382,6 @@ class AreasPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final auth = context.watch<AuthCubit>();
-    final canManage = auth.can(Permission.manageReferenceData);
-    final canAdd = auth.can(Permission.createReferenceData);
     Future<void> edit(Area? area) async {
       final cubit = context.read<CatalogCubit<Area>>();
       final saved = await _showEditor(
@@ -413,13 +402,9 @@ class AreasPage extends StatelessWidget {
       emptyText: l.areasEmpty,
       addLabel: l.addArea,
       icon: Icons.map_rounded,
-      onAdd: canAdd ? () => edit(null) : null,
-      itemBuilder: (context, a) => _CatalogTile(
-        leading: Icons.place_outlined,
-        title: a.name,
-        active: a.isActive,
-        onTap: canManage ? () => edit(a) : null,
-      ),
+      onAdd: () => edit(null),
+      itemBuilder: (context, a) =>
+          _CatalogTile(leading: Icons.place_outlined, title: a.name, active: a.isActive, onTap: () => edit(a)),
     );
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,11 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../core/files/file_gateway.dart';
 import '../features/areas/domain/entities/area.dart';
 import '../features/areas/domain/usecases/area_usecases.dart';
-import '../features/auth/domain/entities/app_user.dart';
-import '../features/auth/domain/repositories/auth_repository.dart';
-import '../features/auth/presentation/cubit/auth_cubit.dart';
-import '../features/auth/presentation/cubit/auth_form_cubits.dart';
-import '../features/auth/presentation/pages/auth_pages.dart';
+import '../features/backup/presentation/backup_page.dart';
 import '../features/care_services/domain/entities/care_service.dart';
 import '../features/care_services/domain/usecases/care_service_usecases.dart';
 import '../features/customers/domain/entities/customer.dart';
@@ -35,104 +29,30 @@ import '../features/records/domain/entities/service_record.dart';
 import '../features/records/presentation/cubit/record_details_cubit.dart';
 import '../features/records/presentation/cubit/record_form_cubit.dart';
 import '../features/records/presentation/cubit/records_list_cubit.dart';
-import '../features/records/presentation/pages/pending_sync_page.dart';
 import '../features/records/presentation/pages/record_details_page.dart';
 import '../features/records/presentation/pages/record_form_page.dart';
 import '../features/records/presentation/pages/records_page.dart';
 import '../features/settings/presentation/catalog_cubit.dart';
 import '../features/settings/presentation/catalog_pages.dart';
 import '../features/settings/presentation/more_pages.dart';
-import '../features/users/presentation/users_page.dart';
 import 'di.dart';
 import 'routes.dart';
 import 'shell.dart';
 
-final _rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-
-/// Re-evaluates redirects whenever the auth state changes.
-class _AuthRefresh extends ChangeNotifier {
-  _AuthRefresh(Stream<Object?> stream) {
-    _subscription = stream.listen((_) => notifyListeners());
-  }
-  late final StreamSubscription<Object?> _subscription;
-
-  @override
-  void dispose() {
-    _subscription.cancel();
-    super.dispose();
-  }
-}
-
-/// Screens limited to certain permissions (checked again by the database).
-const _guarded = {
-  Routes.import: Permission.importData,
-  Routes.export: Permission.exportData,
-  Routes.users: Permission.manageUsers,
-};
-
-/// Where to send the user for a given auth state and requested location.
-/// Pure function (unit-tested in test/app/router_redirect_test.dart).
-String? authRedirect(AuthStatus? status, Uri uri, String loc) {
-  const public = {Routes.login, Routes.forgotPassword};
-  const entry = {Routes.splash, Routes.login, Routes.forgotPassword, Routes.resetPassword};
-
-  // Remember where the user was going (deep link / web refresh) so they
-  // land there after the splash screen or after signing in.
-  String withFrom(String target) {
-    final from = entry.contains(loc) ? uri.queryParameters['from'] : uri.toString();
-    return from == null || from.isEmpty ? target : Uri(path: target, queryParameters: {'from': from}).toString();
-  }
-
-  switch (status) {
-    case null:
-      return loc == Routes.splash ? null : withFrom(Routes.splash);
-    case PasswordRecovery():
-      return loc == Routes.resetPassword ? null : Routes.resetPassword;
-    case Unauthenticated():
-      return public.contains(loc) ? null : withFrom(Routes.login);
-    case Authenticated(:final user):
-      if (entry.contains(loc)) {
-        final from = uri.queryParameters['from'];
-        return from != null && from.startsWith('/') && !entry.any(from.startsWith) ? from : Routes.home;
-      }
-      final needed = _guarded[loc];
-      if (needed != null && !user.can(needed)) return Routes.more;
-      if (loc.endsWith('/edit') && !user.can(Permission.editCustomers)) return Routes.home;
-      return null;
-  }
-}
-
-GoRouter buildRouter(AuthCubit auth) {
-  String? redirect(BuildContext context, GoRouterState state) =>
-      authRedirect(auth.state, state.uri, state.matchedLocation);
+GoRouter buildRouter() {
+  final rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
   Customer? customerExtra(GoRouterState s) => s.extra is Customer ? s.extra! as Customer : null;
   ServiceRecord? recordExtra(GoRouterState s) => s.extra is ServiceRecord ? s.extra! as ServiceRecord : null;
 
   return GoRouter(
-    navigatorKey: _rootKey,
-    initialLocation: Routes.splash,
-    refreshListenable: _AuthRefresh(auth.stream),
-    redirect: redirect,
+    navigatorKey: rootKey,
+    initialLocation: Routes.home,
     routes: [
-      GoRoute(path: Routes.splash, builder: (_, _) => const SplashPage()),
-      GoRoute(
-        path: Routes.login,
-        builder: (_, _) => BlocProvider(create: (_) => LoginCubit(sl()), child: const LoginPage()),
-      ),
-      GoRoute(
-        path: Routes.forgotPassword,
-        builder: (_, _) => BlocProvider(create: (_) => ForgotPasswordCubit(sl()), child: const ForgotPasswordPage()),
-      ),
-      GoRoute(
-        path: Routes.resetPassword,
-        builder: (_, _) => BlocProvider(create: (_) => PasswordCubit(sl()), child: const ResetPasswordPage()),
-      ),
-
       // Full-screen flows above the tab bar.
       GoRoute(
         path: Routes.search,
-        parentNavigatorKey: _rootKey,
+        parentNavigatorKey: rootKey,
         builder: (_, s) => BlocProvider(
           create: (_) => CustomerSearchCubit(sl()),
           child: SearchCustomerPage(
@@ -166,7 +86,7 @@ GoRouter buildRouter(AuthCubit auth) {
                 routes: [
                   GoRoute(
                     path: 'new',
-                    parentNavigatorKey: _rootKey,
+                    parentNavigatorKey: rootKey,
                     builder: (_, s) => BlocProvider(
                       create: (_) => _customerForm()..loadAreas(),
                       child: CustomerFormPage(
@@ -190,7 +110,7 @@ GoRouter buildRouter(AuthCubit auth) {
                     routes: [
                       GoRoute(
                         path: 'saved',
-                        parentNavigatorKey: _rootKey,
+                        parentNavigatorKey: rootKey,
                         builder: (_, s) => _WithCustomer(
                           id: s.pathParameters['id']!,
                           initial: customerExtra(s),
@@ -199,7 +119,7 @@ GoRouter buildRouter(AuthCubit auth) {
                       ),
                       GoRoute(
                         path: 'edit',
-                        parentNavigatorKey: _rootKey,
+                        parentNavigatorKey: rootKey,
                         builder: (_, s) => _WithCustomer(
                           id: s.pathParameters['id']!,
                           initial: customerExtra(s),
@@ -211,7 +131,7 @@ GoRouter buildRouter(AuthCubit auth) {
                       ),
                       GoRoute(
                         path: 'records/new',
-                        parentNavigatorKey: _rootKey,
+                        parentNavigatorKey: rootKey,
                         builder: (_, s) => _WithCustomer(
                           id: s.pathParameters['id']!,
                           initial: customerExtra(s),
@@ -244,13 +164,12 @@ GoRouter buildRouter(AuthCubit auth) {
                 routes: [
                   GoRoute(
                     path: ':id',
-                    parentNavigatorKey: _rootKey,
+                    parentNavigatorKey: rootKey,
                     builder: (_, s) => BlocProvider(
                       create: (_) => RecordDetailsCubit(
                         recordId: s.pathParameters['id']!,
                         getRecord: sl(),
                         archive: sl(),
-                        discard: sl(),
                         initial: recordExtra(s),
                       )..load(),
                       child: const RecordDetailsPage(),
@@ -258,7 +177,7 @@ GoRouter buildRouter(AuthCubit auth) {
                     routes: [
                       GoRoute(
                         path: 'edit',
-                        parentNavigatorKey: _rootKey,
+                        parentNavigatorKey: rootKey,
                         builder: (_, s) {
                           final record = recordExtra(s);
                           if (record == null) return const _Missing();
@@ -325,36 +244,8 @@ GoRouter buildRouter(AuthCubit auth) {
                       child: const ExportPage(),
                     ),
                   ),
+                  GoRoute(path: 'backup', builder: (_, _) => const BackupPage()),
                   GoRoute(path: 'settings', builder: (_, _) => const SettingsPage()),
-                  GoRoute(
-                    path: 'profile',
-                    builder: (_, _) => BlocProvider(
-                      create: (_) => ProfileNameCubit(sl<AuthRepository>()),
-                      child: const UserProfilePage(),
-                    ),
-                    routes: [
-                      GoRoute(
-                        path: 'password',
-                        parentNavigatorKey: _rootKey,
-                        builder: (_, _) => BlocProvider(
-                          create: (_) => PasswordCubit(sl()),
-                          child: const ResetPasswordPage(fromProfile: true),
-                        ),
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: 'users',
-                    builder: (_, _) => BlocProvider(
-                      create: (_) => UsersCubit(list: sl(), change: sl(), invite: sl())..load(),
-                      child: const UsersPage(),
-                    ),
-                  ),
-                  GoRoute(
-                    path: 'pending',
-                    builder: (_, _) =>
-                        BlocProvider(create: (_) => PendingRecordsCubit(sl())..load(), child: const PendingSyncPage()),
-                  ),
                 ],
               ),
             ],

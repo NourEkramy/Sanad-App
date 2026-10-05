@@ -13,8 +13,8 @@ flowchart LR
     N --> D
     D --> E[Add record form<br/>customer card at top]
     E -->|nurse · service → price suggested ·<br/>Cash/Electronic · date/time = now| F[Save]
-    F -->|online| G[Customer profile<br/>new record at top of history]
-    F -->|offline| H[Saved on device<br/>“Waiting to sync”] --> G
+    F --> G[Customer profile<br/>new record at top of history]
+    G -.->|about 20 s later| H[(Google Drive copy updated)]
 ```
 
 | Step | Taps | Notes |
@@ -22,15 +22,15 @@ flowchart LR
 | 1. Open search | 1 | Search bar at the top of Home. The numeric keypad opens automatically. |
 | 2. Enter phone | — | Results appear after 3 digits. Partial numbers (`01012`, `5678`) and Arabic digits work. The typed digits are highlighted in each result. |
 | 3. Confirm customer | 1 | Each result shows **name, phone, area and number of visits** together. |
-| 4. Nurse | 2 | Searchable list (Arabic or English). Staff can add a missing nurse from the same list. |
+| 4. Nurse | 2 | Searchable list (Arabic or English). A missing nurse can be added from the same list. |
 | 5. Service | 2 | Shows each service's default price. Choosing one fills the price. |
 | 6. Price | 0–1 | Edit only when the actual price differs. A typed price is never overwritten. |
 | 7. Payment | 1 | Two large buttons: Cash / Electronic. |
 | 8. Date & time | 0 | Default to now. Tap to change. |
-| 9. Save | 1 | Validation errors appear next to each field. Draft is kept on failure. |
+| 9. Save | 1 | Validation errors appear next to each field. The draft is kept on the phone until saved. |
 
-**Typical total: 8–9 taps.** After saving, the profile opens with the new
-record on top, and with the cloud write already done (or queued offline).
+**Typical total: 8–9 taps.** Saving needs no connection; the backup follows
+on its own.
 
 ## 4.2 Add a new customer
 
@@ -61,19 +61,34 @@ this week, this month, last month, custom range), nurse, service, area,
 payment method; **Sort**: newest, oldest, highest/lowest price. A totals bar
 shows the number of records and revenue for the current filter.
 
-## 4.5 Administration
+## 4.5 Managing the data
 
-* **Nurses / Services / Areas** (More): list with active/inactive toggle.
-  Staff can add. Admins edit, rename or deactivate, with confirmation.
-  Inactive items stay in history but can't be picked for new records.
-  Changing a service's default price never alters past records.
-* **Users** (admin): invite (email, name, role), promote/demote,
-  deactivate (with confirmation). An admin cannot lock themselves out.
-* **Customer corrections** (admin): edit, archive/restore. *Needs review*
-  customers (imported without a phone) are listed through the dashboard banner.
-* **Record corrections** (admin): edit or archive (soft delete with audit log).
+* **Nurses / Services / Areas** (More): add, rename, deactivate. Inactive
+  items stay in history but can't be picked for new records. Changing a
+  service's default price never alters past records.
+* **Customers**: edit, archive/restore. *Needs review* customers (imported
+  without a phone) are reached from the dashboard banner or the filter on the
+  Customers tab.
+* **Records**: edit or archive.
 
-## 4.6 Excel import (admin)
+## 4.6 Google Drive backup
+
+More → **Google Drive backup** (or the cloud icon on Home):
+
+1. **Connect Google Drive** → choose the Google account → allow access to
+   *files created by Sanad*.
+2. If that Drive has no Sanad backup yet, the first backup runs immediately.
+   If it has one (e.g. from a previous phone), Sanad asks:
+   **Restore from Google Drive** (replaces this phone's data) or
+   **Keep this phone's data** (replaces the backup).
+3. From then on every change is backed up automatically. The screen shows the
+   account, the last backup time and the state (up to date / changes waiting /
+   failed with the reason). **Back up now** and **Restore** are always there.
+4. In Google Drive, open **Sanad › Sanad.xlsx** to view the data or share it
+   (Drive's *Share* button). Drive keeps the earlier versions.
+5. **Disconnect** stops the automatic backup; the files stay in Drive.
+
+## 4.7 Excel import
 
 More → Import from Excel →
 1. **Choose file** (.xlsx).
@@ -87,17 +102,13 @@ More → Import from Excel →
 4. **Import**: confirmation, then one transaction, then a result summary.
 5. **History**: every import with **Roll back** (confirmation).
 
-## 4.7 Excel export (admin)
+## 4.8 Excel export
 
 More → Export to Excel → period (all, this month, last month, custom) and
 sheets (Records with customer details, Customers, Nurses, Services, Areas)
-→ **Create Excel file** → share sheet (mobile) or download (web).
+→ **Create Excel file** → share sheet (WhatsApp, e-mail, Drive…) on the
+phone, download on the web.
 
-## 4.8 Account
+## 4.9 Settings
 
-* **Login** with email + password, **Forgot password** (e-mail link that opens
-  the app on *Choose a new password*), **Sign out** (warns if records are
-  still waiting to sync).
-* **Session expired**: back to login with an explanation. Drafts are kept.
-* **Profile**: name, role, change password.
-* **Settings**: language (system / English / العربية), privacy note, version.
+Language (system / English / العربية), privacy note, version.

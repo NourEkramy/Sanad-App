@@ -117,91 +117,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navMore => 'المزيد';
 
   @override
-  String get loginTitle => 'مرحبًا بعودتك';
+  String get greetingMorning => 'صباح الخير';
 
   @override
-  String get loginSubtitle => 'سجّل الدخول بحساب العمل للمتابعة.';
-
-  @override
-  String get loginEmail => 'البريد الإلكتروني';
-
-  @override
-  String get loginPassword => 'كلمة المرور';
-
-  @override
-  String get loginSubmit => 'تسجيل الدخول';
-
-  @override
-  String get loginForgot => 'نسيت كلمة المرور؟';
-
-  @override
-  String get loginSessionExpired => 'انتهت الجلسة. برجاء تسجيل الدخول مرة أخرى.';
-
-  @override
-  String get loginShowPassword => 'إظهار كلمة المرور';
-
-  @override
-  String get loginHidePassword => 'إخفاء كلمة المرور';
-
-  @override
-  String get notConfiguredTitle => 'لم يتم إعداد التطبيق';
-
-  @override
-  String get notConfiguredBody =>
-      'هذه النسخة لا تحتوي على عنوان الخادم. أعد بناء التطبيق مع SUPABASE_URL و SUPABASE_ANON_KEY (راجع docs/08-deployment.md).';
-
-  @override
-  String get forgotTitle => 'إعادة تعيين كلمة المرور';
-
-  @override
-  String get forgotBody => 'أدخل بريد العمل وسنرسل لك رابطًا لاختيار كلمة مرور جديدة.';
-
-  @override
-  String get forgotSubmit => 'إرسال الرابط';
-
-  @override
-  String forgotSent(String email) {
-    return 'إذا كان هناك حساب مرتبط بـ $email فسيصلك رابط إعادة التعيين.';
-  }
-
-  @override
-  String get resetTitle => 'اختر كلمة مرور جديدة';
-
-  @override
-  String get resetBody => 'أدخل كلمة مرور جديدة لحسابك، ثم سجّل الدخول بها.';
-
-  @override
-  String get resetNewPassword => 'كلمة المرور الجديدة';
-
-  @override
-  String get resetConfirmPassword => 'تأكيد كلمة المرور';
-
-  @override
-  String get resetSubmit => 'تحديث كلمة المرور';
-
-  @override
-  String get resetDone => 'تم تحديث كلمة المرور.';
-
-  @override
-  String get signOut => 'تسجيل الخروج';
-
-  @override
-  String get signOutConfirm => 'هل تريد تسجيل الخروج من سند على هذا الجهاز؟';
-
-  @override
-  String signOutPending(int count) {
-    return 'يوجد $count سجلات على هذا الجهاز لم تتم مزامنتها بعد. ستبقى على الجهاز وتتم مزامنتها بعد تسجيل الدخول مرة أخرى.';
-  }
-
-  @override
-  String greetingMorning(String name) {
-    return 'صباح الخير، $name';
-  }
-
-  @override
-  String greetingEvening(String name) {
-    return 'مساء الخير، $name';
-  }
+  String get greetingEvening => 'مساء الخير';
 
   @override
   String get dashboardSearchHint => 'ابحث عن عميل برقم التليفون';
@@ -255,28 +174,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get businessOverview => 'نظرة عامة';
 
   @override
-  String pendingSyncBanner(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count سجل في انتظار المزامنة',
-      few: '$count سجلات في انتظار المزامنة',
-      two: 'سجلان في انتظار المزامنة',
-      one: 'سجل واحد في انتظار المزامنة',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get syncNow => 'مزامنة الآن';
-
-  @override
-  String get syncing => 'جارٍ المزامنة…';
-
-  @override
-  String get syncDone => 'تمت مزامنة كل السجلات.';
-
-  @override
   String needsReviewBanner(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -288,9 +185,6 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get offlineBanner => 'أنت غير متصل. يتم حفظ السجلات الجديدة على الجهاز ومزامنتها تلقائيًا.';
 
   @override
   String get customersTitle => 'العملاء';
@@ -658,9 +552,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get recordSaved => 'تم حفظ السجل.';
 
   @override
-  String get recordQueued => 'لا يوجد اتصال — تم حفظ السجل على الجهاز وستتم مزامنته تلقائيًا.';
-
-  @override
   String get recordUpdated => 'تم تحديث السجل.';
 
   @override
@@ -703,12 +594,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get recordImported => 'مستورد من Excel';
 
   @override
-  String get recordPendingSync => 'في انتظار المزامنة';
-
-  @override
-  String get recordSyncFailed => 'فشلت المزامنة';
-
-  @override
   String get recordNoTime => 'الوقت غير مسجل';
 
   @override
@@ -726,26 +611,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String nurseLabel(String name) {
     return 'الممرض: $name';
-  }
-
-  @override
-  String get pendingTitle => 'في انتظار المزامنة';
-
-  @override
-  String get pendingEmpty => 'كل البيانات متزامنة.';
-
-  @override
-  String get pendingBody => 'هذه السجلات محفوظة على الجهاز وسيتم إرسالها تلقائيًا عند عودة الاتصال.';
-
-  @override
-  String get pendingDiscard => 'حذف السجل من الجهاز';
-
-  @override
-  String get pendingDiscardConfirm => 'حذف هذا السجل غير المتزامن؟ لم يصل إلى الخادم وسيتم فقده.';
-
-  @override
-  String pendingFailedHint(String reason) {
-    return 'رفض الخادم هذا السجل: $reason';
   }
 
   @override
@@ -840,9 +705,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get moreData => 'البيانات';
 
   @override
-  String get moreAccount => 'الحساب';
-
-  @override
   String get importTitle => 'استيراد من Excel';
 
   @override
@@ -867,65 +729,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsPrivacy =>
-      'تُخزَّن بيانات العملاء في قاعدة بيانات سحابية ومحمية بصلاحيات حسب الدور. السجلات المحفوظة دون اتصال مشفرة على الجهاز حتى تتم مزامنتها.';
-
-  @override
-  String get userProfileTitle => 'ملفي الشخصي';
-
-  @override
-  String get profileName => 'الاسم';
-
-  @override
-  String get profileEmail => 'البريد الإلكتروني';
-
-  @override
-  String get profileRole => 'الدور';
-
-  @override
-  String get roleAdmin => 'مسؤول';
-
-  @override
-  String get roleStaff => 'موظف';
-
-  @override
-  String get changePassword => 'تغيير كلمة المرور';
-
-  @override
-  String get profileSaved => 'تم تحديث الملف الشخصي.';
-
-  @override
-  String get usersTitle => 'المستخدمون';
-
-  @override
-  String get inviteUser => 'دعوة مستخدم';
-
-  @override
-  String inviteSent(String email) {
-    return 'تم إرسال الدعوة إلى $email.';
-  }
-
-  @override
-  String get inviteRole => 'الدور';
-
-  @override
-  String get userYou => 'أنت';
-
-  @override
-  String get makeAdmin => 'تعيين كمسؤول';
-
-  @override
-  String get makeStaff => 'تعيين كموظف';
-
-  @override
-  String get userUpdated => 'تم تحديث المستخدم.';
-
-  @override
-  String userDeactivateConfirm(String name) {
-    return 'إيقاف $name؟ سيتم تسجيل خروجه ولن يتمكن من الدخول.';
-  }
-
-  @override
-  String get pendingSyncMenu => 'في انتظار المزامنة';
+      'تُخزَّن بياناتك على هذا الهاتف فقط. إذا ربطت Google Drive، تُحفظ نسخة احتياطية في Drive الخاص بك ولا يراها أحد غيرك إلا إذا شاركتها.';
 
   @override
   String get importIntro =>
@@ -1265,37 +1069,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get validationPriceTooHigh => 'هذا المبلغ كبير جدًا.';
 
   @override
-  String get validationInvalidEmail => 'أدخل بريدًا إلكترونيًا صحيحًا.';
-
-  @override
-  String get validationPasswordTooShort => 'استخدم 8 أحرف على الأقل.';
-
-  @override
-  String get validationPasswordsDoNotMatch => 'كلمتا المرور غير متطابقتين.';
-
-  @override
   String get validationFutureDate => 'لا يمكن أن يكون التاريخ في المستقبل.';
 
   @override
-  String get failureNetwork => 'لا يوجد اتصال بالإنترنت. تحقق من الاتصال وحاول مرة أخرى.';
-
-  @override
-  String get failureServer => 'حدث خطأ في الخادم. حاول مرة أخرى.';
-
-  @override
-  String get failureSessionExpired => 'انتهت الجلسة. برجاء تسجيل الدخول مرة أخرى.';
-
-  @override
-  String get failurePermission => 'ليس لديك صلاحية للقيام بذلك.';
+  String get failureNetwork =>
+      'لا يوجد اتصال بالإنترنت. بياناتك محفوظة على الهاتف، وسيتم النسخ الاحتياطي عند عودة الاتصال.';
 
   @override
   String get failureDuplicatePhone => 'رقم التليفون مسجل بالفعل.';
 
   @override
   String get failureDuplicateName => 'هذا الاسم موجود بالفعل.';
-
-  @override
-  String get failureDuplicateEmail => 'يوجد مستخدم بهذا البريد بالفعل.';
 
   @override
   String get failureDuplicateFile => 'تم استيراد هذا الملف من قبل.';
@@ -1329,24 +1113,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get failureFileWrite => 'تعذر إنشاء ملف Excel.';
 
   @override
-  String get failureAuthInvalid => 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
-
-  @override
-  String get failureAuthDisabled => 'تم إيقاف هذا الحساب. تواصل مع المسؤول.';
-
-  @override
-  String get failureAuthNotConfirmed => 'قم بتأكيد بريدك الإلكتروني أولًا ثم سجّل الدخول.';
-
-  @override
-  String get failureAuthWeakPassword => 'اختر كلمة مرور أقوى.';
-
-  @override
-  String get failureAuthRateLimited => 'محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.';
-
-  @override
-  String get failureAuthUnknown => 'فشل تسجيل الدخول. حاول مرة أخرى.';
-
-  @override
   String get failureRuleNurseInactive => 'هذا الممرض لم يعد نشطًا. اختر ممرضًا آخر.';
 
   @override
@@ -1362,8 +1128,116 @@ class AppLocalizationsAr extends AppLocalizations {
   String get failureRuleBatchNotFound => 'تم التراجع عن هذا الاستيراد بالفعل.';
 
   @override
-  String get failureRuleSelfDemotion => 'لا يمكنك إزالة صلاحية المسؤول عن نفسك.';
+  String get failureRuleInUse => 'هذا العنصر مستخدم ولا يمكن حذفه.';
 
   @override
-  String get failureRuleInUse => 'هذا العنصر مستخدم ولا يمكن حذفه.';
+  String get moreApp => 'التطبيق';
+
+  @override
+  String get failureServer => 'حدث خطأ في Google Drive. حاول مرة أخرى.';
+
+  @override
+  String get failureFileNotABackup => 'هذا الملف ليس نسخة احتياطية من سند.';
+
+  @override
+  String get failureBackupCanceled => 'تم إلغاء تسجيل الدخول إلى Google.';
+
+  @override
+  String get failureBackupNotAuthorized => 'لم يعد لدى سند إذن الوصول إلى Google Drive. اربطه مرة أخرى.';
+
+  @override
+  String get failureBackupNotConfigured =>
+      'تسجيل الدخول إلى Google غير مُعدّ لهذه النسخة من التطبيق بعد. راجع \"إعداد Google Drive\" في دليل التشغيل.';
+
+  @override
+  String get failureBackupNoBackup => 'لا توجد نسخة احتياطية من سند في Google Drive هذا.';
+
+  @override
+  String get backupTitle => 'النسخ الاحتياطي على Google Drive';
+
+  @override
+  String get backupIntro =>
+      'بياناتك محفوظة على هذا الهاتف. اربط Google Drive للاحتفاظ بنسخة في Drive الخاص بك: ملف Sanad.xlsx (كل الأوراق، جاهز للفتح والمشاركة) ونسخة كاملة للاستعادة على هاتف جديد. تُحدَّث النسخة تلقائيًا بعد كل تغيير.';
+
+  @override
+  String get backupConnect => 'ربط Google Drive';
+
+  @override
+  String get backupAccount => 'حساب Google';
+
+  @override
+  String get backupLast => 'آخر نسخة احتياطية';
+
+  @override
+  String get backupNever => 'لم يتم النسخ بعد';
+
+  @override
+  String get backupUpToDate => 'تم نسخ كل البيانات';
+
+  @override
+  String get backupPendingChanges => 'توجد تغييرات في انتظار النسخ';
+
+  @override
+  String get backupNotUpToDate => 'لم يكتمل آخر نسخ احتياطي';
+
+  @override
+  String get backupInProgress => 'جارٍ النسخ الاحتياطي…';
+
+  @override
+  String get backupRestoring => 'جارٍ الاستعادة…';
+
+  @override
+  String get backupNow => 'نسخ احتياطي الآن';
+
+  @override
+  String get backupRestore => 'استعادة من Google Drive';
+
+  @override
+  String get backupRestoreConfirmTitle => 'استبدال البيانات على هذا الهاتف؟';
+
+  @override
+  String get backupRestoreConfirm =>
+      'سيتم استبدال كل العملاء والسجلات والممرضين والخدمات والمناطق على هذا الهاتف بالنسخة الموجودة في Google Drive.';
+
+  @override
+  String get backupRestored => 'تمت استعادة البيانات من Google Drive';
+
+  @override
+  String get backupFoundTitle => 'توجد نسخة احتياطية في Google Drive هذا';
+
+  @override
+  String backupFoundBody(String date) {
+    return 'وجد سند نسخة احتياطية بتاريخ $date. استعدها على هذا الهاتف، أو احتفظ ببيانات هذا الهاتف واستبدل النسخة.';
+  }
+
+  @override
+  String get backupKeepDevice => 'الاحتفاظ ببيانات هذا الهاتف';
+
+  @override
+  String get backupKeepDeviceConfirm =>
+      'سيتم استبدال النسخة الموجودة في Google Drive ببيانات هذا الهاتف. تبقى الإصدارات السابقة في سجل إصدارات الملف على Drive.';
+
+  @override
+  String get backupDisconnect => 'إلغاء ربط Google Drive';
+
+  @override
+  String get backupDisconnectConfirm =>
+      'سيتوقف النسخ الاحتياطي التلقائي. تبقى الملفات الموجودة في Google Drive كما هي.';
+
+  @override
+  String get backupWhere =>
+      'الملفات موجودة في Google Drive › Sanad. افتح Sanad.xlsx هناك لعرضه أو مشاركته مع الآخرين. يحتفظ Drive بالإصدارات السابقة لكل ملف.';
+
+  @override
+  String get backupUnsupported =>
+      'النسخ الاحتياطي على Google Drive متاح في تطبيق Android. هنا استخدم التصدير إلى Excel لحفظ نسخة.';
+
+  @override
+  String get backupBannerConnect => 'انسخ بياناتك احتياطيًا على Google Drive';
+
+  @override
+  String get backupBannerFailed => 'لم يكتمل النسخ الاحتياطي على Google Drive';
+
+  @override
+  String get backupBannerAction => 'فتح';
 }

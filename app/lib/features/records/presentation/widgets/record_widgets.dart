@@ -41,28 +41,6 @@ class PaymentChip extends StatelessWidget {
       StatusChip(label: method.label(context), icon: method.icon, color: method.color, background: method.background);
 }
 
-class SyncChip extends StatelessWidget {
-  const SyncChip(this.state, {super.key});
-  final SyncState state;
-
-  @override
-  Widget build(BuildContext context) => switch (state) {
-    SyncState.synced => const SizedBox.shrink(),
-    SyncState.pending => StatusChip(
-      label: context.l10n.recordPendingSync,
-      icon: Icons.cloud_upload_outlined,
-      color: AppColors.warning,
-      background: AppColors.warningSoft,
-    ),
-    SyncState.failed => StatusChip(
-      label: context.l10n.recordSyncFailed,
-      icon: Icons.error_outline_rounded,
-      color: AppColors.error,
-      background: AppColors.errorSoft,
-    ),
-  };
-}
-
 /// One service record.
 /// [showCustomer] adds the customer name + phone (records list); the customer
 /// profile omits them because the customer is already on screen.
@@ -155,7 +133,6 @@ class RecordTile extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   PaymentChip(record.paymentMethod),
-                  SyncChip(record.syncState),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

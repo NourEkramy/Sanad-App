@@ -1,13 +1,16 @@
 # 2. Database schema
 
-PostgreSQL (Supabase). Source: [`supabase/migrations/20261004000000_initial_schema.sql`](../supabase/migrations/20261004000000_initial_schema.sql).
+SQLite on the device. Source: [`app/lib/core/database/sanad_database.dart`](../app/lib/core/database/sanad_database.dart)
+(schema, seed, transactions, backup dump/restore). Foreign keys are enforced
+(`PRAGMA foreign_keys = ON`).
+
+Storage formats: ids are UUID text; money is **integer piasters**; dates are
+`yyyy-MM-dd`; times `HH:mm:ss`; timestamps UTC ISO 8601; booleans 0/1.
 
 ## 2.1 Entities and relationships
 
 ```mermaid
 erDiagram
-    profiles ||--o{ customers : "created_by"
-    profiles ||--o{ service_records : "created_by"
     areas ||--o{ customers : "lives in"
     areas ||--o{ service_records : "area at time of visit"
     customers ||--o{ service_records : "has"
@@ -17,148 +20,115 @@ erDiagram
     import_batches ||--o{ service_records : "imported"
     import_batches ||--o{ customers : "imported"
 
-    profiles {
-        uuid id PK "= auth.users.id"
-        text full_name
-        text email
-        app_role role "admin | staff"
-        bool is_active
-    }
     areas {
-        uuid id PK
+        text id PK
         text name
-        text name_normalized UK "generated"
-        bool is_active
+        text name_normalized UK
+        int is_active
     }
     nurses {
-        uuid id PK
+        text id PK
         text name
-        text name_normalized UK "generated"
+        text name_normalized UK
         text phone
-        bool is_active
+        int is_active
     }
     services {
-        uuid id PK
+        text id PK
         text name
-        text name_normalized UK "generated"
-        numeric default_price "NULL = variable"
-        bool is_active
+        text name_normalized UK
+        int default_price "piasters, NULL = variable"
+        int is_active
     }
     customers {
-        uuid id PK
+        text id PK
         text full_name
+        text name_normalized
         text phone UK "01XXXXXXXXX"
         text address
-        uuid area_id FK
-        bool needs_review
-        timestamptz deleted_at "soft delete"
+        text area_id FK
+        int needs_review
+        text deleted_at "archive"
     }
     service_records {
-        uuid id PK "client-generated"
-        uuid customer_id FK
-        uuid nurse_id FK
-        uuid service_id FK
-        uuid area_id FK
+        text id PK
+        text customer_id FK
+        text nurse_id FK
+        text service_id FK
+        text area_id FK
         text patient_name
-        numeric price "actual price"
-        payment_method payment_method
-        date service_date
-        time service_time
+        int price "piasters, actual price"
+        text payment_method "cash | electronic | unspecified"
+        text service_date
+        text service_time
         text notes
         text "*_snapshot" "history"
-        timestamptz deleted_at "soft delete"
+        text deleted_at "archive"
     }
 ```
 
-Supporting tables: `import_batches` (one per import, reversible), `import_rows`
-(every source row and its outcome) and `audit_log` (old and new values for every
-update or delete of customers and records).
+Supporting tables: `import_batches` (one per import, reversible) and
+`import_rows` (every source row and what happened to it).
 
 ## 2.2 Tables
 
 | Table | Purpose | Key rules |
 |-------|---------|-----------|
-| `profiles` | App user (1:1 with `auth.users`) | Created by trigger as `staff`. Only admins change roles or activation, and an admin cannot demote or deactivate themselves. |
-| `areas` | Living areas | `name_normalized` is unique, so `الهانوفيل` and ` الهانوفيل ` cannot both exist. Deactivate instead of delete. |
+| `areas` | Living areas | `name_normalized` is unique, so `الهانوفيل` and ` الهانوفيل ` (or `أ`/`ا` variants) cannot both exist. Deactivate instead of delete. |
 | `nurses` | Nurses / technicians | Unique normalised name, optional phone, `is_active`. |
-| `services` | Service catalogue | `default_price` is only a suggestion (NULL means variable). |
-| `customers` | Customers | **`phone` is unique** (partial unique index). It is stored normalised (`01012345678`). Required: name, phone, area. Imported customers without a valid phone are allowed **only** with `needs_review = true`. Soft-deleted with `deleted_at`. |
-| `service_records` | One service/visit | Belongs to exactly one customer. Required: nurse, service, price ≥ 0, payment method, date, time. Imported rows may lack a time or payment method (`unspecified`); new rows may not (check constraints). |
+| `services` | Service catalogue | `default_price` is only a suggestion (NULL means variable). Seeded with the 51 services of the legacy price list. |
+| `customers` | Customers | **`phone` is unique** and stored normalised (`01012345678`). Required: name, area and phone, except imported customers without a valid phone, which are allowed **only** with `needs_review = 1`. Archived with `deleted_at`. |
+| `service_records` | One service/visit | Belongs to exactly one customer. Required: nurse, service, price ≥ 0, payment method, date, time. Imported rows may lack a time or payment method (`unspecified`); new rows may not (`CHECK`). |
 | `import_batches` | Each Excel import | `file_sha256` is unique among committed batches (no double import). |
-| `import_rows` | Audit copy of every imported or skipped row | Raw cell text plus warnings/errors. |
-| `audit_log` | Change history | Written by triggers. Admin-readable only. |
+| `import_rows` | Copy of every imported or skipped row | Raw cell text plus warnings/errors. |
+
+Nine areas and the service price list from the workbook's `قوائم` sheet are
+inserted when the database is created.
 
 ### Why records keep snapshots
 
-The brief requires that a historical record never changes when the customer
-moves, an area is renamed, a nurse's details change, or a service price
-changes. Records therefore store:
+A historical record must never change when the customer moves, an area is
+renamed, a nurse's details change, or a service price changes. Records store:
 
 * `price`: the amount actually charged (never derived from `services.default_price`);
 * `area_id` + `area_name_snapshot`, `address_snapshot`: where the visit took place;
 * `nurse_name_snapshot`, `service_name_snapshot`, `customer_name_snapshot`,
   `customer_phone_snapshot`.
 
-The snapshots are written **by a database trigger**, so clients cannot forge
-them. The foreign keys (`customer_id`, `nurse_id`, `service_id`, `area_id`)
-are kept for relational queries and filtering, so data is not otherwise
-duplicated. Customer *identity* (name and phone) in lists and exports comes
-from the live customer row. The snapshot keeps the original values for audit.
+The record repository writes the snapshot in the same transaction as the
+record and checks that the nurse and service are active and the customer is
+not archived. Customer *identity* (name and phone) in lists and exports comes
+from the live customer row.
 
 ## 2.3 Indexes
 
 | Index | Serves |
 |-------|--------|
-| `customers_phone_key` (unique, partial) | Duplicate prevention and exact phone lookup |
-| `customers_phone_prefix_idx` (`text_pattern_ops`) | **Prefix search** while typing (`01012…`) |
-| `customers_phone_trgm_idx` (GIN trigram) | "Contains" search (`…5678`, 4+ digits) |
-| `customers_name_trgm_idx` (GIN trigram on normalised name) | Name search |
-| `service_records_customer_idx` (customer, date desc, time desc), partial on not-deleted | Customer history |
-| `service_records_date_idx` (date desc, time desc), partial on not-deleted | Records list, today's stats, date filters |
-| `service_records_nurse_idx`, `_service_idx`, `_area_idx` | Filters |
-| `*_name_normalized_key` | Unique reference names |
+| `customers.phone` (unique) | Duplicate prevention, exact lookup, prefix/contains search |
+| `customers_name_idx` | Name search |
+| `service_records_customer_idx` (customer, date, time) | Customer history |
+| `service_records_date_idx` (date, time) | Records list, today's stats, date filters |
+| `service_records_batch_idx` | Import rollback |
+| `*.name_normalized` (unique) | Unique reference names |
 | `import_batches_file_committed_key` | One committed import per file |
 
-## 2.4 Views and functions (API)
+## 2.4 Queries
 
-| Object | Purpose |
-|--------|---------|
-| `customer_overview` (view) | Customer + area name + record count + last visit |
-| `service_record_details` (view) | Record + customer name/phone + snapshots |
-| `search_customers(query, max_results)` | Phone-first search (digits → prefix/contains; text → normalised name). Arabic-Indic digits and `+20` are accepted. |
-| `filter_service_records(...)` | **Single definition** of record filtering, used by the list, the totals and the export |
-| `record_totals(...)` | Count and revenue (cash / electronic) for a filter |
-| `dashboard_stats(day)` | Dashboard numbers in one round trip |
-| `archive_service_record(id)`, `set_customer_archived(id, bool)` | Soft delete / restore (admin) |
-| `import_legacy_batch(payload)` | Atomic import (admin) |
-| `rollback_import_batch(id)` | Reverse an import (admin) |
-| `sanad_normalize(text)`, `sanad_is_valid_phone(text)` | Shared rules, mirrored in Dart |
+| Where | What |
+|-------|------|
+| `LocalCustomerRepository.search` | Phone-first search: digits → phone prefix, then "contains" from 4 digits; text → normalised name. Arabic-Indic digits and `+20` accepted. LIKE wildcards escaped. |
+| `RecordMapper.where` | **Single definition** of record filtering (date range, nurse, service, area, payment, customer, name/phone query), used by the list, the totals and the export |
+| `LocalDashboardRepository` | All dashboard numbers in one query |
+| `LocalImportRepository.commit / rollback` | Atomic import; rollback removes only what the batch created and nothing used since |
+| `SanadDatabase.dump / restore` | Full backup (all tables) and restore in one transaction |
 
-All views use `security_invoker`, so the caller's RLS applies.
+## 2.5 Tests
 
-## 2.5 Row Level Security
-
-RLS is enabled on every table. The API roles get **no `DELETE` grant** on
-any table and `anon` gets nothing at all.
-
-| Table | Staff | Admin |
-|-------|-------|-------|
-| customers | read, create | + edit, archive |
-| service_records | read, create (as themselves) | + edit, archive |
-| areas / nurses / services | read, create | + edit, (de)activate |
-| profiles | own row (name only) | all rows, roles, activation |
-| import_batches / import_rows / audit_log | — | read; writes only through the import RPCs |
-
-`is_staff()` and `is_admin()` look at `profiles.is_active`, so a deactivated
-user immediately loses access even with a valid token.
-
-## 2.6 Tests
-
-`supabase/tests/run.sh` starts a temporary PostgreSQL, applies a Supabase stub,
-the migration and the seed (twice, to check idempotency), then runs
-`01_schema_test.sql`. That file covers normalisation, phone validation,
-duplicate phone/area, required fields, staff/admin permissions (including
-"no DELETE"), search (prefix, contains, Arabic digits, `+20`, name), frozen
-history after renames and price changes, inactive-nurse protection, soft
-delete + audit log, filters and totals, and import → duplicate refusal →
-rollback (keeping customers used later) → re-import.
+`app/test/core/database/local_repositories_test.dart` runs every repository
+against a real in-memory SQLite database: seed data, unique names with
+spelling variants, duplicate phone (use case and constraint), phone and name
+search, archived customers, visit counts, record snapshot and frozen history
+after renames / moves / price changes, double save, inactive nurse and
+archived customer, ordering, filters + totals, record correction, dashboard,
+Excel import (matching, review flags, revenue), duplicate-file refusal,
+rollback keeping used data, re-import, export, and backup dump/restore.

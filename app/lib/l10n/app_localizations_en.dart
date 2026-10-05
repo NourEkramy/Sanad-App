@@ -117,91 +117,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navMore => 'More';
 
   @override
-  String get loginTitle => 'Welcome back';
+  String get greetingMorning => 'Good morning';
 
   @override
-  String get loginSubtitle => 'Sign in with your work account to continue.';
-
-  @override
-  String get loginEmail => 'Email';
-
-  @override
-  String get loginPassword => 'Password';
-
-  @override
-  String get loginSubmit => 'Sign in';
-
-  @override
-  String get loginForgot => 'Forgot password?';
-
-  @override
-  String get loginSessionExpired => 'Your session has expired. Please sign in again.';
-
-  @override
-  String get loginShowPassword => 'Show password';
-
-  @override
-  String get loginHidePassword => 'Hide password';
-
-  @override
-  String get notConfiguredTitle => 'Sanad is not configured';
-
-  @override
-  String get notConfiguredBody =>
-      'This build has no server address. Rebuild the app with SUPABASE_URL and SUPABASE_ANON_KEY (see docs/08-deployment.md).';
-
-  @override
-  String get forgotTitle => 'Reset password';
-
-  @override
-  String get forgotBody => 'Enter your work email and we will send you a link to choose a new password.';
-
-  @override
-  String get forgotSubmit => 'Send reset link';
-
-  @override
-  String forgotSent(String email) {
-    return 'If an account exists for $email, a reset link is on its way.';
-  }
-
-  @override
-  String get resetTitle => 'Choose a new password';
-
-  @override
-  String get resetBody => 'Enter a new password for your account. You will then sign in with it.';
-
-  @override
-  String get resetNewPassword => 'New password';
-
-  @override
-  String get resetConfirmPassword => 'Confirm new password';
-
-  @override
-  String get resetSubmit => 'Update password';
-
-  @override
-  String get resetDone => 'Password updated.';
-
-  @override
-  String get signOut => 'Sign out';
-
-  @override
-  String get signOutConfirm => 'Sign out of Sanad on this device?';
-
-  @override
-  String signOutPending(int count) {
-    return 'There are $count records on this device that have not synced yet. They stay on this device and will sync after you sign in again.';
-  }
-
-  @override
-  String greetingMorning(String name) {
-    return 'Good morning, $name';
-  }
-
-  @override
-  String greetingEvening(String name) {
-    return 'Good evening, $name';
-  }
+  String get greetingEvening => 'Good evening';
 
   @override
   String get dashboardSearchHint => 'Search customer by phone number';
@@ -255,26 +174,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get businessOverview => 'Business overview';
 
   @override
-  String pendingSyncBanner(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count records are waiting to sync',
-      one: '1 record is waiting to sync',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get syncNow => 'Sync now';
-
-  @override
-  String get syncing => 'Syncing…';
-
-  @override
-  String get syncDone => 'All records are synced.';
-
-  @override
   String needsReviewBanner(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -284,9 +183,6 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get offlineBanner => 'You are offline. New records are saved on this device and sync automatically.';
 
   @override
   String get customersTitle => 'Customers';
@@ -644,9 +540,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordSaved => 'Record saved.';
 
   @override
-  String get recordQueued => 'No connection — the record is saved on this device and will sync automatically.';
-
-  @override
   String get recordUpdated => 'Record updated.';
 
   @override
@@ -689,12 +582,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordImported => 'Imported from Excel';
 
   @override
-  String get recordPendingSync => 'Waiting to sync';
-
-  @override
-  String get recordSyncFailed => 'Sync failed';
-
-  @override
   String get recordNoTime => 'Time not recorded';
 
   @override
@@ -713,27 +600,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String nurseLabel(String name) {
     return 'Nurse: $name';
-  }
-
-  @override
-  String get pendingTitle => 'Waiting to sync';
-
-  @override
-  String get pendingEmpty => 'Everything is synced.';
-
-  @override
-  String get pendingBody =>
-      'These records are saved on this device. They are sent automatically when the connection returns.';
-
-  @override
-  String get pendingDiscard => 'Discard record';
-
-  @override
-  String get pendingDiscardConfirm => 'Discard this unsynced record? It has not reached the server and will be lost.';
-
-  @override
-  String pendingFailedHint(String reason) {
-    return 'The server rejected this record: $reason';
   }
 
   @override
@@ -828,9 +694,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moreData => 'Data';
 
   @override
-  String get moreAccount => 'Account';
-
-  @override
   String get importTitle => 'Import from Excel';
 
   @override
@@ -855,65 +718,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsPrivacy =>
-      'Customer data is stored in the cloud database and protected by role-based access. Records saved offline are encrypted on this device until they sync.';
-
-  @override
-  String get userProfileTitle => 'My profile';
-
-  @override
-  String get profileName => 'Name';
-
-  @override
-  String get profileEmail => 'Email';
-
-  @override
-  String get profileRole => 'Role';
-
-  @override
-  String get roleAdmin => 'Administrator';
-
-  @override
-  String get roleStaff => 'Staff';
-
-  @override
-  String get changePassword => 'Change password';
-
-  @override
-  String get profileSaved => 'Profile updated.';
-
-  @override
-  String get usersTitle => 'Users';
-
-  @override
-  String get inviteUser => 'Invite user';
-
-  @override
-  String inviteSent(String email) {
-    return 'Invitation sent to $email.';
-  }
-
-  @override
-  String get inviteRole => 'Role';
-
-  @override
-  String get userYou => 'You';
-
-  @override
-  String get makeAdmin => 'Make administrator';
-
-  @override
-  String get makeStaff => 'Make staff';
-
-  @override
-  String get userUpdated => 'User updated.';
-
-  @override
-  String userDeactivateConfirm(String name) {
-    return 'Deactivate $name? They will be signed out and unable to sign in.';
-  }
-
-  @override
-  String get pendingSyncMenu => 'Waiting to sync';
+      'Your data is stored only on this phone. If you connect Google Drive, a backup is kept in your own Drive, visible only to you until you share it.';
 
   @override
   String get importIntro =>
@@ -1254,37 +1059,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationPriceTooHigh => 'This amount is too high.';
 
   @override
-  String get validationInvalidEmail => 'Enter a valid email address.';
-
-  @override
-  String get validationPasswordTooShort => 'Use at least 8 characters.';
-
-  @override
-  String get validationPasswordsDoNotMatch => 'Passwords do not match.';
-
-  @override
   String get validationFutureDate => 'The date cannot be in the future.';
 
   @override
-  String get failureNetwork => 'No internet connection. Check your connection and try again.';
-
-  @override
-  String get failureServer => 'Something went wrong on the server. Please try again.';
-
-  @override
-  String get failureSessionExpired => 'Your session has expired. Please sign in again.';
-
-  @override
-  String get failurePermission => 'You do not have permission to do this.';
+  String get failureNetwork =>
+      'No internet connection. Your data is safe on this phone; the backup will run when you are back online.';
 
   @override
   String get failureDuplicatePhone => 'This phone number is already registered.';
 
   @override
   String get failureDuplicateName => 'This name already exists.';
-
-  @override
-  String get failureDuplicateEmail => 'A user with this email already exists.';
 
   @override
   String get failureDuplicateFile => 'This file has already been imported.';
@@ -1318,24 +1103,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureFileWrite => 'The Excel file could not be created.';
 
   @override
-  String get failureAuthInvalid => 'Incorrect email or password.';
-
-  @override
-  String get failureAuthDisabled => 'This account has been deactivated. Contact your administrator.';
-
-  @override
-  String get failureAuthNotConfirmed => 'Confirm your email address first, then sign in.';
-
-  @override
-  String get failureAuthWeakPassword => 'Choose a stronger password.';
-
-  @override
-  String get failureAuthRateLimited => 'Too many attempts. Wait a moment and try again.';
-
-  @override
-  String get failureAuthUnknown => 'Sign-in failed. Please try again.';
-
-  @override
   String get failureRuleNurseInactive => 'This nurse is no longer active. Choose another nurse.';
 
   @override
@@ -1351,8 +1118,115 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureRuleBatchNotFound => 'This import was already rolled back.';
 
   @override
-  String get failureRuleSelfDemotion => 'You cannot remove your own administrator access.';
+  String get failureRuleInUse => 'This item is in use and cannot be removed.';
 
   @override
-  String get failureRuleInUse => 'This item is in use and cannot be removed.';
+  String get moreApp => 'App';
+
+  @override
+  String get failureServer => 'Google Drive answered with an error. Please try again.';
+
+  @override
+  String get failureFileNotABackup => 'This file is not a Sanad backup.';
+
+  @override
+  String get failureBackupCanceled => 'Google sign-in was canceled.';
+
+  @override
+  String get failureBackupNotAuthorized => 'Sanad no longer has access to Google Drive. Connect again.';
+
+  @override
+  String get failureBackupNotConfigured =>
+      'Google sign-in is not set up for this copy of the app yet. See \"Google Drive setup\" in the deployment guide.';
+
+  @override
+  String get failureBackupNoBackup => 'No Sanad backup was found in this Google Drive.';
+
+  @override
+  String get backupTitle => 'Google Drive backup';
+
+  @override
+  String get backupIntro =>
+      'Your data is stored on this phone. Connect Google Drive to keep a copy in your own Drive: Sanad.xlsx (all sheets, ready to open and share) and a full backup to restore on a new phone. After every change the copy is updated automatically.';
+
+  @override
+  String get backupConnect => 'Connect Google Drive';
+
+  @override
+  String get backupAccount => 'Google account';
+
+  @override
+  String get backupLast => 'Last backup';
+
+  @override
+  String get backupNever => 'Not backed up yet';
+
+  @override
+  String get backupUpToDate => 'Everything is backed up';
+
+  @override
+  String get backupPendingChanges => 'Changes waiting to be backed up';
+
+  @override
+  String get backupNotUpToDate => 'The last backup did not complete';
+
+  @override
+  String get backupInProgress => 'Backing up…';
+
+  @override
+  String get backupRestoring => 'Restoring…';
+
+  @override
+  String get backupNow => 'Back up now';
+
+  @override
+  String get backupRestore => 'Restore from Google Drive';
+
+  @override
+  String get backupRestoreConfirmTitle => 'Replace the data on this phone?';
+
+  @override
+  String get backupRestoreConfirm =>
+      'All customers, records, nurses, services and areas on this phone will be replaced by the backup in Google Drive.';
+
+  @override
+  String get backupRestored => 'Data restored from Google Drive';
+
+  @override
+  String get backupFoundTitle => 'A backup is already in this Google Drive';
+
+  @override
+  String backupFoundBody(String date) {
+    return 'Sanad found a backup from $date. Restore it to this phone, or keep this phone\'s data and replace the backup.';
+  }
+
+  @override
+  String get backupKeepDevice => 'Keep this phone\'s data';
+
+  @override
+  String get backupKeepDeviceConfirm =>
+      'The backup in Google Drive will be replaced by the data on this phone. Earlier versions stay in the file\'s version history in Drive.';
+
+  @override
+  String get backupDisconnect => 'Disconnect Google Drive';
+
+  @override
+  String get backupDisconnectConfirm => 'Automatic backups will stop. Files already in Google Drive stay there.';
+
+  @override
+  String get backupWhere =>
+      'Files are in Google Drive › Sanad. Open Sanad.xlsx there to view it or share it with others. Drive keeps earlier versions of each file.';
+
+  @override
+  String get backupUnsupported =>
+      'Google Drive backup works in the Android app. Here, use Export to Excel to save a copy.';
+
+  @override
+  String get backupBannerConnect => 'Back up your data to Google Drive';
+
+  @override
+  String get backupBannerFailed => 'The Google Drive backup did not complete';
+
+  @override
+  String get backupBannerAction => 'Open';
 }

@@ -1,9 +1,10 @@
 # Sanad · سند
 
-**Customer & service-records management for home-care teams.**
-Search a customer by phone, confirm, add the visit, save. Every service is kept in
-a cloud database with full history, Excel import/export and role-based access.
-Arabic and English.
+**Customer & service-records app for home care, on your phone.**
+Search a customer by phone, confirm, add the visit, save. Every service is kept
+with full history on the phone, a copy is kept up to date in your own Google
+Drive (`Sanad.xlsx`, ready to open and share), and Excel import/export is built
+in. Arabic and English.
 
 <p>
 <img src="docs/screenshots/02-dashboard.png" width="200" alt="Dashboard">
@@ -24,10 +25,11 @@ Arabic and English.
 
 | | |
 |---|---|
-| **App** (`app/`) | Flutter 3.47 · feature-first clean architecture (domain / data / presentation) · Cubit state management · get_it · go_router · Material 3 design system in Sanad blue · Arabic (RTL) + English · Android, iOS, Web |
-| **Backend** (`supabase/`) | Supabase: PostgreSQL with Row Level Security, phone-indexed search, historical snapshots, audit log, atomic + reversible Excel import, invite-user Edge Function |
-| **Docs** (`docs/`) | Workbook analysis, schema, architecture, user flows, design system, screen specs, testing, deployment, security |
-| **Tests** | 106 Flutter unit/cubit/widget tests + SQL test suite (constraints, RLS, import/rollback), run in CI |
+| **App** (`app/`) | Flutter 3.47 · feature-first clean architecture (domain / data / presentation) · Cubit state management · get_it · go_router · Material 3 design system in Sanad blue · Arabic (RTL) + English · Android (also runs in a browser for a quick look) |
+| **Data** | SQLite on the phone (`sqflite`): foreign keys, unique phone and names, frozen history, atomic and reversible Excel import. No server, no account. |
+| **Cloud copy** | The user's own Google Drive (`drive.file` scope: Sanad sees only its own files): `Sanad.xlsx` with every sheet + a full backup for restore, updated automatically after changes |
+| **Docs** (`docs/`) | Workbook analysis, schema, architecture, user flows, design system, screen specs, testing, setup, security |
+| **Tests** | 133 Flutter tests (unit, cubit, widget, and repository tests on real SQLite), run in CI |
 
 ## Features
 
@@ -36,29 +38,29 @@ Arabic and English.
 * **Service records**: nurse, service (default price suggested; actual price stored), Cash/Electronic, date/time defaulting to now, notes, patient name for family members.
 * **History never changes**: price, nurse, service, area and address are frozen per record.
 * **Records**: search, filters (date range, nurse, service, area, payment), sorting, live totals.
-* **Nurses, services, areas, users**: managed in-app; deactivate instead of delete.
-* **Dashboard**: today's services and revenue (cash / electronic), totals, review alerts.
+* **Nurses, services, areas**: managed in the app; deactivate instead of delete. The legacy price list and areas are preloaded.
+* **Dashboard**: today's services and revenue (cash / electronic), totals, review alerts, backup state.
+* **Google Drive backup**: connect once; every change is backed up; restore on a new phone; the Drive copy of `Sanad.xlsx` can be shared like any Drive file.
 * **Excel import**: auto-mapped columns, preview with row-level warnings, one transaction, rollback.
-* **Excel export**: formatted workbook (Records with customer details, Customers, Nurses, Services, Areas).
-* **Offline safety net**: records saved without a connection are queued on the device (encrypted) and synced automatically. Form drafts survive app restarts.
-* **Security**: admin/staff roles, RLS on every table, no hard deletes, secure session storage.
+* **Excel export**: formatted workbook (Records with customer details, Customers, Nurses, Services, Areas), any period, shared from the phone.
+* **Works offline**: everything is on the phone; only the backup needs a connection, and it retries by itself.
+* **Privacy**: data stays on the phone and in the owner's Drive; nothing is published.
 
 ## Quick start
 
 ```bash
-npx supabase start                              # local backend (Docker), applies migrations + seed
-cp app/env/local.example.json app/env/local.json  # add the publishable key printed above
-cd app && flutter pub get
-flutter run --dart-define-from-file=env/local.json
+cd app
+flutter pub get
+flutter run              # Android phone or emulator
 ```
 
-Create the first admin as described in [docs/08-deployment.md](docs/08-deployment.md).
+To enable the Google Drive backup, register the app with Google once:
+[docs/08-deployment.md › Google Drive setup](docs/08-deployment.md#83-google-drive-setup-once-about-10-minutes).
 
 Tests:
 
 ```bash
 cd app && flutter analyze && flutter test
-supabase/tests/run.sh          # database tests (needs a local PostgreSQL)
 ```
 
 ## Documentation
@@ -70,7 +72,7 @@ supabase/tests/run.sh          # database tests (needs a local PostgreSQL)
 5. [Design system](docs/05-design-system.md)
 6. [Screen specifications](docs/06-screens.md)
 7. [Testing strategy](docs/07-testing.md)
-8. [Deployment](docs/08-deployment.md)
+8. [Setup, Google Drive & installing on a phone](docs/08-deployment.md)
 9. [Security & privacy](docs/09-security.md)
 
 ## Repository layout
@@ -78,15 +80,10 @@ supabase/tests/run.sh          # database tests (needs a local PostgreSQL)
 ```
 app/                      Flutter application
   lib/app/                composition root: DI, router, shell
-  lib/core/               theme, widgets, errors, utils, storage
+  lib/core/               database, theme, widgets, errors, utils, storage
   lib/features/<feature>/ domain · data · presentation
   lib/l10n/               English & Arabic strings
-  test/                   unit, cubit and widget tests
-supabase/
-  migrations/             schema, RLS, functions
-  seed.sql                areas & service price list from the legacy workbook
-  functions/invite-user/  admin-only account creation
-  tests/                  SQL tests + runner
+  test/                   unit, cubit, widget and database tests
 docs/                     project documentation
 ```
 

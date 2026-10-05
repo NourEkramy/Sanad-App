@@ -12,7 +12,6 @@ import '../../domain/entities/record_filter.dart';
 import '../cubit/records_list_cubit.dart';
 import '../widgets/record_filter_sheet.dart';
 import '../widgets/record_widgets.dart';
-import '../widgets/sync_banner.dart';
 
 class RecordsPage extends StatelessWidget {
   const RecordsPage({super.key});
@@ -141,11 +140,10 @@ class RecordsPage extends StatelessWidget {
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.xs, AppSpacing.md, 96),
-      itemCount: state.items.length + 2,
+      itemCount: state.items.length + 1,
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
       itemBuilder: (context, i) {
-        if (i == 0) return const SyncBanner();
-        final index = i - 1;
+        final index = i;
         if (index >= state.items.length) {
           return state.hasMore
               ? const Padding(

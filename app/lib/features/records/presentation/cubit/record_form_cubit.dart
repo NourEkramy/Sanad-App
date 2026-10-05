@@ -29,7 +29,6 @@ class RecordFormState extends Equatable {
     this.restoredDraft = false,
     this.failure,
     this.saved,
-    this.outcome,
   });
 
   final RecordFormStatus status;
@@ -43,7 +42,6 @@ class RecordFormState extends Equatable {
   final bool restoredDraft;
   final Failure? failure;
   final ServiceRecord? saved;
-  final SaveOutcome? outcome;
 
   CareService? get selectedService => services.where((s) => s.id == draft.serviceId).firstOrNull;
 
@@ -57,7 +55,6 @@ class RecordFormState extends Equatable {
     Failure? failure,
     bool clearFailure = false,
     ServiceRecord? saved,
-    SaveOutcome? outcome,
   }) => RecordFormState(
     status: status ?? this.status,
     nurses: nurses ?? this.nurses,
@@ -67,11 +64,10 @@ class RecordFormState extends Equatable {
     restoredDraft: restoredDraft ?? this.restoredDraft,
     failure: clearFailure ? null : failure ?? this.failure,
     saved: saved ?? this.saved,
-    outcome: outcome ?? this.outcome,
   );
 
   @override
-  List<Object?> get props => [status, nurses, services, draft, priceEdited, restoredDraft, failure, saved, outcome];
+  List<Object?> get props => [status, nurses, services, draft, priceEdited, restoredDraft, failure, saved];
 }
 
 /// Add (or, for admins, edit) a service record for one customer.
@@ -271,7 +267,7 @@ class RecordFormCubit extends Cubit<RecordFormState> {
       emit(
         result.fold(
           (f) => state.copyWith(status: RecordFormStatus.editing, failure: f),
-          (saved) => state.copyWith(status: RecordFormStatus.saved, saved: saved, outcome: SaveOutcome.saved),
+          (saved) => state.copyWith(status: RecordFormStatus.saved, saved: saved),
         ),
       );
       return;
@@ -279,10 +275,10 @@ class RecordFormCubit extends Cubit<RecordFormState> {
     final result = await _addRecord(customer, state.draft);
     if (isClosed) return;
     switch (result) {
-      case Success(value: (final saved, final outcome)):
+      case Success(value: final saved):
         _persist?.cancel();
         await _drafts.clear(customer.id);
-        emit(state.copyWith(status: RecordFormStatus.saved, saved: saved, outcome: outcome));
+        emit(state.copyWith(status: RecordFormStatus.saved, saved: saved));
       case Err(:final failure):
         // The draft stays (on screen and on disk): nothing typed is lost.
         emit(state.copyWith(status: RecordFormStatus.editing, failure: failure));

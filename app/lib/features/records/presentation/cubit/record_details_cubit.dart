@@ -23,17 +23,14 @@ class RecordDetailsCubit extends Cubit<RecordDetailsState> {
     required this.recordId,
     required GetRecord getRecord,
     required ArchiveServiceRecord archive,
-    required DiscardPendingRecord discard,
     ServiceRecord? initial,
   }) : _getRecord = getRecord,
        _archive = archive,
-       _discard = discard,
        super(RecordDetailsState(record: initial, loading: initial == null));
 
   final String recordId;
   final GetRecord _getRecord;
   final ArchiveServiceRecord _archive;
-  final DiscardPendingRecord _discard;
 
   Future<void> load() async {
     final result = await _getRecord(recordId);
@@ -50,12 +47,6 @@ class RecordDetailsCubit extends Cubit<RecordDetailsState> {
 
   Future<Failure?> archive() async {
     emit(RecordDetailsState(record: state.record, loading: false, busy: true));
-    final record = state.record;
-    if (record != null && record.syncState != SyncState.synced) {
-      await _discard(record.id);
-      emit(RecordDetailsState(record: record, loading: false, archived: true));
-      return null;
-    }
     final result = await _archive(recordId);
     if (isClosed) return null;
     final failure = result.failureOrNull;

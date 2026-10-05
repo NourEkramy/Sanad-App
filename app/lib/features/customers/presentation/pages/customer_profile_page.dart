@@ -10,8 +10,6 @@ import '../../../../core/widgets/cards.dart';
 import '../../../../core/widgets/feedback.dart';
 import '../../../../core/widgets/l10n.dart';
 import '../../../../core/widgets/state_views.dart';
-import '../../../auth/domain/entities/app_user.dart';
-import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../records/domain/entities/service_record.dart';
 import '../../../records/presentation/widgets/record_widgets.dart';
 import '../../domain/entities/customer.dart';
@@ -23,7 +21,6 @@ class CustomerProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final auth = context.watch<AuthCubit>();
     return BlocBuilder<CustomerProfileCubit, CustomerProfileState>(
       builder: (context, state) {
         final cubit = context.read<CustomerProfileCubit>();
@@ -32,7 +29,7 @@ class CustomerProfilePage extends StatelessWidget {
           appBar: AppBar(
             title: Text(l.profileTitle),
             actions: [
-              if (customer != null && auth.can(Permission.editCustomers))
+              if (customer != null)
                 IconButton(
                   tooltip: l.commonEdit,
                   icon: const Icon(Icons.edit_outlined),
@@ -41,7 +38,7 @@ class CustomerProfilePage extends StatelessWidget {
                     if (updated != null) await cubit.load();
                   },
                 ),
-              if (customer != null && auth.can(Permission.archiveCustomers))
+              if (customer != null)
                 PopupMenuButton<String>(
                   onSelected: (_) => _toggleArchive(context, customer),
                   itemBuilder: (_) => [

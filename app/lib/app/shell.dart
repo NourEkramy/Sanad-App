@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/widgets/l10n.dart';
-import '../features/records/presentation/cubit/sync_cubit.dart';
 
 /// Bottom navigation: Home | Customers | Records | More.
 class AppShell extends StatelessWidget {
@@ -14,7 +12,6 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final pending = context.select<SyncCubit, int>((c) => c.state.pending);
     return Scaffold(
       body: shell,
       bottomNavigationBar: NavigationBar(
@@ -38,7 +35,7 @@ class AppShell extends StatelessWidget {
             label: l.navRecords,
           ),
           NavigationDestination(
-            icon: Badge(isLabelVisible: pending > 0, label: Text('$pending'), child: const Icon(Icons.menu_rounded)),
+            icon: const Icon(Icons.menu_rounded),
             selectedIcon: const Icon(Icons.menu_open_rounded),
             label: l.navMore,
           ),

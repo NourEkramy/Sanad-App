@@ -1,8 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Small key/value store backed by the platform keystore (Keychain on iOS,
-/// EncryptedSharedPreferences/Keystore on Android). Used for the auth session,
-/// unsent records and form drafts, all of which can contain customer data.
+/// EncryptedSharedPreferences/Keystore on Android). Used for form drafts
+/// (which can contain customer data) and app preferences.
 abstract interface class KeyValueStore {
   Future<String?> read(String key);
   Future<void> write(String key, String value);

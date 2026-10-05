@@ -302,161 +302,17 @@ abstract class AppLocalizations {
   /// **'More'**
   String get navMore;
 
-  /// No description provided for @loginTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Welcome back'**
-  String get loginTitle;
-
-  /// No description provided for @loginSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign in with your work account to continue.'**
-  String get loginSubtitle;
-
-  /// No description provided for @loginEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'Email'**
-  String get loginEmail;
-
-  /// No description provided for @loginPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Password'**
-  String get loginPassword;
-
-  /// No description provided for @loginSubmit.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign in'**
-  String get loginSubmit;
-
-  /// No description provided for @loginForgot.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot password?'**
-  String get loginForgot;
-
-  /// No description provided for @loginSessionExpired.
-  ///
-  /// In en, this message translates to:
-  /// **'Your session has expired. Please sign in again.'**
-  String get loginSessionExpired;
-
-  /// No description provided for @loginShowPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Show password'**
-  String get loginShowPassword;
-
-  /// No description provided for @loginHidePassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Hide password'**
-  String get loginHidePassword;
-
-  /// No description provided for @notConfiguredTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Sanad is not configured'**
-  String get notConfiguredTitle;
-
-  /// No description provided for @notConfiguredBody.
-  ///
-  /// In en, this message translates to:
-  /// **'This build has no server address. Rebuild the app with SUPABASE_URL and SUPABASE_ANON_KEY (see docs/08-deployment.md).'**
-  String get notConfiguredBody;
-
-  /// No description provided for @forgotTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset password'**
-  String get forgotTitle;
-
-  /// No description provided for @forgotBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your work email and we will send you a link to choose a new password.'**
-  String get forgotBody;
-
-  /// No description provided for @forgotSubmit.
-  ///
-  /// In en, this message translates to:
-  /// **'Send reset link'**
-  String get forgotSubmit;
-
-  /// No description provided for @forgotSent.
-  ///
-  /// In en, this message translates to:
-  /// **'If an account exists for {email}, a reset link is on its way.'**
-  String forgotSent(String email);
-
-  /// No description provided for @resetTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a new password'**
-  String get resetTitle;
-
-  /// No description provided for @resetBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter a new password for your account. You will then sign in with it.'**
-  String get resetBody;
-
-  /// No description provided for @resetNewPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'New password'**
-  String get resetNewPassword;
-
-  /// No description provided for @resetConfirmPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm new password'**
-  String get resetConfirmPassword;
-
-  /// No description provided for @resetSubmit.
-  ///
-  /// In en, this message translates to:
-  /// **'Update password'**
-  String get resetSubmit;
-
-  /// No description provided for @resetDone.
-  ///
-  /// In en, this message translates to:
-  /// **'Password updated.'**
-  String get resetDone;
-
-  /// No description provided for @signOut.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign out'**
-  String get signOut;
-
-  /// No description provided for @signOutConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign out of Sanad on this device?'**
-  String get signOutConfirm;
-
-  /// No description provided for @signOutPending.
-  ///
-  /// In en, this message translates to:
-  /// **'There are {count} records on this device that have not synced yet. They stay on this device and will sync after you sign in again.'**
-  String signOutPending(int count);
-
   /// No description provided for @greetingMorning.
   ///
   /// In en, this message translates to:
-  /// **'Good morning, {name}'**
-  String greetingMorning(String name);
+  /// **'Good morning'**
+  String get greetingMorning;
 
   /// No description provided for @greetingEvening.
   ///
   /// In en, this message translates to:
-  /// **'Good evening, {name}'**
-  String greetingEvening(String name);
+  /// **'Good evening'**
+  String get greetingEvening;
 
   /// No description provided for @dashboardSearchHint.
   ///
@@ -560,41 +416,11 @@ abstract class AppLocalizations {
   /// **'Business overview'**
   String get businessOverview;
 
-  /// No description provided for @pendingSyncBanner.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 record is waiting to sync} other{{count} records are waiting to sync}}'**
-  String pendingSyncBanner(int count);
-
-  /// No description provided for @syncNow.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync now'**
-  String get syncNow;
-
-  /// No description provided for @syncing.
-  ///
-  /// In en, this message translates to:
-  /// **'Syncing…'**
-  String get syncing;
-
-  /// No description provided for @syncDone.
-  ///
-  /// In en, this message translates to:
-  /// **'All records are synced.'**
-  String get syncDone;
-
   /// No description provided for @needsReviewBanner.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 imported customer needs review} other{{count} imported customers need review}}'**
   String needsReviewBanner(int count);
-
-  /// No description provided for @offlineBanner.
-  ///
-  /// In en, this message translates to:
-  /// **'You are offline. New records are saved on this device and sync automatically.'**
-  String get offlineBanner;
 
   /// No description provided for @customersTitle.
   ///
@@ -1232,12 +1058,6 @@ abstract class AppLocalizations {
   /// **'Record saved.'**
   String get recordSaved;
 
-  /// No description provided for @recordQueued.
-  ///
-  /// In en, this message translates to:
-  /// **'No connection — the record is saved on this device and will sync automatically.'**
-  String get recordQueued;
-
   /// No description provided for @recordUpdated.
   ///
   /// In en, this message translates to:
@@ -1322,18 +1142,6 @@ abstract class AppLocalizations {
   /// **'Imported from Excel'**
   String get recordImported;
 
-  /// No description provided for @recordPendingSync.
-  ///
-  /// In en, this message translates to:
-  /// **'Waiting to sync'**
-  String get recordPendingSync;
-
-  /// No description provided for @recordSyncFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync failed'**
-  String get recordSyncFailed;
-
   /// No description provided for @recordNoTime.
   ///
   /// In en, this message translates to:
@@ -1369,42 +1177,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nurse: {name}'**
   String nurseLabel(String name);
-
-  /// No description provided for @pendingTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Waiting to sync'**
-  String get pendingTitle;
-
-  /// No description provided for @pendingEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'Everything is synced.'**
-  String get pendingEmpty;
-
-  /// No description provided for @pendingBody.
-  ///
-  /// In en, this message translates to:
-  /// **'These records are saved on this device. They are sent automatically when the connection returns.'**
-  String get pendingBody;
-
-  /// No description provided for @pendingDiscard.
-  ///
-  /// In en, this message translates to:
-  /// **'Discard record'**
-  String get pendingDiscard;
-
-  /// No description provided for @pendingDiscardConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Discard this unsynced record? It has not reached the server and will be lost.'**
-  String get pendingDiscardConfirm;
-
-  /// No description provided for @pendingFailedHint.
-  ///
-  /// In en, this message translates to:
-  /// **'The server rejected this record: {reason}'**
-  String pendingFailedHint(String reason);
 
   /// No description provided for @nursesTitle.
   ///
@@ -1580,12 +1352,6 @@ abstract class AppLocalizations {
   /// **'Data'**
   String get moreData;
 
-  /// No description provided for @moreAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'Account'**
-  String get moreAccount;
-
   /// No description provided for @importTitle.
   ///
   /// In en, this message translates to:
@@ -1631,116 +1397,8 @@ abstract class AppLocalizations {
   /// No description provided for @settingsPrivacy.
   ///
   /// In en, this message translates to:
-  /// **'Customer data is stored in the cloud database and protected by role-based access. Records saved offline are encrypted on this device until they sync.'**
+  /// **'Your data is stored only on this phone. If you connect Google Drive, a backup is kept in your own Drive, visible only to you until you share it.'**
   String get settingsPrivacy;
-
-  /// No description provided for @userProfileTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'My profile'**
-  String get userProfileTitle;
-
-  /// No description provided for @profileName.
-  ///
-  /// In en, this message translates to:
-  /// **'Name'**
-  String get profileName;
-
-  /// No description provided for @profileEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'Email'**
-  String get profileEmail;
-
-  /// No description provided for @profileRole.
-  ///
-  /// In en, this message translates to:
-  /// **'Role'**
-  String get profileRole;
-
-  /// No description provided for @roleAdmin.
-  ///
-  /// In en, this message translates to:
-  /// **'Administrator'**
-  String get roleAdmin;
-
-  /// No description provided for @roleStaff.
-  ///
-  /// In en, this message translates to:
-  /// **'Staff'**
-  String get roleStaff;
-
-  /// No description provided for @changePassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Change password'**
-  String get changePassword;
-
-  /// No description provided for @profileSaved.
-  ///
-  /// In en, this message translates to:
-  /// **'Profile updated.'**
-  String get profileSaved;
-
-  /// No description provided for @usersTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Users'**
-  String get usersTitle;
-
-  /// No description provided for @inviteUser.
-  ///
-  /// In en, this message translates to:
-  /// **'Invite user'**
-  String get inviteUser;
-
-  /// No description provided for @inviteSent.
-  ///
-  /// In en, this message translates to:
-  /// **'Invitation sent to {email}.'**
-  String inviteSent(String email);
-
-  /// No description provided for @inviteRole.
-  ///
-  /// In en, this message translates to:
-  /// **'Role'**
-  String get inviteRole;
-
-  /// No description provided for @userYou.
-  ///
-  /// In en, this message translates to:
-  /// **'You'**
-  String get userYou;
-
-  /// No description provided for @makeAdmin.
-  ///
-  /// In en, this message translates to:
-  /// **'Make administrator'**
-  String get makeAdmin;
-
-  /// No description provided for @makeStaff.
-  ///
-  /// In en, this message translates to:
-  /// **'Make staff'**
-  String get makeStaff;
-
-  /// No description provided for @userUpdated.
-  ///
-  /// In en, this message translates to:
-  /// **'User updated.'**
-  String get userUpdated;
-
-  /// No description provided for @userDeactivateConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Deactivate {name}? They will be signed out and unable to sign in.'**
-  String userDeactivateConfirm(String name);
-
-  /// No description provided for @pendingSyncMenu.
-  ///
-  /// In en, this message translates to:
-  /// **'Waiting to sync'**
-  String get pendingSyncMenu;
 
   /// No description provided for @importIntro.
   ///
@@ -2342,24 +2000,6 @@ abstract class AppLocalizations {
   /// **'This amount is too high.'**
   String get validationPriceTooHigh;
 
-  /// No description provided for @validationInvalidEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter a valid email address.'**
-  String get validationInvalidEmail;
-
-  /// No description provided for @validationPasswordTooShort.
-  ///
-  /// In en, this message translates to:
-  /// **'Use at least 8 characters.'**
-  String get validationPasswordTooShort;
-
-  /// No description provided for @validationPasswordsDoNotMatch.
-  ///
-  /// In en, this message translates to:
-  /// **'Passwords do not match.'**
-  String get validationPasswordsDoNotMatch;
-
   /// No description provided for @validationFutureDate.
   ///
   /// In en, this message translates to:
@@ -2369,26 +2009,8 @@ abstract class AppLocalizations {
   /// No description provided for @failureNetwork.
   ///
   /// In en, this message translates to:
-  /// **'No internet connection. Check your connection and try again.'**
+  /// **'No internet connection. Your data is safe on this phone; the backup will run when you are back online.'**
   String get failureNetwork;
-
-  /// No description provided for @failureServer.
-  ///
-  /// In en, this message translates to:
-  /// **'Something went wrong on the server. Please try again.'**
-  String get failureServer;
-
-  /// No description provided for @failureSessionExpired.
-  ///
-  /// In en, this message translates to:
-  /// **'Your session has expired. Please sign in again.'**
-  String get failureSessionExpired;
-
-  /// No description provided for @failurePermission.
-  ///
-  /// In en, this message translates to:
-  /// **'You do not have permission to do this.'**
-  String get failurePermission;
 
   /// No description provided for @failureDuplicatePhone.
   ///
@@ -2401,12 +2023,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This name already exists.'**
   String get failureDuplicateName;
-
-  /// No description provided for @failureDuplicateEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'A user with this email already exists.'**
-  String get failureDuplicateEmail;
 
   /// No description provided for @failureDuplicateFile.
   ///
@@ -2468,42 +2084,6 @@ abstract class AppLocalizations {
   /// **'The Excel file could not be created.'**
   String get failureFileWrite;
 
-  /// No description provided for @failureAuthInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'Incorrect email or password.'**
-  String get failureAuthInvalid;
-
-  /// No description provided for @failureAuthDisabled.
-  ///
-  /// In en, this message translates to:
-  /// **'This account has been deactivated. Contact your administrator.'**
-  String get failureAuthDisabled;
-
-  /// No description provided for @failureAuthNotConfirmed.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm your email address first, then sign in.'**
-  String get failureAuthNotConfirmed;
-
-  /// No description provided for @failureAuthWeakPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a stronger password.'**
-  String get failureAuthWeakPassword;
-
-  /// No description provided for @failureAuthRateLimited.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many attempts. Wait a moment and try again.'**
-  String get failureAuthRateLimited;
-
-  /// No description provided for @failureAuthUnknown.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign-in failed. Please try again.'**
-  String get failureAuthUnknown;
-
   /// No description provided for @failureRuleNurseInactive.
   ///
   /// In en, this message translates to:
@@ -2534,17 +2114,215 @@ abstract class AppLocalizations {
   /// **'This import was already rolled back.'**
   String get failureRuleBatchNotFound;
 
-  /// No description provided for @failureRuleSelfDemotion.
-  ///
-  /// In en, this message translates to:
-  /// **'You cannot remove your own administrator access.'**
-  String get failureRuleSelfDemotion;
-
   /// No description provided for @failureRuleInUse.
   ///
   /// In en, this message translates to:
   /// **'This item is in use and cannot be removed.'**
   String get failureRuleInUse;
+
+  /// No description provided for @moreApp.
+  ///
+  /// In en, this message translates to:
+  /// **'App'**
+  String get moreApp;
+
+  /// No description provided for @failureServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Drive answered with an error. Please try again.'**
+  String get failureServer;
+
+  /// No description provided for @failureFileNotABackup.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is not a Sanad backup.'**
+  String get failureFileNotABackup;
+
+  /// No description provided for @failureBackupCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in was canceled.'**
+  String get failureBackupCanceled;
+
+  /// No description provided for @failureBackupNotAuthorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Sanad no longer has access to Google Drive. Connect again.'**
+  String get failureBackupNotAuthorized;
+
+  /// No description provided for @failureBackupNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in is not set up for this copy of the app yet. See \"Google Drive setup\" in the deployment guide.'**
+  String get failureBackupNotConfigured;
+
+  /// No description provided for @failureBackupNoBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'No Sanad backup was found in this Google Drive.'**
+  String get failureBackupNoBackup;
+
+  /// No description provided for @backupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Drive backup'**
+  String get backupTitle;
+
+  /// No description provided for @backupIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is stored on this phone. Connect Google Drive to keep a copy in your own Drive: Sanad.xlsx (all sheets, ready to open and share) and a full backup to restore on a new phone. After every change the copy is updated automatically.'**
+  String get backupIntro;
+
+  /// No description provided for @backupConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Google Drive'**
+  String get backupConnect;
+
+  /// No description provided for @backupAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Google account'**
+  String get backupAccount;
+
+  /// No description provided for @backupLast.
+  ///
+  /// In en, this message translates to:
+  /// **'Last backup'**
+  String get backupLast;
+
+  /// No description provided for @backupNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Not backed up yet'**
+  String get backupNever;
+
+  /// No description provided for @backupUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything is backed up'**
+  String get backupUpToDate;
+
+  /// No description provided for @backupPendingChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes waiting to be backed up'**
+  String get backupPendingChanges;
+
+  /// No description provided for @backupNotUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'The last backup did not complete'**
+  String get backupNotUpToDate;
+
+  /// No description provided for @backupInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Backing up…'**
+  String get backupInProgress;
+
+  /// No description provided for @backupRestoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring…'**
+  String get backupRestoring;
+
+  /// No description provided for @backupNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up now'**
+  String get backupNow;
+
+  /// No description provided for @backupRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from Google Drive'**
+  String get backupRestore;
+
+  /// No description provided for @backupRestoreConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace the data on this phone?'**
+  String get backupRestoreConfirmTitle;
+
+  /// No description provided for @backupRestoreConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'All customers, records, nurses, services and areas on this phone will be replaced by the backup in Google Drive.'**
+  String get backupRestoreConfirm;
+
+  /// No description provided for @backupRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Data restored from Google Drive'**
+  String get backupRestored;
+
+  /// No description provided for @backupFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A backup is already in this Google Drive'**
+  String get backupFoundTitle;
+
+  /// No description provided for @backupFoundBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sanad found a backup from {date}. Restore it to this phone, or keep this phone\'s data and replace the backup.'**
+  String backupFoundBody(String date);
+
+  /// No description provided for @backupKeepDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this phone\'s data'**
+  String get backupKeepDevice;
+
+  /// No description provided for @backupKeepDeviceConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup in Google Drive will be replaced by the data on this phone. Earlier versions stay in the file\'s version history in Drive.'**
+  String get backupKeepDeviceConfirm;
+
+  /// No description provided for @backupDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect Google Drive'**
+  String get backupDisconnect;
+
+  /// No description provided for @backupDisconnectConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backups will stop. Files already in Google Drive stay there.'**
+  String get backupDisconnectConfirm;
+
+  /// No description provided for @backupWhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Files are in Google Drive › Sanad. Open Sanad.xlsx there to view it or share it with others. Drive keeps earlier versions of each file.'**
+  String get backupWhere;
+
+  /// No description provided for @backupUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Drive backup works in the Android app. Here, use Export to Excel to save a copy.'**
+  String get backupUnsupported;
+
+  /// No description provided for @backupBannerConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up your data to Google Drive'**
+  String get backupBannerConnect;
+
+  /// No description provided for @backupBannerFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The Google Drive backup did not complete'**
+  String get backupBannerFailed;
+
+  /// No description provided for @backupBannerAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get backupBannerAction;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

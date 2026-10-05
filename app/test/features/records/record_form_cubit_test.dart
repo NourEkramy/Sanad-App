@@ -27,7 +27,7 @@ void main() {
     getServices: GetCareServices(services),
     saveNurse: SaveNurse(FakeNurseRepository()),
     saveService: SaveCareService(services),
-    addRecord: AddServiceRecord(records, MemoryPendingStore(), () => 'new-id', clock: () => testNow),
+    addRecord: AddServiceRecord(records, () => 'new-id', clock: () => testNow),
     updateRecord: UpdateServiceRecord(records, clock: () => testNow),
     drafts: drafts,
     clock: () => testNow,

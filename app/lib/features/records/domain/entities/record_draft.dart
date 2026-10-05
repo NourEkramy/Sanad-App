@@ -4,8 +4,8 @@ import '../../../../core/utils/local_time.dart';
 import '../../../../core/utils/money.dart';
 import 'service_record.dart';
 
-/// A validated, ready-to-save service record. [id] is generated on the device
-/// so that saving is idempotent (retries and offline sync never duplicate).
+/// A validated, ready-to-save service record. [id] is generated up front so
+/// that saving the same record twice never creates a duplicate.
 class NewServiceRecord extends Equatable {
   const NewServiceRecord({
     required this.id,
@@ -44,28 +44,6 @@ class NewServiceRecord extends Equatable {
   final LocalTime serviceTime;
   final String? notes;
   final DateTime createdAt;
-
-  ServiceRecord toRecord({SyncState syncState = SyncState.synced, String? syncError}) => ServiceRecord(
-    id: id,
-    customerId: customerId,
-    customerName: customerName,
-    customerPhone: customerPhone,
-    customerAddress: customerAddress,
-    areaName: areaName,
-    patientName: patientName,
-    nurseId: nurseId,
-    nurseName: nurseName,
-    serviceId: serviceId,
-    serviceName: serviceName,
-    price: price,
-    paymentMethod: paymentMethod,
-    serviceDate: serviceDate,
-    serviceTime: serviceTime,
-    notes: notes,
-    createdAt: createdAt,
-    syncState: syncState,
-    syncError: syncError,
-  );
 
   @override
   List<Object?> get props => [
