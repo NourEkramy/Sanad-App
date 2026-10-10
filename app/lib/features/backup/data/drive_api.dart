@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:http/http.dart' as http;
 
 import '../../../core/errors/failure.dart';
@@ -127,10 +128,36 @@ class DriveApi {
     // An expired token is refreshed once.
     if (response.statusCode == 401) response = await attempt(refresh: true);
     if (response.statusCode >= 200 && response.statusCode < 300) return response;
-    throw switch (response.statusCode) {
-      401 || 403 => const BackupFailure(BackupFailureReason.notAuthorized),
-      _ => ServerFailure('drive_${response.statusCode}'),
-    };
+    throw failureFor(response.statusCode, response.body);
+  }
+
+  /// Turns a Drive error response into a failure that says what to fix.
+  @visibleForTesting
+  static Failure failureFor(int status, String body) {
+    String? reason;
+    String? message;
+    try {
+      final error = (jsonDecode(body) as Map)['error'] as Map;
+      message = error['message'] as String?;
+      final errors = error['errors'];
+      reason = errors is List && errors.isNotEmpty ? (errors.first as Map)['reason'] as String? : null;
+      reason ??= error['status'] as String?;
+    } catch (_) {
+      // Not a JSON error body.
+    }
+    final detail = [?reason, ?message].join(': ');
+    final apiDisabled =
+        reason == 'accessNotConfigured' ||
+        reason == 'SERVICE_DISABLED' ||
+        (message ?? '').contains('has not been used in project') ||
+        (message ?? '').contains('is disabled');
+    if (status == 403 && apiDisabled) {
+      return BackupFailure(BackupFailureReason.notConfigured, 'Google Drive API is not enabled. $detail'.trim());
+    }
+    if (status == 401 || status == 403) {
+      return BackupFailure(BackupFailureReason.notAuthorized, detail.isEmpty ? null : detail);
+    }
+    return ServerFailure('drive_$status');
   }
 
   static String _quote(String value) => value.replaceAll(r'\', r'\\').replaceAll("'", r"\'");

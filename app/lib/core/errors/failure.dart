@@ -77,11 +77,15 @@ enum FileFailureReason { unreadable, noSheets, headerNotFound, empty, writeFaile
 
 /// Google Drive backup could not be used.
 final class BackupFailure extends Failure {
-  const BackupFailure(this.reason);
+  const BackupFailure(this.reason, [this.detail]);
   final BackupFailureReason reason;
 
+  /// Google's own error code/text, shown to help fix setup problems.
+  /// (Never contains customer data.)
+  final String? detail;
+
   @override
-  List<Object?> get props => [reason];
+  List<Object?> get props => [reason, detail];
 }
 
 enum BackupFailureReason {
@@ -93,6 +97,9 @@ enum BackupFailureReason {
 
   /// The app's Google Cloud registration is missing or wrong (setup issue).
   notConfigured,
+
+  /// Google sign-in failed for another reason (see the detail).
+  signInFailed,
 
   /// There is no Sanad backup in this Google Drive.
   noBackup,

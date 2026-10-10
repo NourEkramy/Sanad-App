@@ -1143,11 +1143,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get failureBackupCanceled => 'تم إلغاء تسجيل الدخول إلى Google.';
 
   @override
-  String get failureBackupNotAuthorized => 'لم يعد لدى سند إذن الوصول إلى Google Drive. اربطه مرة أخرى.';
+  String get failureBackupNotAuthorized =>
+      'لم يتم منح إذن الوصول إلى Google Drive. اضغط ربط واسمح بالوصول إلى الملفات التي ينشئها سند.';
 
   @override
   String get failureBackupNotConfigured =>
-      'تسجيل الدخول إلى Google غير مُعدّ لهذه النسخة من التطبيق بعد. راجع \"إعداد Google Drive\" في دليل التشغيل.';
+      'إعداد Google Drive غير صحيح لهذه النسخة من التطبيق. في Google Cloud تأكد من: تفعيل Google Drive API، ووجود Android client باسم الحزمة com.sanad.sanad وبصمة SHA-1 لهذا التطبيق.';
 
   @override
   String get failureBackupNoBackup => 'لا توجد نسخة احتياطية من سند في Google Drive هذا.';
@@ -1240,4 +1241,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupBannerAction => 'فتح';
+
+  @override
+  String get failureBackupSignInFailed => 'فشل تسجيل الدخول إلى Google. حاول مرة أخرى.';
 }

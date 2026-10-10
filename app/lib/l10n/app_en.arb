@@ -553,8 +553,8 @@
   "failureServer": "Google Drive answered with an error. Please try again.",
   "failureFileNotABackup": "This file is not a Sanad backup.",
   "failureBackupCanceled": "Google sign-in was canceled.",
-  "failureBackupNotAuthorized": "Sanad no longer has access to Google Drive. Connect again.",
-  "failureBackupNotConfigured": "Google sign-in is not set up for this copy of the app yet. See \"Google Drive setup\" in the deployment guide.",
+  "failureBackupNotAuthorized": "Google Drive access was not granted. Tap Connect and allow access to the files Sanad creates.",
+  "failureBackupNotConfigured": "Google Drive is not set up correctly for this copy of the app. In Google Cloud check: the Google Drive API is enabled, and an Android client exists with package com.sanad.sanad and the SHA-1 of this app.",
   "failureBackupNoBackup": "No Sanad backup was found in this Google Drive.",
   "backupTitle": "Google Drive backup",
   "backupIntro": "Your data is stored on this phone. Connect Google Drive to keep a copy in your own Drive: Sanad.xlsx (all sheets, ready to open and share) and a full backup to restore on a new phone. After every change the copy is updated automatically.",
@@ -589,5 +589,6 @@
   "backupUnsupported": "Google Drive backup works in the Android app. Here, use Export to Excel to save a copy.",
   "backupBannerConnect": "Back up your data to Google Drive",
   "backupBannerFailed": "The Google Drive backup did not complete",
-  "backupBannerAction": "Open"
+  "backupBannerAction": "Open",
+  "failureBackupSignInFailed": "Google sign-in failed. Please try again."
 }

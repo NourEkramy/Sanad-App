@@ -96,12 +96,23 @@ class GoogleDriveBackupStore implements CloudBackupStore {
     try {
       return await body();
     } on GoogleSignInException catch (e) {
-      throw switch (e.code) {
-        GoogleSignInExceptionCode.canceled => const BackupFailure(BackupFailureReason.canceled),
-        GoogleSignInExceptionCode.clientConfigurationError ||
-        GoogleSignInExceptionCode.providerConfigurationError => const BackupFailure(BackupFailureReason.notConfigured),
-        _ => const BackupFailure(BackupFailureReason.notAuthorized),
-      };
+      throw signInFailure(e);
     }
+  }
+
+  /// Google reports a missing/mismatched OAuth client (package name or
+  /// SHA-1) as status 10, DEVELOPER_ERROR, inside an "unknown" error.
+  @visibleForTesting
+  static BackupFailure signInFailure(GoogleSignInException e) {
+    final detail = [e.code.name, ?e.description].join(': ');
+    final description = e.description ?? '';
+    final developerError = description.contains('DEVELOPER_ERROR') || RegExp(r'(^|\D)10:').hasMatch(description);
+    return switch (e.code) {
+      GoogleSignInExceptionCode.canceled => const BackupFailure(BackupFailureReason.canceled),
+      GoogleSignInExceptionCode.clientConfigurationError ||
+      GoogleSignInExceptionCode.providerConfigurationError => BackupFailure(BackupFailureReason.notConfigured, detail),
+      _ when developerError => BackupFailure(BackupFailureReason.notConfigured, detail),
+      _ => BackupFailure(BackupFailureReason.signInFailed, detail),
+    };
   }
 }

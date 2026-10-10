@@ -26,13 +26,17 @@ extension FailureMessages on BuildContext {
         FileFailureReason.writeFailed => l.failureFileWrite,
         FileFailureReason.notABackup => l.failureFileNotABackup,
       },
-      BackupFailure(:final reason) => switch (reason) {
-        BackupFailureReason.canceled => l.failureBackupCanceled,
-        BackupFailureReason.notAuthorized => l.failureBackupNotAuthorized,
-        BackupFailureReason.notConfigured => l.failureBackupNotConfigured,
-        BackupFailureReason.noBackup => l.failureBackupNoBackup,
-        BackupFailureReason.unsupported => l.backupUnsupported,
-      },
+      BackupFailure(:final reason, :final detail) => [
+        switch (reason) {
+          BackupFailureReason.canceled => l.failureBackupCanceled,
+          BackupFailureReason.notAuthorized => l.failureBackupNotAuthorized,
+          BackupFailureReason.notConfigured => l.failureBackupNotConfigured,
+          BackupFailureReason.signInFailed => l.failureBackupSignInFailed,
+          BackupFailureReason.noBackup => l.failureBackupNoBackup,
+          BackupFailureReason.unsupported => l.backupUnsupported,
+        },
+        if (detail != null && detail.isNotEmpty) '($detail)',
+      ].join('\n'),
       BusinessRuleFailure(:final rule) => ruleMessage(rule),
       _ => l.failureUnexpected,
     };

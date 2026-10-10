@@ -2147,13 +2147,13 @@ abstract class AppLocalizations {
   /// No description provided for @failureBackupNotAuthorized.
   ///
   /// In en, this message translates to:
-  /// **'Sanad no longer has access to Google Drive. Connect again.'**
+  /// **'Google Drive access was not granted. Tap Connect and allow access to the files Sanad creates.'**
   String get failureBackupNotAuthorized;
 
   /// No description provided for @failureBackupNotConfigured.
   ///
   /// In en, this message translates to:
-  /// **'Google sign-in is not set up for this copy of the app yet. See \"Google Drive setup\" in the deployment guide.'**
+  /// **'Google Drive is not set up correctly for this copy of the app. In Google Cloud check: the Google Drive API is enabled, and an Android client exists with package com.sanad.sanad and the SHA-1 of this app.'**
   String get failureBackupNotConfigured;
 
   /// No description provided for @failureBackupNoBackup.
@@ -2323,6 +2323,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open'**
   String get backupBannerAction;
+
+  /// No description provided for @failureBackupSignInFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in failed. Please try again.'**
+  String get failureBackupSignInFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

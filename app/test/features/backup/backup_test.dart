@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sanad/core/errors/failure.dart';
@@ -10,6 +11,7 @@ import 'package:sanad/core/network/connectivity_service.dart';
 import 'package:sanad/core/result/result.dart';
 import 'package:sanad/core/storage/secure_store.dart';
 import 'package:sanad/features/backup/data/drive_api.dart';
+import 'package:sanad/features/backup/data/google_drive_backup_store.dart';
 import 'package:sanad/features/backup/data/local_backup_source.dart';
 import 'package:sanad/features/backup/domain/backup.dart';
 import 'package:sanad/features/backup/presentation/backup_cubit.dart';
@@ -333,6 +335,49 @@ void main() {
         client: MockClient((_) async => http.Response('', 403)),
       );
       await expectLater(drive.find('x'), throwsA(const BackupFailure(BackupFailureReason.notAuthorized)));
+    });
+  });
+
+  group('setup errors say what to fix', () {
+    test('a Google Cloud client that does not match the app is a setup problem', () {
+      final failure = GoogleDriveBackupStore.signInFailure(
+        const GoogleSignInException(
+          code: GoogleSignInExceptionCode.unknownError,
+          description: 'SDK reported an exception: 10: DEVELOPER_ERROR',
+        ),
+      );
+      expect(failure.reason, BackupFailureReason.notConfigured);
+      expect(failure.detail, contains('DEVELOPER_ERROR'));
+    });
+
+    test('other sign-in errors keep Google\'s detail', () {
+      final failure = GoogleDriveBackupStore.signInFailure(
+        const GoogleSignInException(code: GoogleSignInExceptionCode.interrupted, description: 'network'),
+      );
+      expect(failure, const BackupFailure(BackupFailureReason.signInFailed, 'interrupted: network'));
+      expect(
+        GoogleDriveBackupStore.signInFailure(const GoogleSignInException(code: GoogleSignInExceptionCode.canceled)),
+        const BackupFailure(BackupFailureReason.canceled),
+      );
+    });
+
+    test('Drive API not enabled in the project', () {
+      const body =
+          '{"error":{"code":403,"message":"Google Drive API has not been used in project 123 before or it is '
+          'disabled.","errors":[{"reason":"accessNotConfigured"}],"status":"PERMISSION_DENIED"}}';
+      final failure = DriveApi.failureFor(403, body) as BackupFailure;
+      expect(failure.reason, BackupFailureReason.notConfigured);
+      expect(failure.detail, startsWith('Google Drive API is not enabled'));
+    });
+
+    test('a missing permission is reported as not granted', () {
+      const body =
+          '{"error":{"code":403,"message":"Insufficient Permission","errors":[{"reason":"insufficientPermissions"}]}}';
+      expect(
+        DriveApi.failureFor(403, body),
+        const BackupFailure(BackupFailureReason.notAuthorized, 'insufficientPermissions: Insufficient Permission'),
+      );
+      expect(DriveApi.failureFor(500, ''), const ServerFailure('drive_500'));
     });
   });
 }

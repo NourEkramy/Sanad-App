@@ -1133,11 +1133,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureBackupCanceled => 'Google sign-in was canceled.';
 
   @override
-  String get failureBackupNotAuthorized => 'Sanad no longer has access to Google Drive. Connect again.';
+  String get failureBackupNotAuthorized =>
+      'Google Drive access was not granted. Tap Connect and allow access to the files Sanad creates.';
 
   @override
   String get failureBackupNotConfigured =>
-      'Google sign-in is not set up for this copy of the app yet. See \"Google Drive setup\" in the deployment guide.';
+      'Google Drive is not set up correctly for this copy of the app. In Google Cloud check: the Google Drive API is enabled, and an Android client exists with package com.sanad.sanad and the SHA-1 of this app.';
 
   @override
   String get failureBackupNoBackup => 'No Sanad backup was found in this Google Drive.';
@@ -1229,4 +1230,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupBannerAction => 'Open';
+
+  @override
+  String get failureBackupSignInFailed => 'Google sign-in failed. Please try again.';
 }
