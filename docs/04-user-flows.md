@@ -14,7 +14,7 @@ flowchart LR
     D --> E[Add record form<br/>customer card at top]
     E -->|nurse · service → price suggested ·<br/>Cash/Electronic · date/time = now| F[Save]
     F --> G[Customer profile<br/>new record at top of history]
-    G -.->|about 20 s later| H[(Google Drive copy updated)]
+    G -.->|a few seconds later| H[(Row added to the Google Sheet)]
 ```
 
 | Step | Taps | Notes |
@@ -29,8 +29,8 @@ flowchart LR
 | 8. Date & time | 0 | Default to now. Tap to change. |
 | 9. Save | 1 | Validation errors appear next to each field. The draft is kept on the phone until saved. |
 
-**Typical total: 8–9 taps.** Saving needs no connection; the backup follows
-on its own.
+**Typical total: 8–9 taps.** Saving needs no connection; the Google Sheet is
+updated on its own a few seconds later (or when the connection is back).
 
 ## 4.2 Add a new customer
 
@@ -71,22 +71,41 @@ shows the number of records and revenue for the current filter.
   Customers tab.
 * **Records**: edit or archive.
 
-## 4.6 Google Drive backup
+## 4.6 Google Sheet link
 
-More → **Google Drive backup** (or the cloud icon on Home):
+Set up once on a computer (see [08-deployment.md › 8.4](08-deployment.md#84-connecting-the-google-sheet-once-free)):
+the workbook becomes a Google Sheet and the Sanad script is pasted into it
+and deployed as a Web app. Then, on the phone, More → **Google Sheet** (or
+the banner / sheet icon on Home):
 
-1. **Connect Google Drive** → choose the Google account → allow access to
-   *files created by Sanad*.
-2. If that Drive has no Sanad backup yet, the first backup runs immediately.
-   If it has one (e.g. from a previous phone), Sanad asks:
-   **Restore from Google Drive** (replaces this phone's data) or
-   **Keep this phone's data** (replaces the backup).
-3. From then on every change is backed up automatically. The screen shows the
-   account, the last backup time and the state (up to date / changes waiting /
-   failed with the reason). **Back up now** and **Restore** are always there.
-4. In Google Drive, open **Sanad › Sanad.xlsx** to view the data or share it
-   (Drive's *Share* button). Drive keeps the earlier versions.
-5. **Disconnect** stops the automatic backup; the files stay in Drive.
+```mermaid
+flowchart LR
+    A[Paste the Web app link] -->|Connect| B{Paired?}
+    B -->|first phone| C[Sanad reads every sheet]
+    B -->|another phone| K[Enter the connection code<br/>from the سند menu] --> C
+    C --> D{Phone has data?}
+    D -->|no| E[Load the sheet's data]
+    D -->|yes| F[Use the sheet's data<br/>replaces the phone's]
+    D -->|yes| G[Keep this phone's data<br/>adds it to the sheet]
+    E & F & G --> H[Connected: every change<br/>is written to the sheet]
+```
+
+1. **Connect**: paste the link. Sanad shows what it found: records,
+   customers, total amount, dates, skipped rows, customers needing review.
+2. **Load the sheet's data** (a new phone), or, if the phone already has
+   data, **Use the sheet's data** (replaces this phone's data, asks first) or
+   **Keep this phone's data and add it to the sheet** (only if it is not in
+   the sheet yet, otherwise visits would appear twice). An empty sheet simply
+   receives the phone's data.
+3. From then on every new or changed visit, customer, nurse, service and area
+   is written into the sheet a few seconds after it is made, when the app
+   goes to the background, and when the connection comes back. The screen
+   shows the state (up to date / *n* changes waiting / could not be updated,
+   with the reason), the last update, the sheets it writes to,
+   **Update now** and **Load all data from the sheet again** (after editing
+   the sheet by hand).
+4. **Disconnect** stops the updates; the sheet and the phone's data stay as
+   they are.
 
 ## 4.7 Excel import
 

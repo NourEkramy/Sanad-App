@@ -156,7 +156,12 @@ class LocalImportRepository implements ImportRepository {
           _blankToNull(item['area_name']) ??
           (await txn.query('areas', columns: ['name'], where: 'id = ?', whereArgs: [areaId])).first['name'];
       final patient = _blankToNull(item['patient_name']);
-      final recordId = _db.newId();
+      // A record loaded back from a connected Google Sheet keeps its ID there.
+      final sheetId = item['id'] as String?;
+      final taken =
+          sheetId == null ||
+          (await txn.query('service_records', columns: ['id'], where: 'id = ?', whereArgs: [sheetId])).isNotEmpty;
+      final recordId = taken ? _db.newId() : sheetId;
       await txn.insert('service_records', {
         'id': recordId,
         'customer_id': customerId,
@@ -235,13 +240,22 @@ class LocalImportRepository implements ImportRepository {
     await _db.write((txn) async {
       final batch = await txn.query(
         'import_batches',
-        columns: ['summary'],
+        columns: ['summary', 'file_sha256'],
         where: "id = ? AND status = 'committed'",
         whereArgs: [batchId],
       );
       if (batch.isEmpty) throw const BusinessRuleFailure('batch_not_found');
 
       final args = [batchId];
+      // Rows Sanad already wrote into the connected Google Sheet are cleared
+      // there too — except for data that was loaded from that sheet.
+      if (!(batch.first['file_sha256']! as String).startsWith(sheetImportPrefix)) {
+        await txn.rawInsert(
+          'INSERT OR REPLACE INTO sheet_removals (record_id, sheet_row, created_at) '
+          'SELECT id, sheet_row, ? FROM service_records WHERE import_batch_id = ? AND sheet_row IS NOT NULL',
+          [_db.timestamp(), batchId],
+        );
+      }
       final records = await txn.delete('service_records', where: 'import_batch_id = ?', whereArgs: args);
       final customers = await txn.delete(
         'customers',

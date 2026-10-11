@@ -1,14 +1,16 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 
-import '../errors/failure.dart';
 import '../utils/text_normalizer.dart';
 import 'seed_data.dart';
+import 'sheet_state.dart';
 
-/// The on-device database (SQLite). It is the only copy of the data the app
-/// works with; Google Drive receives backups of it.
+/// The on-device database (SQLite): the data the app works with. When a
+/// Google Sheet is connected, every change is also written there (each row
+/// carries a [SheetState]).
 ///
 /// Business rules that the server used to enforce (unique phone, valid
 /// references, frozen history) are enforced here by constraints and by the
@@ -17,7 +19,7 @@ class SanadDatabase {
   SanadDatabase._(this._db, this._clock);
 
   static const fileName = 'sanad.db';
-  static const schemaVersion = 1;
+  static const schemaVersion = 2;
 
   final Database _db;
   final DateTime Function() _clock;
@@ -34,13 +36,11 @@ class SanadDatabase {
         version: schemaVersion,
         onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
         onCreate: (db, _) async {
-          final batch = db.batch();
-          for (final statement in _schema) {
-            batch.execute(statement);
-          }
-          await batch.commit(noResult: true);
+          await _run(db, _schema);
+          await _migrate(db, 1, schemaVersion);
           await _seed(db, now);
         },
+        onUpgrade: (db, from, to) => _migrate(db, from, to),
       ),
     );
     return SanadDatabase._(db, now);
@@ -49,7 +49,7 @@ class SanadDatabase {
   /// Read access for queries.
   DatabaseExecutor get reader => _db;
 
-  /// Emits after every committed change (used to schedule backups).
+  /// Emits after every committed change (used to update the Google Sheet).
   Stream<void> get changes => _changes.stream;
 
   String newId() => _uuid.v4();
@@ -59,10 +59,12 @@ class SanadDatabase {
 
   DateTime now() => _clock();
 
-  /// Runs [action] in one transaction and announces the change.
-  Future<T> write<T>(Future<T> Function(Transaction txn) action) async {
+  /// Runs [action] in one transaction and announces the change ([notify]
+  /// is false only for bookkeeping that is not a change of the data, such as
+  /// marking rows as written to the Google Sheet).
+  Future<T> write<T>(Future<T> Function(Transaction txn) action, {bool notify = true}) async {
     final result = await _db.transaction(action);
-    _changes.add(null);
+    if (notify) _changes.add(null);
     return result;
   }
 
@@ -70,12 +72,6 @@ class SanadDatabase {
     await _changes.close();
     await _db.close();
   }
-
-  // ---------------------------------------------------------------------------
-  // Full backup / restore
-  // ---------------------------------------------------------------------------
-
-  static const backupFormat = 'sanad-backup';
 
   /// Tables in dependency order (parents first).
   static const tables = [
@@ -86,47 +82,58 @@ class SanadDatabase {
     'customers',
     'service_records',
     'import_rows',
+    'sheet_removals',
   ];
 
-  /// Every row of every table, as JSON-compatible maps.
-  /// Read in one transaction so the snapshot is consistent.
-  Future<Map<String, Object?>> dump() async {
-    final data = <String, Object?>{};
-    await _db.transaction((txn) async {
-      for (final table in tables) {
-        data[table] = await txn.query(table);
-      }
-    });
-    return {'format': backupFormat, 'version': schemaVersion, 'created_at': timestamp(), 'tables': data};
-  }
-
-  /// Replaces all data with [backup] (produced by [dump]) in one transaction.
-  /// Fails with `FileFailure('not_a_backup')` without changing anything when
-  /// the content is not a Sanad backup.
-  Future<void> restore(Map<String, dynamic> backup) async {
-    final tablesJson = backup['tables'];
-    if (backup['format'] != backupFormat || tablesJson is! Map || (backup['version'] as num? ?? 0) > schemaVersion) {
-      throw const FileFailure(FileFailureReason.notABackup);
+  /// Deletes all data and puts back the reference lists of a new install
+  /// (used before loading everything from a Google Sheet).
+  Future<void> reset() => write((txn) async {
+    for (final table in tables.reversed) {
+      await txn.delete(table);
     }
-    await write((txn) async {
-      for (final table in tables.reversed) {
-        await txn.delete(table);
-      }
-      for (final table in tables) {
-        final rows = tablesJson[table];
-        if (rows is! List) continue;
-        final batch = txn.batch();
-        for (final row in rows) {
-          batch.insert(table, (row as Map).cast<String, Object?>());
-        }
-        await batch.commit(noResult: true);
-      }
-    });
-  }
+    await _seed(txn, _clock);
+  });
 
   // ---------------------------------------------------------------------------
   // Schema
   // ---------------------------------------------------------------------------
+
+  static Future<void> _run(DatabaseExecutor db, List<String> statements) async {
+    final batch = db.batch();
+    for (final statement in statements) {
+      batch.execute(statement);
+    }
+    await batch.commit(noResult: true);
+  }
+
+  static Future<void> _migrate(DatabaseExecutor db, int from, int to) async {
+    for (var version = from + 1; version <= to; version++) {
+      await _run(db, _migrations[version]!);
+    }
+  }
+
+  /// Schema changes after version 1, by target version. New installs run
+  /// them too, so every database goes through the same steps.
+  static const Map<int, List<String>> _migrations = {
+    2: [
+      // Google Sheet link: where each row is in the sheet and whether it
+      // still has to be written there (see SheetState).
+      'ALTER TABLE service_records ADD COLUMN sheet_row INTEGER',
+      'ALTER TABLE service_records ADD COLUMN sheet_state INTEGER NOT NULL DEFAULT ${SheetState.changed}',
+      'ALTER TABLE customers ADD COLUMN sheet_row INTEGER',
+      'ALTER TABLE customers ADD COLUMN sheet_state INTEGER NOT NULL DEFAULT ${SheetState.changed}',
+      'ALTER TABLE areas ADD COLUMN sheet_state INTEGER NOT NULL DEFAULT ${SheetState.changed}',
+      'ALTER TABLE nurses ADD COLUMN sheet_state INTEGER NOT NULL DEFAULT ${SheetState.changed}',
+      'ALTER TABLE services ADD COLUMN sheet_state INTEGER NOT NULL DEFAULT ${SheetState.changed}',
+      // Records deleted on the phone whose row must be cleared in the sheet.
+      '''
+      CREATE TABLE sheet_removals (
+        record_id  TEXT PRIMARY KEY,
+        sheet_row  INTEGER,
+        created_at TEXT NOT NULL
+      )''',
+    ],
+  };
 
   static Future<void> _seed(DatabaseExecutor db, DateTime Function() now) async {
     final at = now().toUtc().toIso8601String();
@@ -153,8 +160,12 @@ class SanadDatabase {
     await batch.commit(noResult: true);
   }
 
-  // Money is stored as integer piasters, dates as `yyyy-MM-dd`, times as
-  // `HH:mm:ss`, timestamps as UTC ISO 8601, booleans as 0/1.
+  /// The schema of version 1 (1.0.2 and earlier), for upgrade tests.
+  @visibleForTesting
+  static List<String> get schemaV1 => _schema;
+
+  // Version 1. Money is stored as integer piasters, dates as `yyyy-MM-dd`,
+  // times as `HH:mm:ss`, timestamps as UTC ISO 8601, booleans as 0/1.
   static const _schema = [
     '''
     CREATE TABLE import_batches (

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sanad/core/database/sanad_database.dart';
+import 'package:sanad/core/database/sheet_state.dart';
 import 'package:sanad/core/errors/failure.dart';
 import 'package:sanad/core/utils/local_time.dart';
 import 'package:sanad/core/utils/money.dart';
@@ -26,6 +27,7 @@ import 'package:sanad/features/records/domain/entities/record_draft.dart';
 import 'package:sanad/features/records/domain/entities/record_filter.dart';
 import 'package:sanad/features/records/domain/entities/service_record.dart';
 import 'package:sanad/features/records/domain/usecases/record_usecases.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../helpers/database.dart';
 
@@ -416,29 +418,70 @@ void main() {
     });
   });
 
-  group('backup', () {
-    test('dump → restore brings back exactly the same data', () async {
+  group('database', () {
+    test('a database left by version 1.0.2 is upgraded and keeps its data', () async {
+      final dir = await Directory.systemTemp.createTemp('sanad_db');
+      addTearDown(() => dir.delete(recursive: true));
+      final path = '${dir.path}/${SanadDatabase.fileName}';
+      final at = now.toUtc().toIso8601String();
+      final old = await databaseFactoryFfi.openDatabase(
+        path,
+        options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: (d, _) async {
+            for (final statement in SanadDatabase.schemaV1) {
+              await d.execute(statement);
+            }
+          },
+        ),
+      );
+      await old.insert('areas', {
+        'id': 'a1',
+        'name': 'سموحة',
+        'name_normalized': 'سموحه',
+        'created_at': at,
+        'updated_at': at,
+      });
+      await old.insert('customers', {
+        'id': 'c1',
+        'full_name': 'منى عادل',
+        'name_normalized': 'مني عادل',
+        'phone': '01155555501',
+        'area_id': 'a1',
+        'created_at': at,
+        'updated_at': at,
+      });
+      await old.close();
+
+      final upgraded = await SanadDatabase.open(databaseFactoryFfi, path, clock: () => now);
+      addTearDown(upgraded.close);
+      final version = await upgraded.reader.rawQuery('PRAGMA user_version');
+      expect(version.single.values.single, SanadDatabase.schemaVersion);
+      final row = (await upgraded.reader.query('customers')).single;
+      expect(row['full_name'], 'منى عادل');
+      expect(row['sheet_state'], SheetState.changed, reason: 'written to the sheet once one is connected');
+      expect(row['sheet_row'], isNull);
+      expect((await upgraded.reader.query('areas')).single['sheet_state'], SheetState.changed);
+      expect(await upgraded.reader.query('sheet_removals'), isEmpty);
+      expect((await LocalCustomerRepository(upgraded).list()).valueOrNull!.single.areaName, 'سموحة');
+    });
+
+    test('reset deletes everything and puts back the lists of a new install', () async {
       final mona = await newCustomer();
       final (nurse, service) = await nurseAndService();
-      final record = await addRecord(mona, nurse: nurse, service: service);
-      final backup = await db.dump();
+      await addRecord(mona, nurse: nurse, service: service);
+      await areas.createArea('العجمي');
 
-      await customers.setArchived(mona.id, archived: true);
-      await records.archive(record.id);
-      await newCustomer(name: 'Later', phone: '01099999999');
-
-      await db.restore(backup);
-      expect((await customers.list()).valueOrNull!.map((c) => c.id), [mona.id]);
-      expect((await records.getById(record.id)).valueOrNull!.isArchived, isFalse);
+      await db.reset();
+      expect((await customers.list()).valueOrNull, isEmpty);
+      expect((await records.list(const RecordFilter())).valueOrNull, isEmpty);
+      expect((await nurses.getNurses(includeInactive: true)).valueOrNull, isEmpty);
+      expect((await services.getServices()).valueOrNull, hasLength(51));
+      expect((await areas.getAreas()).valueOrNull!.map((a) => a.name), isNot(contains('العجمي')));
+      expect((await areas.getAreas()).valueOrNull, hasLength(9));
     });
 
-    test('something that is not a Sanad backup is refused without changing anything', () async {
-      await newCustomer();
-      await expectLater(db.restore({'format': 'other'}), throwsA(const FileFailure(FileFailureReason.notABackup)));
-      expect((await customers.list()).valueOrNull, hasLength(1));
-    });
-
-    test('every change is announced (to schedule a backup)', () async {
+    test('every change is announced (to update the sheet)', () async {
       final events = <void>[];
       final sub = db.changes.listen(events.add);
       await newCustomer();

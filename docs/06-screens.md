@@ -4,7 +4,7 @@ Route → implementation. Every screen supports English and Arabic (RTL). Screen
 
 | # | Screen | Route | Purpose · content · actions |
 |---|--------|-------|-----------------------------|
-| 1 | **Dashboard** | `/home` | Greeting and date; Google Drive status icon (up to date / waiting / failed); **search bar** (one tap to phone search); banners (*Back up to Google Drive* when not connected, backup failed, *N customers need review*); quick actions (**Add service record** highlighted, Search customer, Add customer, Export); today: services, revenue, cash, electronic; overview: customers, records, this month, active nurses · services. Pull to refresh. |
+| 1 | **Dashboard** | `/home` | Greeting and date; Google Sheet status icon (up to date / waiting / failed); **search bar** (one tap to phone search); banners (*Keep your data in your Google Sheet* when not connected, *could not be updated*, *N customers need review*); quick actions (**Add service record** highlighted, Search customer, Add customer, Export); today: services, revenue, cash, electronic; overview: customers, records, this month, active nurses · services. Pull to refresh. |
 | 2 | **Customers** | `/customers` | Search entry, *Needs review* filter, paginated customer list (name, phone, area, visits, badges), FAB *Add customer*. |
 | 3 | **Search customer** | `/search` (`?for=record`) | Auto-focused phone keypad (toggle to name keyboard). Results as you type with highlighted digits; count; *Customer not found* + **Add new customer** (phone pre-filled). In "for record" mode, tapping a result opens *Add record*. |
 | 4 | **Add / edit customer** | `/customers/new`, `/customers/:id/edit` | Name, phone (✓ when valid), living area (searchable, **+ Add new area**), address, notes. Duplicate phone → existing-customer sheet. Errors clear as fields are fixed. |
@@ -22,9 +22,9 @@ Route → implementation. Every screen supports English and Arabic (RTL). Screen
 | 15 | Add / edit area | sheet | Name (normalised duplicate check), active switch. |
 | 16 | **Excel import** | `/more/import` | Stepper: File → Columns (sheet picker, header row, field ↔ column mapping) → Preview (stats, warnings/errors with row numbers, new names) → confirm → result. Import history with **Roll back**. |
 | 17 | **Excel export** | `/more/export` | Period chips, sheet checkboxes, *Create Excel file* → share/download, result card. |
-| 18 | **Google Drive backup** | `/more/backup` | Not connected: explanation + **Connect Google Drive**. Connected: state (up to date / changes waiting / failed + reason), Google account, last backup, **Back up now**, **Restore from Google Drive**, **Disconnect**. Found-backup card after connecting (Restore / Keep this phone's data). Web: notice + Export. |
+| 18 | **Google Sheet** | `/more/sheet` | Not connected: explanation, the 4 setup steps, **Copy the Sanad script**, *Web app link* field, *Connection code* field when another phone is paired, **Connect**. Found card after connecting: sheet name, records, customers, total, dates, skipped and needs-review counts → **Load the sheet's data**, or (phone has data) **Use the sheet's data** / **Keep this phone's data and add it to the sheet**, each confirmed. Connected: state (up to date / *n* changes waiting / could not be updated + reason), spreadsheet, last update, sheets written to, **Update now**, **Load all data from the sheet again**, **Disconnect**, one-way note. |
 | 19 | **Settings** | `/more/settings` | Language (system / English / العربية), about, privacy note. |
-| 20 | More | `/more` | Manage (nurses, services, areas), Data (Google Drive backup with a warning badge on failure, export, import), App (settings). |
+| 20 | More | `/more` | Manage (nurses, services, areas), Data (Google Sheet with a warning badge on failure, export, import), App (settings). |
 
 ## Navigation
 
@@ -34,4 +34,4 @@ Full-screen flows (above the tab bar): Search · Add customer · Add/Edit record
 ```
 
 Tapping the active tab returns to its first screen. Web refreshes keep the
-requested screen. After a restore from Google Drive the app returns to Home.
+requested screen. After loading the data from the Google Sheet the app returns to Home.

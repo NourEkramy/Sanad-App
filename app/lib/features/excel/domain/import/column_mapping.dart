@@ -18,7 +18,10 @@ enum ImportField {
   paymentMethod,
   patientName,
   notes,
-  status;
+  status,
+
+  /// The record ID Sanad writes into a connected Google Sheet.
+  sanadId;
 
   bool get isRequired => this == serviceDate || this == price;
 }
@@ -81,6 +84,7 @@ class ColumnDetector {
     ImportField.patientName: ['patient (if different)', 'المريض (إن اختلف)'],
     ImportField.notes: ['notes', 'ملاحظات'],
     ImportField.status: ['status', 'حالة الاستلام'],
+    ImportField.sanadId: ['معرف سند', 'sanad id'],
   };
 
   /// Substrings (normalised), checked for still-unmapped columns in this

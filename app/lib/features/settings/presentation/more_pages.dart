@@ -8,10 +8,10 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/cards.dart';
 import '../../../core/widgets/l10n.dart';
 import '../../../core/widgets/sanad_logo.dart';
-import '../../backup/presentation/backup_cubit.dart';
+import '../../sheet/presentation/sheet_cubit.dart';
 import 'locale_cubit.dart';
 
-const appVersion = '1.0.0';
+const appVersion = '1.0.3';
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
@@ -19,7 +19,7 @@ class MorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final backupFailed = context.select<BackupCubit, bool>((c) => c.state.failure != null);
+    final sheetFailed = context.select<SheetCubit, bool>((c) => c.state.failure != null);
     return Scaffold(
       appBar: AppBar(title: Text(l.moreTitle)),
       body: ListView(
@@ -41,10 +41,10 @@ class MorePage extends StatelessWidget {
           _Group(
             children: [
               _Item(
-                icon: Icons.add_to_drive_rounded,
-                label: l.backupTitle,
-                badge: backupFailed ? '!' : null,
-                onTap: () => context.go(Routes.backup),
+                icon: Icons.table_chart_outlined,
+                label: l.sheetTitle,
+                badge: sheetFailed ? '!' : null,
+                onTap: () => context.go(Routes.sheet),
               ),
               _Item(icon: Icons.file_download_outlined, label: l.exportTitle, onTap: () => context.go(Routes.export)),
               _Item(icon: Icons.upload_file_outlined, label: l.importTitle, onTap: () => context.go(Routes.import)),

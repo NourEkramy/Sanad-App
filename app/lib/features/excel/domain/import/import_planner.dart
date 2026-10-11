@@ -95,6 +95,7 @@ class ImportPlanner {
           patient: ValueParsers.text(cell(ImportField.patientName)),
           notes: ValueParsers.notes(cell(ImportField.notes)),
           legacyRef: ValueParsers.text(cell(ImportField.legacyRef)),
+          sheetId: ValueParsers.sheetId(cell(ImportField.sanadId)),
           raw: raw,
           warnings: issues,
         ),
@@ -133,6 +134,7 @@ class ImportPlanner {
             legacyRef: row.legacyRef,
             address: row.address,
             areaName: row.area,
+            sheetId: row.sheetId,
             raw: row.raw,
             warnings: warnings.toSet().toList(),
           );
@@ -243,6 +245,7 @@ class _Row {
     required this.patient,
     required this.notes,
     required this.legacyRef,
+    required this.sheetId,
     required this.raw,
     required this.warnings,
   });
@@ -261,6 +264,7 @@ class _Row {
   final String? patient;
   final String? notes;
   final String? legacyRef;
+  final String? sheetId;
   final Map<String, String> raw;
   final List<String> warnings;
   late String customerKey;

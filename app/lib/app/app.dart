@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import '../core/theme/app_theme.dart';
 import '../core/widgets/feedback.dart';
-import '../features/backup/presentation/backup_cubit.dart';
 import '../features/settings/presentation/locale_cubit.dart';
+import '../features/sheet/presentation/sheet_cubit.dart';
 import '../l10n/app_localizations.dart';
 import 'di.dart';
 import 'router.dart';
@@ -14,8 +14,8 @@ import 'router.dart';
 class SanadApp extends StatefulWidget {
   const SanadApp({super.key});
 
-  /// Localizations of the running app (used outside the widget tree, for the
-  /// Excel copy in Google Drive).
+  /// Localizations of the running app (used outside the widget tree, e.g.
+  /// for the name of missing areas when loading a Google Sheet).
   static AppLocalizations? localizations;
 
   @override
@@ -24,7 +24,15 @@ class SanadApp extends StatefulWidget {
 
 class _SanadAppState extends State<SanadApp> with WidgetsBindingObserver {
   final _locale = LocaleCubit(sl())..load();
-  final _backup = BackupCubit(source: sl(), cloud: sl(), prefs: sl(), connectivity: sl())..start();
+  final _sheet = SheetCubit(
+    connect: sl(),
+    linkSheet: sl(),
+    sync: sl(),
+    store: sl(),
+    links: sl(),
+    connectivity: sl(),
+    unspecifiedLabel: () => SanadApp.localizations?.importUnspecifiedName ?? 'غير محدد',
+  )..start();
   late GoRouter _router = buildRouter();
 
   @override
@@ -35,26 +43,27 @@ class _SanadAppState extends State<SanadApp> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) _backup.appPaused();
+    if (state == AppLifecycleState.paused) _sheet.appPaused();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _router.dispose();
-    _backup.close();
+    _sheet.close();
     _locale.close();
     super.dispose();
   }
 
-  /// After a restore every screen shows old data: start again from home.
-  void _restored() {
+  /// After the data was replaced by the sheet's, every screen shows old
+  /// data: start again from home.
+  void _reload() {
     final old = _router;
     setState(() => _router = buildRouter());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       old.dispose();
       final context = _router.routerDelegate.navigatorKey.currentContext;
-      if (context != null && context.mounted) context.showSuccess(AppLocalizations.of(context).backupRestored);
+      if (context != null && context.mounted) context.showSuccess(AppLocalizations.of(context).sheetLoaded);
     });
   }
 
@@ -62,11 +71,11 @@ class _SanadAppState extends State<SanadApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) => MultiBlocProvider(
     providers: [
       BlocProvider.value(value: _locale),
-      BlocProvider.value(value: _backup),
+      BlocProvider.value(value: _sheet),
     ],
-    child: BlocListener<BackupCubit, BackupState>(
-      listenWhen: (a, b) => a.restoreCount != b.restoreCount,
-      listener: (_, _) => _restored(),
+    child: BlocListener<SheetCubit, SheetLinkState>(
+      listenWhen: (a, b) => a.reloadCount != b.reloadCount,
+      listener: (_, _) => _reload(),
       child: BlocBuilder<LocaleCubit, Locale?>(
         builder: (_, locale) => MaterialApp.router(
           onGenerateTitle: (context) => AppLocalizations.of(context).appName,

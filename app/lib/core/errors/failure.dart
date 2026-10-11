@@ -10,12 +10,12 @@ abstract class Failure extends Equatable {
   List<Object?> get props => const [];
 }
 
-/// The device is offline or Google Drive could not be reached.
+/// The device is offline or the Google Sheet could not be reached.
 final class NetworkFailure extends Failure {
   const NetworkFailure();
 }
 
-/// A remote service (Google Drive) answered with an unexpected error.
+/// The Google Sheet's script answered with an unexpected error.
 final class ServerFailure extends Failure {
   const ServerFailure([this.code]);
   final String? code;
@@ -73,39 +73,39 @@ final class FileFailure extends Failure {
   List<Object?> get props => [reason];
 }
 
-enum FileFailureReason { unreadable, noSheets, headerNotFound, empty, writeFailed, notABackup }
+enum FileFailureReason { unreadable, noSheets, headerNotFound, empty, writeFailed }
 
-/// Google Drive backup could not be used.
-final class BackupFailure extends Failure {
-  const BackupFailure(this.reason, [this.detail]);
-  final BackupFailureReason reason;
+/// The connected Google Sheet could not be used.
+final class SheetFailure extends Failure {
+  const SheetFailure(this.reason, [this.detail]);
+  final SheetFailureReason reason;
 
-  /// Google's own error code/text, shown to help fix setup problems.
-  /// (Never contains customer data.)
+  /// Extra information shown to the user (e.g. the script's error message);
+  /// it is never logged.
   final String? detail;
 
   @override
   List<Object?> get props => [reason, detail];
 }
 
-enum BackupFailureReason {
-  /// The person closed the Google account / permission screen.
-  canceled,
+enum SheetFailureReason {
+  /// Not a Sanad Web app link (or the script is not deployed there).
+  invalidLink,
 
-  /// Drive access was not granted, or was revoked.
-  notAuthorized,
+  /// The deployment is not open to "Anyone" (Google asked to sign in).
+  accessDenied,
 
-  /// The app's Google Cloud registration is missing or wrong (setup issue).
-  notConfigured,
+  /// The sheet is already paired with another phone: its code is needed.
+  codeRequired,
 
-  /// Google sign-in failed for another reason (see the detail).
-  signInFailed,
+  /// The connection code was changed in the sheet: connect again.
+  notPaired,
 
-  /// There is no Sanad backup in this Google Drive.
-  noBackup,
+  /// The visits sheet was deleted or renamed.
+  sheetMissing,
 
-  /// Drive backup is not available on this platform.
-  unsupported,
+  /// The script reported an error.
+  scriptError,
 }
 
 final class UnexpectedFailure extends Failure {

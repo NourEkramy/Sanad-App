@@ -8,9 +8,6 @@ import '../core/storage/secure_store.dart';
 import '../features/areas/data/local_area_repository.dart';
 import '../features/areas/domain/repositories/area_repository.dart';
 import '../features/areas/domain/usecases/area_usecases.dart';
-import '../features/backup/data/google_drive_backup_store.dart';
-import '../features/backup/data/local_backup_source.dart';
-import '../features/backup/domain/backup.dart';
 import '../features/care_services/data/local_care_service_repository.dart';
 import '../features/care_services/domain/repositories/care_service_repository.dart';
 import '../features/care_services/domain/usecases/care_service_usecases.dart';
@@ -23,7 +20,6 @@ import '../features/excel/data/excel_workbook_codec.dart';
 import '../features/excel/data/local_excel_repositories.dart';
 import '../features/excel/domain/excel_repositories.dart';
 import '../features/excel/domain/excel_usecases.dart';
-import '../features/excel/domain/export/export_models.dart';
 import '../features/nurses/data/local_nurse_repository.dart';
 import '../features/nurses/domain/repositories/nurse_repository.dart';
 import '../features/nurses/domain/usecases/nurse_usecases.dart';
@@ -31,15 +27,18 @@ import '../features/records/data/local_record_repository.dart';
 import '../features/records/data/record_draft_store.dart';
 import '../features/records/domain/repositories/record_repository.dart';
 import '../features/records/domain/usecases/record_usecases.dart';
+import '../features/sheet/data/apps_script_connector.dart';
+import '../features/sheet/data/local_sheet_store.dart';
+import '../features/sheet/domain/sheet_link.dart';
+import '../features/sheet/domain/sheet_sync.dart';
+import '../features/sheet/domain/sheet_usecases.dart';
 
 /// Service locator. Only the composition root (this file, `app.dart` and
 /// route builders) reads from it; everything else receives dependencies
 /// through constructors.
 final sl = GetIt.instance;
 
-/// [exportLabels] gives the workbook labels in the app's current language
-/// (used for the Excel copy in Google Drive).
-Future<void> configureDependencies({required ExportLabels Function() exportLabels}) async {
+Future<void> configureDependencies() async {
   final store = SecureStore();
   final db = await openSanadDatabase();
 
@@ -58,8 +57,9 @@ Future<void> configureDependencies({required ExportLabels Function() exportLabel
     ..registerLazySingleton<ImportRepository>(() => LocalImportRepository(db))
     ..registerLazySingleton<ExportRepository>(() => LocalExportRepository(db))
     ..registerLazySingleton<WorkbookCodec>(() => const ExcelWorkbookCodec())
-    ..registerLazySingleton<CloudBackupStore>(GoogleDriveBackupStore.new)
-    ..registerLazySingleton(() => BackupPrefsStore(store));
+    ..registerLazySingleton<SheetConnector>(AppsScriptConnector.new)
+    ..registerLazySingleton<SheetStore>(() => LocalSheetStore(db))
+    ..registerLazySingleton(() => SheetLinkStore(store));
 
   // Use cases
   const uuid = Uuid();
@@ -93,5 +93,7 @@ Future<void> configureDependencies({required ExportLabels Function() exportLabel
     ..registerLazySingleton(() => ListImportBatches(sl()))
     ..registerLazySingleton(() => RollbackImport(sl()))
     ..registerLazySingleton(() => ExportWorkbook(sl(), sl()))
-    ..registerLazySingleton<BackupSource>(() => LocalBackupSource(db, sl(), exportLabels));
+    ..registerLazySingleton(() => ConnectSheet(sl(), sl(), sl()))
+    ..registerLazySingleton(() => LinkSheet(sl(), sl(), sl()))
+    ..registerLazySingleton(() => SyncSheet(sl(), sl(), sl()));
 }

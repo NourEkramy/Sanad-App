@@ -4,8 +4,6 @@ import 'package:intl/intl.dart';
 
 import 'app/app.dart';
 import 'app/di.dart';
-import 'features/excel/presentation/export_page.dart';
-import 'l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,8 +11,6 @@ Future<void> main() async {
   // Western digits everywhere, so dates read the same way as prices and the
   // phone numbers staff type.
   DateFormat.useNativeDigitsByDefaultFor('ar', false);
-  await configureDependencies(
-    exportLabels: () => exportLabelsFor(SanadApp.localizations ?? lookupAppLocalizations(const Locale('ar'))),
-  );
+  await configureDependencies();
   runApp(const SanadApp());
 }

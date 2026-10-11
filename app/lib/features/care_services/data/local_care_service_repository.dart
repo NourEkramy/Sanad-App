@@ -1,4 +1,5 @@
 import '../../../core/database/sanad_database.dart';
+import '../../../core/database/sheet_state.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/result/result.dart';
 import '../../../core/utils/money.dart';
@@ -54,6 +55,7 @@ class LocalCareServiceRepository implements CareServiceRepository {
           'default_price': service.defaultPrice?.piasters,
           'is_active': service.isActive ? 1 : 0,
           'updated_at': _db.timestamp(),
+          'sheet_state': SheetState.changed,
         },
         where: 'id = ?',
         whereArgs: [service.id],

@@ -13,6 +13,9 @@ abstract interface class WorkbookCodec {
   Result<Uint8List> encodeExport(ExportData data, ExportLabels labels, Set<ExportSheet> sheets);
 }
 
+/// `file_sha256` prefix of the imports that loaded a connected Google Sheet.
+const sheetImportPrefix = 'sheet:';
+
 abstract interface class ImportRepository {
   Future<Result<ExistingData>> existingData();
 

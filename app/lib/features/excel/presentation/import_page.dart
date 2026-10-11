@@ -31,6 +31,7 @@ extension ImportFieldLabel on ImportField {
     ImportField.patientName => l.importField_patientName,
     ImportField.notes => l.importField_notes,
     ImportField.status => l.importField_status,
+    ImportField.sanadId => l.importField_sanadId,
   };
 }
 

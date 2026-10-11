@@ -196,6 +196,14 @@ abstract final class ValueParsers {
     return t.isEmpty || _isPlaceholder(t) ? null : t;
   }
 
+  static final _uuid = RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
+
+  /// A Sanad record ID (UUID) from a connected sheet, or null.
+  static String? sheetId(SheetCell cell) {
+    final t = cell.text.toLowerCase();
+    return _uuid.hasMatch(t) ? t : null;
+  }
+
   /// Free text kept verbatim (only trimmed); placeholders become null.
   static String? notes(SheetCell cell) {
     final t = cell.text.trim();

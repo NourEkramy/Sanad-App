@@ -718,7 +718,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsPrivacy =>
-      'Your data is stored only on this phone. If you connect Google Drive, a backup is kept in your own Drive, visible only to you until you share it.';
+      'Your data is stored on this phone. If you connect a Google Sheet, Sanad writes it into that sheet in your own Google Drive; nobody else sees it unless you share the sheet.';
 
   @override
   String get importIntro =>
@@ -1063,7 +1063,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get failureNetwork =>
-      'No internet connection. Your data is safe on this phone; the backup will run when you are back online.';
+      'No internet connection. Your data is safe on this phone; the sheet will be updated when you are back online.';
 
   @override
   String get failureDuplicatePhone => 'This phone number is already registered.';
@@ -1127,110 +1127,160 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureServer => 'Google Drive answered with an error. Please try again.';
 
   @override
-  String get failureFileNotABackup => 'This file is not a Sanad backup.';
+  String get sheetTitle => 'Google Sheet';
 
   @override
-  String get failureBackupCanceled => 'Google sign-in was canceled.';
+  String get sheetIntro =>
+      'Keep all your data in your own Google Sheet in Google Drive. Sanad loads everything from the sheet once, then writes every new or changed visit, customer, nurse, service and area into it a few seconds later. Your other sheets and formulas (dashboard, monthly summary, expenses) keep working. Free, and no Google sign-in is needed in the app.';
 
   @override
-  String get failureBackupNotAuthorized =>
-      'Google Drive access was not granted. Tap Connect and allow access to the files Sanad creates.';
+  String get sheetSetupTitle => 'Set up your sheet (once, about 5 minutes, on a computer)';
 
   @override
-  String get failureBackupNotConfigured =>
-      'Google Drive is not set up correctly for this copy of the app. In Google Cloud check: the Google Drive API is enabled, and an Android client exists with package com.sanad.sanad and the SHA-1 of this app.';
+  String get sheetStep1 =>
+      'Put your Excel file in Google Drive and open it with Google Sheets, then File → Save as Google Sheets. (Or create a new empty Google Sheet.)';
 
   @override
-  String get failureBackupNoBackup => 'No Sanad backup was found in this Google Drive.';
+  String get sheetStep2 =>
+      'In the sheet: Extensions → Apps Script. Delete what is there, paste the Sanad script (copy button below, or tools/google-sheets/Code.gs in the project), and click Save.';
 
   @override
-  String get backupTitle => 'Google Drive backup';
+  String get sheetStep3 =>
+      'Deploy → New deployment → Web app. Execute as: Me. Who has access: Anyone. Deploy, then Authorize access → your account → Advanced → Go to … (it is your own script) → Allow.';
 
   @override
-  String get backupIntro =>
-      'Your data is stored on this phone. Connect Google Drive to keep a copy in your own Drive: Sanad.xlsx (all sheets, ready to open and share) and a full backup to restore on a new phone. After every change the copy is updated automatically.';
+  String get sheetStep4 => 'Copy the Web app URL and paste it below. Keep it private: it works like a password.';
 
   @override
-  String get backupConnect => 'Connect Google Drive';
+  String get sheetCopyScript => 'Copy the Sanad script';
 
   @override
-  String get backupAccount => 'Google account';
+  String get sheetScriptCopied => 'Script copied';
 
   @override
-  String get backupLast => 'Last backup';
+  String get sheetLinkLabel => 'Web app link';
 
   @override
-  String get backupNever => 'Not backed up yet';
+  String get sheetCodeNeeded =>
+      'This sheet is already connected to another phone. In the sheet, open the سند menu → رمز الربط, and enter the connection code here.';
 
   @override
-  String get backupUpToDate => 'Everything is backed up';
+  String get sheetCodeLabel => 'Connection code';
 
   @override
-  String get backupPendingChanges => 'Changes waiting to be backed up';
+  String get sheetConnect => 'Connect';
 
   @override
-  String get backupNotUpToDate => 'The last backup did not complete';
+  String get sheetFound => 'Sanad found this data in the sheet:';
 
   @override
-  String get backupInProgress => 'Backing up…';
+  String get sheetLoad => 'Load the sheet\'s data';
 
   @override
-  String get backupRestoring => 'Restoring…';
+  String get sheetPhoneHasData => 'This phone already has data. Choose which data to keep.';
 
   @override
-  String get backupNow => 'Back up now';
+  String get sheetUseSheetData => 'Use the sheet\'s data';
 
   @override
-  String get backupRestore => 'Restore from Google Drive';
+  String get sheetKeepPhoneData => 'Keep this phone\'s data and add it to the sheet';
 
   @override
-  String get backupRestoreConfirmTitle => 'Replace the data on this phone?';
+  String get sheetReplaceConfirm =>
+      'The data on this phone (customers, records, nurses, services, areas) will be replaced by the sheet\'s data. The sheet is not changed.';
 
   @override
-  String get backupRestoreConfirm =>
-      'All customers, records, nurses, services and areas on this phone will be replaced by the backup in Google Drive.';
+  String get sheetKeepConfirm =>
+      'Everything on this phone will be written into the sheet, next to what is already there. Choose this only if this phone\'s data is not in the sheet yet, otherwise visits would appear twice.';
 
   @override
-  String get backupRestored => 'Data restored from Google Drive';
+  String get sheetLoaded => 'Data loaded from the Google Sheet';
 
   @override
-  String get backupFoundTitle => 'A backup is already in this Google Drive';
+  String get sheetUpToDate => 'The sheet is up to date';
 
   @override
-  String backupFoundBody(String date) {
-    return 'Sanad found a backup from $date. Restore it to this phone, or keep this phone\'s data and replace the backup.';
+  String sheetWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count changes waiting to be written',
+      one: '1 change waiting to be written',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get backupKeepDevice => 'Keep this phone\'s data';
+  String get sheetUpdating => 'Updating the sheet…';
 
   @override
-  String get backupKeepDeviceConfirm =>
-      'The backup in Google Drive will be replaced by the data on this phone. Earlier versions stay in the file\'s version history in Drive.';
+  String get sheetReading => 'Reading the sheet…';
 
   @override
-  String get backupDisconnect => 'Disconnect Google Drive';
+  String get sheetNotUpdated => 'The sheet could not be updated';
 
   @override
-  String get backupDisconnectConfirm => 'Automatic backups will stop. Files already in Google Drive stay there.';
+  String get sheetName => 'Spreadsheet';
 
   @override
-  String get backupWhere =>
-      'Files are in Google Drive › Sanad. Open Sanad.xlsx there to view it or share it with others. Drive keeps earlier versions of each file.';
+  String get sheetLastUpdate => 'Last update';
 
   @override
-  String get backupUnsupported =>
-      'Google Drive backup works in the Android app. Here, use Export to Excel to save a copy.';
+  String get sheetNever => 'Not yet';
 
   @override
-  String get backupBannerConnect => 'Back up your data to Google Drive';
+  String get sheetWritesTo => 'Writes to';
 
   @override
-  String get backupBannerFailed => 'The Google Drive backup did not complete';
+  String get sheetUpdateNow => 'Update now';
 
   @override
-  String get backupBannerAction => 'Open';
+  String get sheetReload => 'Load all data from the sheet again';
 
   @override
-  String get failureBackupSignInFailed => 'Google sign-in failed. Please try again.';
+  String get sheetDisconnect => 'Disconnect the sheet';
+
+  @override
+  String get sheetDisconnectConfirm =>
+      'Sanad will stop writing to this sheet. The sheet and the data on this phone stay as they are.';
+
+  @override
+  String get sheetOneWay =>
+      'Sanad writes to the sheet; it does not read changes made directly in the sheet. After editing the sheet by hand, use \"Load all data from the sheet again\" to bring those changes into the phone.';
+
+  @override
+  String get sheetBannerConnect => 'Keep your data in your Google Sheet';
+
+  @override
+  String get sheetBannerFailed => 'The Google Sheet could not be updated';
+
+  @override
+  String get sheetBannerAction => 'Open';
+
+  @override
+  String get importField_sanadId => 'Sanad ID (kept)';
+
+  @override
+  String get failureSheetInvalidLink =>
+      'This is not a Sanad Web app link. Copy the URL shown after Deploy → New deployment (it starts with https://script.google.com/macros/ and ends with /exec).';
+
+  @override
+  String get failureSheetDevLink =>
+      'This is a test link (ending in /dev). Use Deploy → New deployment and copy the Web app URL ending in /exec.';
+
+  @override
+  String get failureSheetAccessDenied =>
+      'Google asked to sign in. In Apps Script, open Deploy → Manage deployments → edit, set \"Who has access\" to Anyone, and deploy again.';
+
+  @override
+  String get failureSheetNotPaired => 'The connection code was changed in the sheet. Connect again with the new code.';
+
+  @override
+  String failureSheetMissing(String name) {
+    return 'The sheet \"$name\" was not found in the spreadsheet. Connect again so Sanad can find your sheets.';
+  }
+
+  @override
+  String get failureSheetScript =>
+      'The Sanad script in the sheet reported an error. Make sure it is the latest version.';
 }

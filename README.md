@@ -2,9 +2,10 @@
 
 **Customer & service-records app for home care, on your phone.**
 Search a customer by phone, confirm, add the visit, save. Every service is kept
-with full history on the phone, a copy is kept up to date in your own Google
-Drive (`Sanad.xlsx`, ready to open and share), and Excel import/export is built
-in. Arabic and English.
+with full history on the phone and written into **your own Google Sheet** in
+Google Drive a few seconds later: the same workbook you already use, with its
+dashboard and formulas. Free, no server, no Google sign-in in the app. Excel
+import/export is built in. Arabic and English.
 
 <p>
 <img src="docs/screenshots/02-dashboard.png" width="200" alt="Dashboard">
@@ -18,6 +19,10 @@ in. Arabic and English.
 <img src="docs/screenshots/14-dashboard-ar.png" width="200" alt="Arabic dashboard">
 <img src="docs/screenshots/15-profile-ar.png" width="200" alt="Arabic profile">
 </p>
+<p>
+<img src="docs/screenshots/17-google-sheet.png" width="200" alt="Google Sheet link">
+<img src="docs/screenshots/18-google-sheet-ar.png" width="200" alt="Google Sheet link (Arabic)">
+</p>
 
 *Screenshots use fictional demo data.*
 
@@ -27,9 +32,9 @@ in. Arabic and English.
 |---|---|
 | **App** (`app/`) | Flutter 3.47 · feature-first clean architecture (domain / data / presentation) · Cubit state management · get_it · go_router · Material 3 design system in Sanad blue · Arabic (RTL) + English · Android (also runs in a browser for a quick look) |
 | **Data** | SQLite on the phone (`sqflite`): foreign keys, unique phone and names, frozen history, atomic and reversible Excel import. No server, no account. |
-| **Cloud copy** | The user's own Google Drive (`drive.file` scope: Sanad sees only its own files): `Sanad.xlsx` with every sheet + a full backup for restore, updated automatically after changes |
+| **Google Sheet** | The user's own spreadsheet in Google Drive, through a small free script pasted into it (`tools/google-sheets/Code.gs`, deployed as a Web app). Sanad loads all of its data once, then writes every new or changed visit, customer, nurse, service and area into it. |
 | **Docs** (`docs/`) | Workbook analysis, schema, architecture, user flows, design system, screen specs, testing, setup, security |
-| **Tests** | 133 Flutter tests (unit, cubit, widget, and repository tests on real SQLite), run in CI |
+| **Tests** | Flutter tests (unit, cubit, widget, repository tests on real SQLite, and end to end against the real sheet script) and Node tests for the script, run in CI |
 
 ## Features
 
@@ -39,12 +44,12 @@ in. Arabic and English.
 * **History never changes**: price, nurse, service, area and address are frozen per record.
 * **Records**: search, filters (date range, nurse, service, area, payment), sorting, live totals.
 * **Nurses, services, areas**: managed in the app; deactivate instead of delete. The legacy price list and areas are preloaded.
-* **Dashboard**: today's services and revenue (cash / electronic), totals, review alerts, backup state.
-* **Google Drive backup**: connect once; every change is backed up; restore on a new phone; the Drive copy of `Sanad.xlsx` can be shared like any Drive file.
+* **Dashboard**: today's services and revenue (cash / electronic), totals, review alerts, Google Sheet state.
+* **Google Sheet link**: paste the sheet's link once; Sanad loads everything from the sheet, then every new or changed record lands in the visits sheet (in the next free pre-numbered row, keeping its formulas), new customers in the customers sheet and new names in the lists. Works with any Google account and any phone; a second phone connects with a code.
 * **Excel import**: auto-mapped columns, preview with row-level warnings, one transaction, rollback.
 * **Excel export**: formatted workbook (Records with customer details, Customers, Nurses, Services, Areas), any period, shared from the phone.
-* **Works offline**: everything is on the phone; only the backup needs a connection, and it retries by itself.
-* **Privacy**: data stays on the phone and in the owner's Drive; nothing is published.
+* **Works offline**: everything is on the phone; only the sheet update needs a connection, and it retries by itself.
+* **Privacy**: data stays on the phone and in the owner's spreadsheet; nothing is published.
 
 ## Quick start
 
@@ -54,13 +59,14 @@ flutter pub get
 flutter run              # Android phone or emulator
 ```
 
-To enable the Google Drive backup, register the app with Google once:
-[docs/08-deployment.md › Google Cloud setup](docs/08-deployment.md#84-google-cloud-setup-once-any-google-account-any-phone).
+To keep the data in a Google Sheet (5 minutes, once, on a computer):
+[docs/08-deployment.md › Connecting the Google Sheet](docs/08-deployment.md#84-connecting-the-google-sheet-once-free).
 
 Tests:
 
 ```bash
 cd app && flutter analyze && flutter test
+node --test tools/google-sheets/test/*.test.js     # the sheet script
 ```
 
 ## Documentation
@@ -72,7 +78,7 @@ cd app && flutter analyze && flutter test
 5. [Design system](docs/05-design-system.md)
 6. [Screen specifications](docs/06-screens.md)
 7. [Testing strategy](docs/07-testing.md)
-8. [Setup, Google Drive & installing on a phone](docs/08-deployment.md)
+8. [Setup, Google Sheet & installing on a phone](docs/08-deployment.md)
 9. [Security & privacy](docs/09-security.md)
 
 ## Repository layout
@@ -83,7 +89,9 @@ app/                      Flutter application
   lib/core/               database, theme, widgets, errors, utils, storage
   lib/features/<feature>/ domain · data · presentation
   lib/l10n/               English & Arabic strings
-  test/                   unit, cubit, widget and database tests
+  test/                   unit, cubit, widget, database and end-to-end tests
+tools/google-sheets/      the script pasted into the Google Sheet (Code.gs),
+                          its tests, and a local stand-in server for development
 docs/                     project documentation
 ```
 

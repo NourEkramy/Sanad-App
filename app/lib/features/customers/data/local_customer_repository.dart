@@ -1,4 +1,5 @@
 import '../../../core/database/sanad_database.dart';
+import '../../../core/database/sheet_state.dart';
 import '../../../core/database/sql.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/errors/failure.dart';
@@ -136,6 +137,7 @@ class LocalCustomerRepository implements CustomerRepository {
           // A corrected legacy customer no longer needs review.
           'needs_review': 0,
           'updated_at': _db.timestamp(),
+          'sheet_state': SheetState.changed,
         },
         where: 'id = ?',
         whereArgs: [id],

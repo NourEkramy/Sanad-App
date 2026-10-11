@@ -729,7 +729,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsPrivacy =>
-      'تُخزَّن بياناتك على هذا الهاتف فقط. إذا ربطت Google Drive، تُحفظ نسخة احتياطية في Drive الخاص بك ولا يراها أحد غيرك إلا إذا شاركتها.';
+      'تُخزَّن بياناتك على هذا الهاتف. إذا ربطت جدول Google، يكتب سند البيانات في هذا الجدول على Google Drive الخاص بك، ولا يراها أحد غيرك إلا إذا شاركت الجدول.';
 
   @override
   String get importIntro =>
@@ -1073,7 +1073,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get failureNetwork =>
-      'لا يوجد اتصال بالإنترنت. بياناتك محفوظة على الهاتف، وسيتم النسخ الاحتياطي عند عودة الاتصال.';
+      'لا يوجد اتصال بالإنترنت. بياناتك محفوظة على الهاتف، وسيتم تحديث الجدول عند عودة الاتصال.';
 
   @override
   String get failureDuplicatePhone => 'رقم التليفون مسجل بالفعل.';
@@ -1137,111 +1137,160 @@ class AppLocalizationsAr extends AppLocalizations {
   String get failureServer => 'حدث خطأ في Google Drive. حاول مرة أخرى.';
 
   @override
-  String get failureFileNotABackup => 'هذا الملف ليس نسخة احتياطية من سند.';
+  String get sheetTitle => 'جدول Google';
 
   @override
-  String get failureBackupCanceled => 'تم إلغاء تسجيل الدخول إلى Google.';
+  String get sheetIntro =>
+      'احتفظ بكل بياناتك في جدول Google الخاص بك على Google Drive. يحمّل سند كل البيانات من الجدول مرة واحدة، ثم يكتب فيه كل زيارة أو عميل أو ممرض أو خدمة أو منطقة جديدة أو معدّلة بعد ثوانٍ. تبقى أوراقك ومعادلاتك الأخرى (الداشبورد، الملخص الشهري، المصروفات) تعمل كما هي. مجاني، ولا يحتاج تسجيل دخول Google داخل التطبيق.';
 
   @override
-  String get failureBackupNotAuthorized =>
-      'لم يتم منح إذن الوصول إلى Google Drive. اضغط ربط واسمح بالوصول إلى الملفات التي ينشئها سند.';
+  String get sheetSetupTitle => 'إعداد الجدول (مرة واحدة، حوالي 5 دقائق، على الكمبيوتر)';
 
   @override
-  String get failureBackupNotConfigured =>
-      'إعداد Google Drive غير صحيح لهذه النسخة من التطبيق. في Google Cloud تأكد من: تفعيل Google Drive API، ووجود Android client باسم الحزمة com.sanad.sanad وبصمة SHA-1 لهذا التطبيق.';
+  String get sheetStep1 =>
+      'ارفع ملف Excel إلى Google Drive وافتحه بـ Google Sheets، ثم ملف ← حفظ كجداول بيانات Google. (أو أنشئ جدول Google جديداً فارغاً.)';
 
   @override
-  String get failureBackupNoBackup => 'لا توجد نسخة احتياطية من سند في Google Drive هذا.';
+  String get sheetStep2 =>
+      'في الجدول: الإضافات ← Apps Script. احذف الموجود، والصق نص سند البرمجي (زر النسخ بالأسفل، أو الملف tools/google-sheets/Code.gs في المشروع)، ثم اضغط حفظ.';
 
   @override
-  String get backupTitle => 'النسخ الاحتياطي على Google Drive';
+  String get sheetStep3 =>
+      'نشر (Deploy) ← نشر جديد ← Web app. التنفيذ باسم: أنا (Me). من يمكنه الوصول: أي شخص (Anyone). انشر، ثم Authorize access ← حسابك ← Advanced ← Go to … (إنه نصك البرمجي) ← Allow.';
 
   @override
-  String get backupIntro =>
-      'بياناتك محفوظة على هذا الهاتف. اربط Google Drive للاحتفاظ بنسخة في Drive الخاص بك: ملف Sanad.xlsx (كل الأوراق، جاهز للفتح والمشاركة) ونسخة كاملة للاستعادة على هاتف جديد. تُحدَّث النسخة تلقائيًا بعد كل تغيير.';
+  String get sheetStep4 => 'انسخ رابط الـ Web app والصقه بالأسفل. احتفظ به سراً: فهو يعمل ككلمة مرور.';
 
   @override
-  String get backupConnect => 'ربط Google Drive';
+  String get sheetCopyScript => 'نسخ نص سند البرمجي';
 
   @override
-  String get backupAccount => 'حساب Google';
+  String get sheetScriptCopied => 'تم نسخ النص البرمجي';
 
   @override
-  String get backupLast => 'آخر نسخة احتياطية';
+  String get sheetLinkLabel => 'رابط الـ Web app';
 
   @override
-  String get backupNever => 'لم يتم النسخ بعد';
+  String get sheetCodeNeeded => 'هذا الجدول مربوط بهاتف آخر. افتح في الجدول قائمة سند ← رمز الربط، واكتب الرمز هنا.';
 
   @override
-  String get backupUpToDate => 'تم نسخ كل البيانات';
+  String get sheetCodeLabel => 'رمز الربط';
 
   @override
-  String get backupPendingChanges => 'توجد تغييرات في انتظار النسخ';
+  String get sheetConnect => 'ربط';
 
   @override
-  String get backupNotUpToDate => 'لم يكتمل آخر نسخ احتياطي';
+  String get sheetFound => 'وجد سند هذه البيانات في الجدول:';
 
   @override
-  String get backupInProgress => 'جارٍ النسخ الاحتياطي…';
+  String get sheetLoad => 'تحميل بيانات الجدول';
 
   @override
-  String get backupRestoring => 'جارٍ الاستعادة…';
+  String get sheetPhoneHasData => 'يوجد بيانات على هذا الهاتف بالفعل. اختر أي البيانات تحتفظ بها.';
 
   @override
-  String get backupNow => 'نسخ احتياطي الآن';
+  String get sheetUseSheetData => 'استخدام بيانات الجدول';
 
   @override
-  String get backupRestore => 'استعادة من Google Drive';
+  String get sheetKeepPhoneData => 'الاحتفاظ ببيانات الهاتف وإضافتها إلى الجدول';
 
   @override
-  String get backupRestoreConfirmTitle => 'استبدال البيانات على هذا الهاتف؟';
+  String get sheetReplaceConfirm =>
+      'سيتم استبدال البيانات على هذا الهاتف (العملاء، السجلات، الممرضون، الخدمات، المناطق) ببيانات الجدول. لن يتغير الجدول.';
 
   @override
-  String get backupRestoreConfirm =>
-      'سيتم استبدال كل العملاء والسجلات والممرضين والخدمات والمناطق على هذا الهاتف بالنسخة الموجودة في Google Drive.';
+  String get sheetKeepConfirm =>
+      'سيُكتب كل ما على هذا الهاتف في الجدول بجانب الموجود فيه. اختر هذا فقط إذا لم تكن بيانات الهاتف موجودة في الجدول، وإلا ستظهر الزيارات مرتين.';
 
   @override
-  String get backupRestored => 'تمت استعادة البيانات من Google Drive';
+  String get sheetLoaded => 'تم تحميل البيانات من جدول Google';
 
   @override
-  String get backupFoundTitle => 'توجد نسخة احتياطية في Google Drive هذا';
+  String get sheetUpToDate => 'الجدول محدّث';
 
   @override
-  String backupFoundBody(String date) {
-    return 'وجد سند نسخة احتياطية بتاريخ $date. استعدها على هذا الهاتف، أو احتفظ ببيانات هذا الهاتف واستبدل النسخة.';
+  String sheetWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تغيير في انتظار الكتابة',
+      few: '$count تغييرات في انتظار الكتابة',
+      two: 'تغييران في انتظار الكتابة',
+      one: 'تغيير واحد في انتظار الكتابة',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get backupKeepDevice => 'الاحتفاظ ببيانات هذا الهاتف';
+  String get sheetUpdating => 'جارٍ تحديث الجدول…';
 
   @override
-  String get backupKeepDeviceConfirm =>
-      'سيتم استبدال النسخة الموجودة في Google Drive ببيانات هذا الهاتف. تبقى الإصدارات السابقة في سجل إصدارات الملف على Drive.';
+  String get sheetReading => 'جارٍ قراءة الجدول…';
 
   @override
-  String get backupDisconnect => 'إلغاء ربط Google Drive';
+  String get sheetNotUpdated => 'تعذّر تحديث الجدول';
 
   @override
-  String get backupDisconnectConfirm =>
-      'سيتوقف النسخ الاحتياطي التلقائي. تبقى الملفات الموجودة في Google Drive كما هي.';
+  String get sheetName => 'الجدول';
 
   @override
-  String get backupWhere =>
-      'الملفات موجودة في Google Drive › Sanad. افتح Sanad.xlsx هناك لعرضه أو مشاركته مع الآخرين. يحتفظ Drive بالإصدارات السابقة لكل ملف.';
+  String get sheetLastUpdate => 'آخر تحديث';
 
   @override
-  String get backupUnsupported =>
-      'النسخ الاحتياطي على Google Drive متاح في تطبيق Android. هنا استخدم التصدير إلى Excel لحفظ نسخة.';
+  String get sheetNever => 'لم يتم بعد';
 
   @override
-  String get backupBannerConnect => 'انسخ بياناتك احتياطيًا على Google Drive';
+  String get sheetWritesTo => 'يكتب في';
 
   @override
-  String get backupBannerFailed => 'لم يكتمل النسخ الاحتياطي على Google Drive';
+  String get sheetUpdateNow => 'تحديث الآن';
 
   @override
-  String get backupBannerAction => 'فتح';
+  String get sheetReload => 'تحميل كل البيانات من الجدول مرة أخرى';
 
   @override
-  String get failureBackupSignInFailed => 'فشل تسجيل الدخول إلى Google. حاول مرة أخرى.';
+  String get sheetDisconnect => 'فصل الجدول';
+
+  @override
+  String get sheetDisconnectConfirm =>
+      'سيتوقف سند عن الكتابة في هذا الجدول. يبقى الجدول والبيانات على هذا الهاتف كما هي.';
+
+  @override
+  String get sheetOneWay =>
+      'سند يكتب في الجدول، ولا يقرأ التعديلات التي تتم مباشرة في الجدول. بعد التعديل يدوياً في الجدول، استخدم \"تحميل كل البيانات من الجدول مرة أخرى\" لنقل هذه التعديلات إلى الهاتف.';
+
+  @override
+  String get sheetBannerConnect => 'احتفظ ببياناتك في جدول Google الخاص بك';
+
+  @override
+  String get sheetBannerFailed => 'تعذّر تحديث جدول Google';
+
+  @override
+  String get sheetBannerAction => 'فتح';
+
+  @override
+  String get importField_sanadId => 'معرف سند (يُحتفظ به)';
+
+  @override
+  String get failureSheetInvalidLink =>
+      'هذا ليس رابط Web app لسند. انسخ الرابط الذي يظهر بعد نشر ← نشر جديد (يبدأ بـ https://script.google.com/macros/ وينتهي بـ /exec).';
+
+  @override
+  String get failureSheetDevLink =>
+      'هذا رابط تجريبي (ينتهي بـ /dev). استخدم نشر ← نشر جديد وانسخ رابط الـ Web app المنتهي بـ /exec.';
+
+  @override
+  String get failureSheetAccessDenied =>
+      'طلبت Google تسجيل الدخول. في Apps Script افتح نشر ← إدارة عمليات النشر ← تعديل، واجعل \"من يمكنه الوصول\" أي شخص (Anyone)، ثم انشر مرة أخرى.';
+
+  @override
+  String get failureSheetNotPaired => 'تم تغيير رمز الربط في الجدول. اربط مرة أخرى بالرمز الجديد.';
+
+  @override
+  String failureSheetMissing(String name) {
+    return 'لم يتم العثور على الورقة \"$name\" في الجدول. اربط مرة أخرى ليجد سند أوراقك.';
+  }
+
+  @override
+  String get failureSheetScript => 'أبلغ نص سند البرمجي في الجدول عن خطأ. تأكد أنه أحدث إصدار.';
 }

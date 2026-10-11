@@ -10,7 +10,7 @@ import '../../../core/utils/money.dart';
 import '../../../core/widgets/cards.dart';
 import '../../../core/widgets/l10n.dart';
 import '../../../core/widgets/state_views.dart';
-import '../../backup/presentation/backup_widgets.dart';
+import '../../sheet/presentation/sheet_widgets.dart';
 import '../domain/dashboard.dart';
 import 'dashboard_cubit.dart';
 
@@ -31,7 +31,7 @@ class HomePage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.xxl),
                 sliver: SliverList.list(
                   children: [
-                    const BackupBanner(),
+                    const SheetBanner(),
                     if ((state.stats?.customersNeedingReview ?? 0) > 0)
                       Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -110,7 +110,7 @@ class _Header extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const BackupStatusButton(),
+                  const SheetStatusButton(),
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),

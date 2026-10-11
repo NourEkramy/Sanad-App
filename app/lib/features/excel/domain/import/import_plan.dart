@@ -76,11 +76,15 @@ class PlannedRecord {
     this.legacyRef,
     this.address,
     this.areaName,
+    this.sheetId,
     this.warnings = const [],
   });
 
   /// 1-based spreadsheet row number.
   final int rowNumber;
+
+  /// ID written by Sanad in a connected Google Sheet (kept on re-import).
+  final String? sheetId;
   final String customerKey;
   final String nurseKey;
   final String serviceKey;
@@ -216,6 +220,7 @@ class ImportPlan {
           'service_time': r.serviceTime?.toJson(),
           'notes': r.notes,
           'legacy_ref': r.legacyRef,
+          'id': r.sheetId,
           'address': r.address,
           'area_key': TextNormalizer.key(r.areaName),
           'area_name': r.areaName,

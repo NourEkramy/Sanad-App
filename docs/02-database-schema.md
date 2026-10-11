@@ -1,8 +1,8 @@
 # 2. Database schema
 
 SQLite on the device. Source: [`app/lib/core/database/sanad_database.dart`](../app/lib/core/database/sanad_database.dart)
-(schema, seed, transactions, backup dump/restore). Foreign keys are enforced
-(`PRAGMA foreign_keys = ON`).
+(schema, migrations, seed, transactions). Foreign keys are enforced
+(`PRAGMA foreign_keys = ON`). Current schema version: **2**.
 
 Storage formats: ids are UUID text; money is **integer piasters**; dates are
 `yyyy-MM-dd`; times `HH:mm:ss`; timestamps UTC ISO 8601; booleans 0/1.
@@ -49,6 +49,8 @@ erDiagram
         text area_id FK
         int needs_review
         text deleted_at "archive"
+        int sheet_row "row in the Google Sheet"
+        int sheet_state "0 written, 1 changed, 2 loaded"
     }
     service_records {
         text id PK
@@ -64,11 +66,16 @@ erDiagram
         text notes
         text "*_snapshot" "history"
         text deleted_at "archive"
+        int sheet_row "row in the Google Sheet"
+        int sheet_state "0 written, 1 changed, 2 loaded"
     }
 ```
 
-Supporting tables: `import_batches` (one per import, reversible) and
-`import_rows` (every source row and what happened to it).
+Supporting tables: `import_batches` (one per import, reversible),
+`import_rows` (every source row and what happened to it) and
+`sheet_removals` (records deleted by an import rollback whose sheet row must
+still be cleared). `areas`, `nurses` and `services` also have a
+`sheet_state` column.
 
 ## 2.2 Tables
 
@@ -81,6 +88,7 @@ Supporting tables: `import_batches` (one per import, reversible) and
 | `service_records` | One service/visit | Belongs to exactly one customer. Required: nurse, service, price ≥ 0, payment method, date, time. Imported rows may lack a time or payment method (`unspecified`); new rows may not (`CHECK`). |
 | `import_batches` | Each Excel import | `file_sha256` is unique among committed batches (no double import). |
 | `import_rows` | Copy of every imported or skipped row | Raw cell text plus warnings/errors. |
+| `sheet_removals` | Records to clear in the Google Sheet | Filled when an Excel import is rolled back after its records were written to the sheet; emptied once the rows are cleared. |
 
 Nine areas and the service price list from the workbook's `قوائم` sheet are
 inserted when the database is created.
@@ -99,6 +107,26 @@ The record repository writes the snapshot in the same transaction as the
 record and checks that the nurse and service are active and the customer is
 not archived. Customer *identity* (name and phone) in lists and exports comes
 from the live customer row.
+
+### Google Sheet state (version 2)
+
+Every customer, record, area, nurse and service carries `sheet_state`:
+
+| Value | Meaning | Written to the sheet as |
+|---|---|---|
+| `1` changed (default) | Created or edited on the phone | The whole row (customers matched by phone; new rows appended) |
+| `2` linked | Loaded from the sheet | Only its Sanad ID (visits) or blank cells (customers); list names nothing |
+| `0` written | The sheet has it | — |
+
+Repositories set `sheet_state = 1` in the same transaction as every edit.
+`sheet_row` remembers the row of a visit or customer in the sheet.
+
+### Migrations
+
+`onCreate` builds version 1, then runs every migration, then seeds; an
+existing database runs only the migrations it lacks (`onUpgrade`). Version 2
+adds `sheet_row` / `sheet_state` and `sheet_removals`; rows that already
+exist get `sheet_state = 1`, so they are written once a sheet is connected.
 
 ## 2.3 Indexes
 
@@ -120,7 +148,8 @@ from the live customer row.
 | `RecordMapper.where` | **Single definition** of record filtering (date range, nurse, service, area, payment, customer, name/phone query), used by the list, the totals and the export |
 | `LocalDashboardRepository` | All dashboard numbers in one query |
 | `LocalImportRepository.commit / rollback` | Atomic import; rollback removes only what the batch created and nothing used since |
-| `SanadDatabase.dump / restore` | Full backup (all tables) and restore in one transaction |
+| `LocalSheetStore.pending / markWritten` | Rows waiting for the Google Sheet (`sheet_state <> 0`), and marking them written only if `updated_at` did not change in the meantime |
+| `SanadDatabase.reset` | Deletes all data and puts back the built-in lists (before loading everything from the sheet) |
 
 ## 2.5 Tests
 
@@ -131,4 +160,5 @@ search, archived customers, visit counts, record snapshot and frozen history
 after renames / moves / price changes, double save, inactive nurse and
 archived customer, ordering, filters + totals, record correction, dashboard,
 Excel import (matching, review flags, revenue), duplicate-file refusal,
-rollback keeping used data, re-import, export, and backup dump/restore.
+rollback keeping used data, re-import, export, the upgrade of a version-1
+database (1.0.2) to version 2 keeping its data, and reset.

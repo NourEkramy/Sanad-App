@@ -1,6 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../../../core/database/sanad_database.dart';
+import '../../../core/database/sheet_state.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/errors/failure.dart';
 import '../../../core/result/result.dart';
@@ -128,6 +129,7 @@ class LocalRecordRepository implements RecordRepository {
         'patient_name_normalized': _normalized(patientName),
         'notes': notes,
         'updated_at': _db.timestamp(),
+        'sheet_state': SheetState.changed,
       };
       // Only a newly chosen nurse/service must be active; its current name
       // becomes the record's snapshot.
@@ -150,7 +152,7 @@ class LocalRecordRepository implements RecordRepository {
     await _db.write(
       (txn) => txn.update(
         'service_records',
-        {'deleted_at': at, 'updated_at': at},
+        {'deleted_at': at, 'updated_at': at, 'sheet_state': SheetState.changed},
         where: 'id = ? AND deleted_at IS NULL',
         whereArgs: [id],
       ),

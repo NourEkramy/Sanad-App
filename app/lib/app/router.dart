@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../core/files/file_gateway.dart';
 import '../features/areas/domain/entities/area.dart';
 import '../features/areas/domain/usecases/area_usecases.dart';
-import '../features/backup/presentation/backup_page.dart';
 import '../features/care_services/domain/entities/care_service.dart';
 import '../features/care_services/domain/usecases/care_service_usecases.dart';
 import '../features/customers/domain/entities/customer.dart';
@@ -35,6 +34,7 @@ import '../features/records/presentation/pages/records_page.dart';
 import '../features/settings/presentation/catalog_cubit.dart';
 import '../features/settings/presentation/catalog_pages.dart';
 import '../features/settings/presentation/more_pages.dart';
+import '../features/sheet/presentation/sheet_page.dart';
 import 'di.dart';
 import 'routes.dart';
 import 'shell.dart';
@@ -244,7 +244,7 @@ GoRouter buildRouter() {
                       child: const ExportPage(),
                     ),
                   ),
-                  GoRoute(path: 'backup', builder: (_, _) => const BackupPage()),
+                  GoRoute(path: 'sheet', builder: (_, _) => const SheetPage()),
                   GoRoute(path: 'settings', builder: (_, _) => const SettingsPage()),
                 ],
               ),

@@ -1397,7 +1397,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsPrivacy.
   ///
   /// In en, this message translates to:
-  /// **'Your data is stored only on this phone. If you connect Google Drive, a backup is kept in your own Drive, visible only to you until you share it.'**
+  /// **'Your data is stored on this phone. If you connect a Google Sheet, Sanad writes it into that sheet in your own Google Drive; nobody else sees it unless you share the sheet.'**
   String get settingsPrivacy;
 
   /// No description provided for @importIntro.
@@ -2009,7 +2009,7 @@ abstract class AppLocalizations {
   /// No description provided for @failureNetwork.
   ///
   /// In en, this message translates to:
-  /// **'No internet connection. Your data is safe on this phone; the backup will run when you are back online.'**
+  /// **'No internet connection. Your data is safe on this phone; the sheet will be updated when you are back online.'**
   String get failureNetwork;
 
   /// No description provided for @failureDuplicatePhone.
@@ -2132,203 +2132,275 @@ abstract class AppLocalizations {
   /// **'Google Drive answered with an error. Please try again.'**
   String get failureServer;
 
-  /// No description provided for @failureFileNotABackup.
+  /// No description provided for @sheetTitle.
   ///
   /// In en, this message translates to:
-  /// **'This file is not a Sanad backup.'**
-  String get failureFileNotABackup;
+  /// **'Google Sheet'**
+  String get sheetTitle;
 
-  /// No description provided for @failureBackupCanceled.
+  /// No description provided for @sheetIntro.
   ///
   /// In en, this message translates to:
-  /// **'Google sign-in was canceled.'**
-  String get failureBackupCanceled;
+  /// **'Keep all your data in your own Google Sheet in Google Drive. Sanad loads everything from the sheet once, then writes every new or changed visit, customer, nurse, service and area into it a few seconds later. Your other sheets and formulas (dashboard, monthly summary, expenses) keep working. Free, and no Google sign-in is needed in the app.'**
+  String get sheetIntro;
 
-  /// No description provided for @failureBackupNotAuthorized.
+  /// No description provided for @sheetSetupTitle.
   ///
   /// In en, this message translates to:
-  /// **'Google Drive access was not granted. Tap Connect and allow access to the files Sanad creates.'**
-  String get failureBackupNotAuthorized;
+  /// **'Set up your sheet (once, about 5 minutes, on a computer)'**
+  String get sheetSetupTitle;
 
-  /// No description provided for @failureBackupNotConfigured.
+  /// No description provided for @sheetStep1.
   ///
   /// In en, this message translates to:
-  /// **'Google Drive is not set up correctly for this copy of the app. In Google Cloud check: the Google Drive API is enabled, and an Android client exists with package com.sanad.sanad and the SHA-1 of this app.'**
-  String get failureBackupNotConfigured;
+  /// **'Put your Excel file in Google Drive and open it with Google Sheets, then File → Save as Google Sheets. (Or create a new empty Google Sheet.)'**
+  String get sheetStep1;
 
-  /// No description provided for @failureBackupNoBackup.
+  /// No description provided for @sheetStep2.
   ///
   /// In en, this message translates to:
-  /// **'No Sanad backup was found in this Google Drive.'**
-  String get failureBackupNoBackup;
+  /// **'In the sheet: Extensions → Apps Script. Delete what is there, paste the Sanad script (copy button below, or tools/google-sheets/Code.gs in the project), and click Save.'**
+  String get sheetStep2;
 
-  /// No description provided for @backupTitle.
+  /// No description provided for @sheetStep3.
   ///
   /// In en, this message translates to:
-  /// **'Google Drive backup'**
-  String get backupTitle;
+  /// **'Deploy → New deployment → Web app. Execute as: Me. Who has access: Anyone. Deploy, then Authorize access → your account → Advanced → Go to … (it is your own script) → Allow.'**
+  String get sheetStep3;
 
-  /// No description provided for @backupIntro.
+  /// No description provided for @sheetStep4.
   ///
   /// In en, this message translates to:
-  /// **'Your data is stored on this phone. Connect Google Drive to keep a copy in your own Drive: Sanad.xlsx (all sheets, ready to open and share) and a full backup to restore on a new phone. After every change the copy is updated automatically.'**
-  String get backupIntro;
+  /// **'Copy the Web app URL and paste it below. Keep it private: it works like a password.'**
+  String get sheetStep4;
 
-  /// No description provided for @backupConnect.
+  /// No description provided for @sheetCopyScript.
   ///
   /// In en, this message translates to:
-  /// **'Connect Google Drive'**
-  String get backupConnect;
+  /// **'Copy the Sanad script'**
+  String get sheetCopyScript;
 
-  /// No description provided for @backupAccount.
+  /// No description provided for @sheetScriptCopied.
   ///
   /// In en, this message translates to:
-  /// **'Google account'**
-  String get backupAccount;
+  /// **'Script copied'**
+  String get sheetScriptCopied;
 
-  /// No description provided for @backupLast.
+  /// No description provided for @sheetLinkLabel.
   ///
   /// In en, this message translates to:
-  /// **'Last backup'**
-  String get backupLast;
+  /// **'Web app link'**
+  String get sheetLinkLabel;
 
-  /// No description provided for @backupNever.
+  /// No description provided for @sheetCodeNeeded.
   ///
   /// In en, this message translates to:
-  /// **'Not backed up yet'**
-  String get backupNever;
+  /// **'This sheet is already connected to another phone. In the sheet, open the سند menu → رمز الربط, and enter the connection code here.'**
+  String get sheetCodeNeeded;
 
-  /// No description provided for @backupUpToDate.
+  /// No description provided for @sheetCodeLabel.
   ///
   /// In en, this message translates to:
-  /// **'Everything is backed up'**
-  String get backupUpToDate;
+  /// **'Connection code'**
+  String get sheetCodeLabel;
 
-  /// No description provided for @backupPendingChanges.
+  /// No description provided for @sheetConnect.
   ///
   /// In en, this message translates to:
-  /// **'Changes waiting to be backed up'**
-  String get backupPendingChanges;
+  /// **'Connect'**
+  String get sheetConnect;
 
-  /// No description provided for @backupNotUpToDate.
+  /// No description provided for @sheetFound.
   ///
   /// In en, this message translates to:
-  /// **'The last backup did not complete'**
-  String get backupNotUpToDate;
+  /// **'Sanad found this data in the sheet:'**
+  String get sheetFound;
 
-  /// No description provided for @backupInProgress.
+  /// No description provided for @sheetLoad.
   ///
   /// In en, this message translates to:
-  /// **'Backing up…'**
-  String get backupInProgress;
+  /// **'Load the sheet\'s data'**
+  String get sheetLoad;
 
-  /// No description provided for @backupRestoring.
+  /// No description provided for @sheetPhoneHasData.
   ///
   /// In en, this message translates to:
-  /// **'Restoring…'**
-  String get backupRestoring;
+  /// **'This phone already has data. Choose which data to keep.'**
+  String get sheetPhoneHasData;
 
-  /// No description provided for @backupNow.
+  /// No description provided for @sheetUseSheetData.
   ///
   /// In en, this message translates to:
-  /// **'Back up now'**
-  String get backupNow;
+  /// **'Use the sheet\'s data'**
+  String get sheetUseSheetData;
 
-  /// No description provided for @backupRestore.
+  /// No description provided for @sheetKeepPhoneData.
   ///
   /// In en, this message translates to:
-  /// **'Restore from Google Drive'**
-  String get backupRestore;
+  /// **'Keep this phone\'s data and add it to the sheet'**
+  String get sheetKeepPhoneData;
 
-  /// No description provided for @backupRestoreConfirmTitle.
+  /// No description provided for @sheetReplaceConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Replace the data on this phone?'**
-  String get backupRestoreConfirmTitle;
+  /// **'The data on this phone (customers, records, nurses, services, areas) will be replaced by the sheet\'s data. The sheet is not changed.'**
+  String get sheetReplaceConfirm;
 
-  /// No description provided for @backupRestoreConfirm.
+  /// No description provided for @sheetKeepConfirm.
   ///
   /// In en, this message translates to:
-  /// **'All customers, records, nurses, services and areas on this phone will be replaced by the backup in Google Drive.'**
-  String get backupRestoreConfirm;
+  /// **'Everything on this phone will be written into the sheet, next to what is already there. Choose this only if this phone\'s data is not in the sheet yet, otherwise visits would appear twice.'**
+  String get sheetKeepConfirm;
 
-  /// No description provided for @backupRestored.
+  /// No description provided for @sheetLoaded.
   ///
   /// In en, this message translates to:
-  /// **'Data restored from Google Drive'**
-  String get backupRestored;
+  /// **'Data loaded from the Google Sheet'**
+  String get sheetLoaded;
 
-  /// No description provided for @backupFoundTitle.
+  /// No description provided for @sheetUpToDate.
   ///
   /// In en, this message translates to:
-  /// **'A backup is already in this Google Drive'**
-  String get backupFoundTitle;
+  /// **'The sheet is up to date'**
+  String get sheetUpToDate;
 
-  /// No description provided for @backupFoundBody.
+  /// No description provided for @sheetWaiting.
   ///
   /// In en, this message translates to:
-  /// **'Sanad found a backup from {date}. Restore it to this phone, or keep this phone\'s data and replace the backup.'**
-  String backupFoundBody(String date);
+  /// **'{count, plural, =1{1 change waiting to be written} other{{count} changes waiting to be written}}'**
+  String sheetWaiting(int count);
 
-  /// No description provided for @backupKeepDevice.
+  /// No description provided for @sheetUpdating.
   ///
   /// In en, this message translates to:
-  /// **'Keep this phone\'s data'**
-  String get backupKeepDevice;
+  /// **'Updating the sheet…'**
+  String get sheetUpdating;
 
-  /// No description provided for @backupKeepDeviceConfirm.
+  /// No description provided for @sheetReading.
   ///
   /// In en, this message translates to:
-  /// **'The backup in Google Drive will be replaced by the data on this phone. Earlier versions stay in the file\'s version history in Drive.'**
-  String get backupKeepDeviceConfirm;
+  /// **'Reading the sheet…'**
+  String get sheetReading;
 
-  /// No description provided for @backupDisconnect.
+  /// No description provided for @sheetNotUpdated.
   ///
   /// In en, this message translates to:
-  /// **'Disconnect Google Drive'**
-  String get backupDisconnect;
+  /// **'The sheet could not be updated'**
+  String get sheetNotUpdated;
 
-  /// No description provided for @backupDisconnectConfirm.
+  /// No description provided for @sheetName.
   ///
   /// In en, this message translates to:
-  /// **'Automatic backups will stop. Files already in Google Drive stay there.'**
-  String get backupDisconnectConfirm;
+  /// **'Spreadsheet'**
+  String get sheetName;
 
-  /// No description provided for @backupWhere.
+  /// No description provided for @sheetLastUpdate.
   ///
   /// In en, this message translates to:
-  /// **'Files are in Google Drive › Sanad. Open Sanad.xlsx there to view it or share it with others. Drive keeps earlier versions of each file.'**
-  String get backupWhere;
+  /// **'Last update'**
+  String get sheetLastUpdate;
 
-  /// No description provided for @backupUnsupported.
+  /// No description provided for @sheetNever.
   ///
   /// In en, this message translates to:
-  /// **'Google Drive backup works in the Android app. Here, use Export to Excel to save a copy.'**
-  String get backupUnsupported;
+  /// **'Not yet'**
+  String get sheetNever;
 
-  /// No description provided for @backupBannerConnect.
+  /// No description provided for @sheetWritesTo.
   ///
   /// In en, this message translates to:
-  /// **'Back up your data to Google Drive'**
-  String get backupBannerConnect;
+  /// **'Writes to'**
+  String get sheetWritesTo;
 
-  /// No description provided for @backupBannerFailed.
+  /// No description provided for @sheetUpdateNow.
   ///
   /// In en, this message translates to:
-  /// **'The Google Drive backup did not complete'**
-  String get backupBannerFailed;
+  /// **'Update now'**
+  String get sheetUpdateNow;
 
-  /// No description provided for @backupBannerAction.
+  /// No description provided for @sheetReload.
+  ///
+  /// In en, this message translates to:
+  /// **'Load all data from the sheet again'**
+  String get sheetReload;
+
+  /// No description provided for @sheetDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect the sheet'**
+  String get sheetDisconnect;
+
+  /// No description provided for @sheetDisconnectConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Sanad will stop writing to this sheet. The sheet and the data on this phone stay as they are.'**
+  String get sheetDisconnectConfirm;
+
+  /// No description provided for @sheetOneWay.
+  ///
+  /// In en, this message translates to:
+  /// **'Sanad writes to the sheet; it does not read changes made directly in the sheet. After editing the sheet by hand, use \"Load all data from the sheet again\" to bring those changes into the phone.'**
+  String get sheetOneWay;
+
+  /// No description provided for @sheetBannerConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your data in your Google Sheet'**
+  String get sheetBannerConnect;
+
+  /// No description provided for @sheetBannerFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The Google Sheet could not be updated'**
+  String get sheetBannerFailed;
+
+  /// No description provided for @sheetBannerAction.
   ///
   /// In en, this message translates to:
   /// **'Open'**
-  String get backupBannerAction;
+  String get sheetBannerAction;
 
-  /// No description provided for @failureBackupSignInFailed.
+  /// No description provided for @importField_sanadId.
   ///
   /// In en, this message translates to:
-  /// **'Google sign-in failed. Please try again.'**
-  String get failureBackupSignInFailed;
+  /// **'Sanad ID (kept)'**
+  String get importField_sanadId;
+
+  /// No description provided for @failureSheetInvalidLink.
+  ///
+  /// In en, this message translates to:
+  /// **'This is not a Sanad Web app link. Copy the URL shown after Deploy → New deployment (it starts with https://script.google.com/macros/ and ends with /exec).'**
+  String get failureSheetInvalidLink;
+
+  /// No description provided for @failureSheetDevLink.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a test link (ending in /dev). Use Deploy → New deployment and copy the Web app URL ending in /exec.'**
+  String get failureSheetDevLink;
+
+  /// No description provided for @failureSheetAccessDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Google asked to sign in. In Apps Script, open Deploy → Manage deployments → edit, set \"Who has access\" to Anyone, and deploy again.'**
+  String get failureSheetAccessDenied;
+
+  /// No description provided for @failureSheetNotPaired.
+  ///
+  /// In en, this message translates to:
+  /// **'The connection code was changed in the sheet. Connect again with the new code.'**
+  String get failureSheetNotPaired;
+
+  /// No description provided for @failureSheetMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The sheet \"{name}\" was not found in the spreadsheet. Connect again so Sanad can find your sheets.'**
+  String failureSheetMissing(String name);
+
+  /// No description provided for @failureSheetScript.
+  ///
+  /// In en, this message translates to:
+  /// **'The Sanad script in the sheet reported an error. Make sure it is the latest version.'**
+  String get failureSheetScript;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
