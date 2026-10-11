@@ -1,8 +1,8 @@
 # 8. Setup & deployment
 
 Sanad runs entirely on the phone. There is no server to deploy. The only
-one-time setup is registering the app with Google so it may write its backup
-into your Google Drive (8.3).
+one-time setup is a permanent signing key (8.3) and registering the app with
+Google so it may write backups into its users' Google Drive (8.4).
 
 ## 8.1 Prerequisites
 
@@ -19,59 +19,80 @@ flutter run            # phone connected by USB, or an emulator
 flutter run -d chrome  # quick look in the browser (data stays in that browser; no Drive backup)
 ```
 
-## 8.3 Google Drive setup (once, about 10 minutes)
+## 8.3 One permanent signing key (once)
 
-Google requires every app that writes to Drive to be registered. Do this
-signed in with **the Google account that will hold the backups**.
+Google recognises the app by its package name **and the fingerprint (SHA-1)
+of the key it is signed with**. Sign every copy you install with the same
+permanent key, and register that key once: then the app works on every
+Android phone it is installed on.
 
-1. Open <https://console.cloud.google.com/> → project picker → **New project**
-   → name it `Sanad` → **Create**, and select it.
-2. **APIs & Services → Library** → search **Google Drive API** → **Enable**.
-3. **Google Auth Platform** (APIs & Services → OAuth consent screen) →
-   **Get started**: app name `Sanad`, your e-mail as support e-mail, audience
-   **External**, your e-mail as contact → **Create**.
-4. **Data access → Add or remove scopes** → filter for `drive.file` → tick
-   `…/auth/drive.file` ("See, edit, create and delete only the specific Google
-   Drive files you use with this app") → **Update** → **Save**.
-5. **Audience → Publish app** → confirm. (`drive.file` is a non-sensitive
-   scope, so Google does not require a review. If you leave the app in
-   *Testing*, add your account under *Test users*; Google then asks you to
-   allow access again every 7 days.)
-6. Get your computer's signing fingerprint (SHA-1). In a terminal:
-   ```powershell
-   cd "E:\Sanad App\app\android"
-   .\gradlew signingReport
-   ```
-   (on macOS/Linux: `./gradlew signingReport`). Copy the **SHA1** line of the
-   `debug` variant. If `gradlew` is missing, run `flutter build apk` once first.
-7. **Clients → Create client** → type **Android** → package name
-   `com.sanad.sanad` → paste the SHA-1 → **Create**.
+On your PC (PowerShell; `keytool` comes with Android Studio's Java, e.g.
+`"C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe"`):
 
-Nothing has to be copied into the app: Google recognises it by package name
-and signing certificate. Then on the phone: More → **Google Drive backup** →
-**Connect Google Drive**.
-
-> The fingerprint belongs to the computer that builds the app (its
-> `~/.android/debug.keystore`). If you build on another computer, add its
-> SHA-1 as another Android client, or copy the keystore file. If sign-in shows
-> "Google sign-in is not set up for this copy of the app", the package name or
-> SHA-1 does not match, or the Drive API is not enabled.
-
-## 8.4 Install on your phone
-
-```bash
-cd app
-flutter build apk --release
+```powershell
+cd "E:\Sanad App\app\android"
+keytool -genkeypair -v -keystore sanad-release.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias sanad
+keytool -list -v -keystore sanad-release.jks -alias sanad     # copy the SHA1 line
 ```
 
-Copy `app/build/app/outputs/flutter-apk/app-release.apk` to the phone and
-open it (allow installing from this source when Android asks), or with the
-phone connected: `flutter install --release`.
+Create `app\android\key.properties` (git-ignored, never share it):
 
-Release builds are signed with the computer's debug key (the Flutter
-default), which is fine for personal use and matches the SHA-1 from 8.3. To
-publish on Google Play later, create an upload key ("Build and release an
-Android app" in the Flutter docs) and add its SHA-1 as another Android client.
+```
+storePassword=YOUR_PASSWORD
+keyPassword=YOUR_PASSWORD
+keyAlias=sanad
+storeFile=../sanad-release.jks
+```
+
+**Back up `sanad-release.jks` and the password** (e.g. a private USB stick
+and your password manager). Losing them means future updates cannot be
+installed over the existing app.
+
+## 8.4 Google Cloud setup (once): any Google account, any phone
+
+Signed in to Google Cloud with the account that owns the project:
+
+1. <https://console.cloud.google.com/> → **New project** `Sanad` → select it.
+2. **APIs & Services → Library → Google Drive API → Enable.**
+3. **Google Auth Platform → Branding**: app name `Sanad`, support e-mail,
+   developer contact e-mail → Save. (Don't upload a logo: that requires
+   Google's brand review.)
+4. **Data access → Add or remove scopes** → `…/auth/drive.file` → Update → Save.
+5. **Audience → Publish app → Confirm.** Status must be **In production**.
+   This is what lets **any Google account** connect. `drive.file` is a
+   non-sensitive scope, so Google does not require a review. (In *Testing*,
+   only listed test users can connect.)
+6. **Clients → Create client → Android**: package `com.sanad.sanad`,
+   SHA-1 from 8.3. Add one Android client per signing key you use (e.g. a
+   test key, and Google Play's app-signing key if you publish on Play).
+7. **Clients → Create client → Web application**: name `Sanad sign-in`, no
+   URLs needed → copy its **Client ID** (`….apps.googleusercontent.com`).
+   With it, Sanad signs in to the Google account first and then asks for
+   Drive access for exactly that account (Google's main Android flow).
+
+Changes can take a few minutes to reach phones.
+
+## 8.4a Build and install on phones
+
+```powershell
+cd "E:\Sanad App\app"
+flutter build apk --release --dart-define=GOOGLE_WEB_CLIENT_ID=YOUR_WEB_CLIENT_ID
+```
+
+Copy `app\build\app\outputs\flutter-apk\app-release.apk` to any Android
+phone and open it (or publish it on Google Play). Every phone then shows
+**Connect Google Drive**; the user picks **any** Google account, and the
+backup goes to that account's own Drive.
+
+Phone requirements: Android 7 or newer **with Google Play services**
+(practically every Android phone except recent Huawei models). On phones
+without Google services the app works fully; use **Export to Excel** and
+share the file instead of the automatic Drive copy. iPhone needs a separate
+build on a Mac and an **iOS** client in step 6.
+
+If a copy of the app was installed with a different key (e.g. a test build),
+uninstall it first: Android refuses to replace an app signed with another
+key. Back up or export before uninstalling.
 
 ## 8.5 Bring in the existing workbook
 

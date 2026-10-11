@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../core/config/google_config.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/errors/failure.dart';
 import '../../../core/result/result.dart';
@@ -22,12 +23,28 @@ class GoogleDriveBackupStore implements CloudBackupStore {
   Future<void>? _initialized;
   String? _token;
 
+  /// The signed-in Google account (only with a Web client ID configured);
+  /// Drive access is then requested for exactly this account.
+  GoogleSignInAccount? _account;
+
+  static bool get _signInFirst => GoogleConfig.webClientId.isNotEmpty;
+
   @override
   bool get isSupported => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
-  GoogleSignInAuthorizationClient get _client => GoogleSignIn.instance.authorizationClient;
+  GoogleSignInAuthorizationClient get _client =>
+      _account?.authorizationClient ?? GoogleSignIn.instance.authorizationClient;
 
-  Future<void> _init() => _initialized ??= GoogleSignIn.instance.initialize();
+  Future<void> _init() => _initialized ??= () async {
+    await GoogleSignIn.instance.initialize(serverClientId: _signInFirst ? GoogleConfig.webClientId : null);
+    if (!_signInFirst) return;
+    // Silently find the account chosen before (no UI when it works).
+    try {
+      _account = await GoogleSignIn.instance.attemptLightweightAuthentication();
+    } on GoogleSignInException {
+      _account = null;
+    }
+  }();
 
   /// Silent: uses the access the user already granted.
   Future<String> _accessToken({bool refresh = false}) async {
@@ -47,9 +64,12 @@ class GoogleDriveBackupStore implements CloudBackupStore {
   Future<Result<String>> connect() => guard(() async {
     if (!isSupported) throw const BackupFailure(BackupFailureReason.unsupported);
     await _init();
+    if (_signInFirst) {
+      _account = await _guardSignIn(() => GoogleSignIn.instance.authenticate(scopeHint: _scopes));
+    }
     final authorization = await _guardSignIn(() => _client.authorizeScopes(_scopes));
     _token = authorization.accessToken;
-    return await _api.accountEmail() ?? '';
+    return _account?.email ?? await _api.accountEmail() ?? '';
   });
 
   @override
@@ -57,6 +77,7 @@ class GoogleDriveBackupStore implements CloudBackupStore {
     await _init();
     final token = _token;
     _token = null;
+    _account = null;
     if (token != null) await _client.clearAuthorizationToken(accessToken: token);
     // Also revokes the Drive permission; ignore failures (already revoked).
     try {

@@ -55,7 +55,7 @@ flutter run              # Android phone or emulator
 ```
 
 To enable the Google Drive backup, register the app with Google once:
-[docs/08-deployment.md › Google Drive setup](docs/08-deployment.md#83-google-drive-setup-once-about-10-minutes).
+[docs/08-deployment.md › Google Cloud setup](docs/08-deployment.md#84-google-cloud-setup-once-any-google-account-any-phone).
 
 Tests:
 
